@@ -167,6 +167,8 @@
         Dim RStickUD As Single = 0
         Dim LTrigger As Single = 0
         Dim RTrigger As Single = 0
+        Dim user As String = ""
+        Dim cmd As String = ""
 
 
 
@@ -204,6 +206,9 @@
                 buttons -= &H10000000
                 buttons = buttons Or &H2000
                 chkHoldO.Checked = true
+                PopQ
+                press
+                return
             End If
 
 
@@ -211,6 +216,9 @@
                 buttons -= &H20000000
                 buttons = buttons And &HFFFFDFFF
                 chkHoldO.checked = false
+                PopQ
+                press
+                return
             End If
 
 
@@ -220,15 +228,18 @@
             RStickUD = QueuedInput(0).RStickUD
             LTrigger = QueuedInput(0).LTrigger
             RTrigger = QueuedInput(0).RTrigger
-            refTimerPress.Interval = QueuedInput(0).time * 16 'Input is 'frames', assume 60 fps
-                                                               'Result seems to be working out to
-                                                                'equal 30 fps?
+            user = QueuedInput(0).user
+            cmd = QueuedInput(0).cmd
+            refTimerPress.Interval = QueuedInput(0).time
             PopQ()
             txtChat.Text = txtChat.Text + Hex(CInt(hookmem)) & " q:" & QueuedInput.Count & Environment.NewLine
 
         Else
             refTimerPress.Interval = 33
         End if
+        
+        WBytes(hookmem + &H300, System.Text.Encoding.ASCII.GetBytes(user + Chr(0)))
+        WBytes(hookmem + &H310, System.Text.Encoding.ASCII.GetBytes(cmd + Chr(0)))
 
         WUInt32(hookmem + &H40C, buttons)
 
@@ -242,11 +253,12 @@
 
     End Sub
     Private Sub PushQ(ByRef buttons As Integer, RStickLR As Single, RStickUD As Single, LStickLR As Single, _
-                      LStickUD As Single, LTrigger As Single, RTrigger As Single, time As Integer)
+                      LStickUD As Single, LTrigger As Single, RTrigger As Single, time As Integer, user As String, _
+                      cmd As String)
+        
         QueuedInput.Add(New QdInput() With {.buttons = buttons, .RstickLR = RStickLR, .RstickUD = RStickUD, _
                                             .LStickLR = LStickLR, .LStickUD = LStickUD, .LTrigger = LTrigger, _
-                                            .RTrigger = RTrigger, .time = time * 4})
-        'Time * 4 due to an apparent 4x BeginScenes per frame?
+                                            .RTrigger = RTrigger, .time = time, .user = user, .cmd = cmd})
     End Sub
     Private Sub PopQ()
         QueuedInput.RemoveAt(0)
@@ -271,7 +283,7 @@
         Dim username As String
         Dim cmd As string
         username = txt.Split(":")(0).Trim(" ")
-        cmd = txt.Split(":")(1).Trim(" ")
+        cmd = txt.Split(":")(txt.Split(":").Count-1).Trim(" ")
 
         txtChat.Text = txtChat.Text & username & "." & cmd & Environment.NewLine
         If txtChat.Text.Length > 100 Then txtChat.Text = ""
@@ -317,6 +329,7 @@
                         "hwf", "hwl", "hwr", "hwb", _
                         "hwfl", "hwfr", "hwbl", "hwbr", _
                         "rof", "rol", "rob", "ror", _
+                        "rofr", "rofl", "robr", "robl", _
                         "lu", "ll", "lr", "ld", "r3", _
                         "hlu", "hll", "hlr", "hld", _
                         "du", "dd", "dl", "dr", _
@@ -325,6 +338,7 @@
                         "takecontrol", "restorecontrol", _
                         "hh", "h", _
                         "holdx", "holdo", "noholdo", "holdsq", "holdtri", _
+                        "ho", "nho", _
                         "clearcmds"}
         
         Dim tmpuser = entry(0)
@@ -336,6 +350,7 @@
             For each cmd in tmpcmd.Split(",")
                 ProcessCMD({tmpuser, cmd.Replace(" ","")})
             Next
+            Return
         End If
 
       
@@ -366,6 +381,7 @@
                     Return
                 Else
                     QueuedInput.Clear
+                    refTimerPress.Interval = 1
                 End If
         End Select
 
@@ -373,10 +389,11 @@
 
 
 
-        If CllCMDList.Contains(tmpcmd) or (tmpcmd(0) = "c" And tmpcmd.Contains("-")) Then
+        If CllCMDList.Contains(tmpcmd) Or (tmpcmd.Contains("-") And _
+            (tmpcmd(0) = "c" Or tmpcmd(0) = "a" Or tmpcmd(0) = "w" Or tmpcmd(0) = "l")) then
 
             For i = 0 To CMDmulti - 1
-                execCMD(tmpcmd)
+                execCMD(tmpuser, tmpcmd)
             Next
             
         End If
@@ -384,11 +401,12 @@
     End Sub
 
 
-    Private Sub execCMD(cmd As String)
+    Private Sub execCMD(user As String, cmd As String)
 
         REM PS3Controller ( buttons, R stick left/right, R stick up/down, L stick left/right, L stick up/down, _
         REM                 hold button length)
 
+        'Math error, left in to maintain existing commands. /5
         If (cmd(0) = "c" And cmd.contains("-")) Then
             Dim duration
             Dim axis(3) as Single
@@ -396,187 +414,245 @@
                 axis(i) = (5 - val(cmd(i+1))) / 5
             Next
             duration = cmd.split("-")(1)
-            controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration)
+            controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration * 1.9, user, cmd)
         End If
 
+
+
+        'replacement for above, /4
+        If (cmd(0) = "a" And cmd.contains("-")) Then
+            Dim duration
+            Dim axis(3) as Single
+            For i = 0 To 3
+                axis(i) = (5 - val(cmd(i+1))) / 4
+            Next
+            duration = cmd.split("-")(1)
+            controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
+        End If
+
+        If (cmd(0) = "l" And cmd.contains("-")) Then
+            Dim duration
+            Dim axis(1) as Single
+            For i = 0 To 1
+                axis(i) = (5 - val(cmd(i+1))) / 4
+            Next
+            duration = cmd.split("-")(1)
+            controller(0, axis(0), axis(1), 0, 0, 0, 0, duration, user, cmd)
+        End If
+
+        If (cmd(0) = "w" And cmd.contains("-")) Then
+            Dim duration
+            Dim axis(1) as Single
+            For i = 0 To 1
+                axis(i) = (5 - val(cmd(i+1))) / 4
+            Next
+            duration = cmd.split("-")(1)
+            controller(0, 0, 0, axis(0), axis(1), 0, 0, duration, user, cmd)
+        End If
 
 
 
         Select Case cmd
             Case "wf"
-                Controller(0, 0, 0, 0, 1, 0, 0, 20)
+                Controller(0, 0, 0, 0, 1, 0, 0, 38, user, cmd)
             Case "wl"
-                Controller(0, 0, 0, -1, 0, 0, 0, 20)
+                Controller(0, 0, 0, -1, 0, 0, 0, 38, user, cmd)
             Case "wb"
-                Controller(0, 0, 0, 0, -1, 0, 0, 20)
+                Controller(0, 0, 0, 0, -1, 0, 0, 38, user, cmd)
             Case "wr"
-                Controller(0, 0, 0, 1, 0, 0, 0, 20)
+                Controller(0, 0, 0, 1, 0, 0, 0, 38, user, cmd)
 
             Case "wfl"
-                Controller(0, 0, 0, -1, 1, 0, 0, 20)
+                Controller(0, 0, 0, -1, 1, 0, 0, 38, user, cmd)
             Case "wfr"
-                Controller(0, 0, 0, 1, 1, 0, 0, 20)
+                Controller(0, 0, 0, 1, 1, 0, 0, 38, user, cmd)
             Case "wbl"
-                Controller(0, 0, 0, -1, -1, 0, 0, 20)
+                Controller(0, 0, 0, -1, -1, 0, 0, 38, user, cmd)
             Case "wbr"
-                Controller(0, 0, 0, 1, -1, 0, 0, 20)
+                Controller(0, 0, 0, 1, -1, 0, 0, 38, user, cmd)
 
             Case "hwf"
-                Controller(0, 0, 0, 0, 0.5, 0, 0, 20)
+                Controller(0, 0, 0, 0, 0.5, 0, 0, 38, user, cmd)
             Case "hwl"
-                Controller(0, 0, 0, -0.5, 0, 0, 0, 20)
+                Controller(0, 0, 0, -0.5, 0, 0, 0, 38, user, cmd)
             Case "hwb"
-                Controller(0, 0, 0, 0, -0.5, 0, 0, 20)
+                Controller(0, 0, 0, 0, -0.5, 0, 0, 38, user, cmd)
             Case "hwr"
-                Controller(0, 0, 0, 0.5, 0, 0, 0, 20)
+                Controller(0, 0, 0, 0.5, 0, 0, 0, 38, user, cmd)
 
             Case "hwfl"
-                Controller(0, 0, 0, -0.5, 0.5, 0, 0, 20)
+                Controller(0, 0, 0, -0.5, 0.5, 0, 0, 38, user, cmd)
             Case "hwfr"
-                Controller(0, 0, 0, 0.5, 0.5, 0, 0, 20)
+                Controller(0, 0, 0, 0.5, 0.5, 0, 0, 38, user, cmd)
             Case "hwbl"
-                Controller(0, 0, 0, -0.5, -0.5, 0, 0, 20)
+                Controller(0, 0, 0, -0.5, -0.5, 0, 0, 38, user, cmd)
             Case "hwbr"
-                Controller(0, 0, 0, 0.5, -0.5, 0, 0, 20)
+                Controller(0, 0, 0, 0.5, -0.5, 0, 0, 38, user, cmd)
 
             Case "flong"
-                Controller(0, 0, 0, 0, 1, 0, 0, 60)
+                Controller(0, 0, 0, 0, 1, 0, 0, 114, user, cmd)
 
             Case "rof"
-                Controller(0, 0, 0, 0, 1, 0, 0, 2)
-                Controller(&H2000, 0, 0, 0, 1, 0, 0, 2)
-                Controller(0, 0, 0, 0, 1, 0, 0, 10)
+                Controller(0, 0, 0, 0, 1, 0, 0, 2, user, cmd)
+                Controller(&H2000, 0, 0, 0, 1, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 1, 0, 0, 18, user, cmd)
+                If chkHoldO.Checked Then outputChat("HoldO currently active")
+
+            Case "rofl"
+                Controller(0, 0, 0, -1, 1, 0, 0, 2, user, cmd)
+                Controller(&H2000, 0, 0, -1, 1, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, -1, 1, 0, 0, 18, user, cmd)
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
 
             Case "rol"
-                Controller(0, 0, 0, -1, 0, 0, 0, 2)
-                Controller(&H2000, 0, 0, -1, 0, 0, 0, 2)
-                Controller(0, 0, 0, -1, 0, 0, 0, 10)
+                Controller(0, 0, 0, -1, 0, 0, 0, 2, user, cmd)
+                Controller(&H2000, 0, 0, -1, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, -1, 0, 0, 0, 18, user, cmd)
+                If chkHoldO.Checked Then outputChat("HoldO currently active")
+
+            Case "robl"
+                Controller(0, 0, 0, -1, -1, 0, 0, 2, user, cmd)
+                Controller(&H2000, 0, 0, -1, -1, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, -1, -1, 0, 0, 18, user, cmd)
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
 
             Case "rob"
-                Controller(0, 0, 0, 0, -1, 0, 0, 2)
-                Controller(&H2000, 0, 0, 0, -1, 0, 0, 2)
-                Controller(0, 0, 0, 0, -1, 0, 0, 10)
+                Controller(0, 0, 0, 0, -1, 0, 0, 2, user, cmd)
+                Controller(&H2000, 0, 0, 0, -1, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, -1, 0, 0, 18, user, cmd)
+                If chkHoldO.Checked Then outputChat("HoldO currently active")
+
+            Case "robr"
+                Controller(0, 0, 0, 1, -1, 0, 0, 2, user, cmd)
+                Controller(&H2000, 0, 0, 1, -1, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 1, -1, 0, 0, 18, user, cmd)
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
 
             Case "ror"
-                Controller(0, 0, 0, 1, 0, 0, 0, 2)
-                Controller(&H2000, 0, 0, 1, 0, 0, 0, 2)
-                Controller(0, 0, 0, 1, 0, 0, 0, 10)
+                Controller(0, 0, 0, 1, 0, 0, 0, 2, user, cmd)
+                Controller(&H2000, 0, 0, 1, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 1, 0, 0, 0, 18, user, cmd)
+                If chkHoldO.Checked Then outputChat("HoldO currently active")
+
+            Case "rofr"
+                Controller(0, 0, 0, 1, 1, 0, 0, 2, user, cmd)
+                Controller(&H2000, 0, 0, 1, 1, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 1, 1, 0, 0, 18, user, cmd)
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
 
             Case "lu"
-                Controller(0, 0, 1, 0, 0, 0, 0, 4)
+                Controller(0, 0, 1, 0, 0, 0, 0, 7, user, cmd)
             Case "ll"
-                Controller(0, -1, 0, 0, 0, 0, 0, 4)
+                Controller(0, -1, 0, 0, 0, 0, 0, 7, user, cmd)
             Case "lr"
-                Controller(0, 1, 0, 0, 0, 0, 0, 4)
+                Controller(0, 1, 0, 0, 0, 0, 0, 7, user, cmd)
             Case "ld"
-                Controller(0, 0, -1, 0, 0, 0, 0, 4)
+                Controller(0, 0, -1, 0, 0, 0, 0, 7, user, cmd)
 
             Case "hlu"
-                Controller(0, 0, 0.5, 0, 0, 0, 0, 4)
+                Controller(0, 0, 0.5, 0, 0, 0, 0, 7, user, cmd)
             Case "hll"
-                Controller(0, -0.5, 0, 0, 0, 0, 0, 4)
+                Controller(0, -0.5, 0, 0, 0, 0, 0, 7, user, cmd)
             Case "hlr"
-                Controller(0, 0.5, 0, 0, 0, 0, 0, 4)
+                Controller(0, 0.5, 0, 0, 0, 0, 0, 7, user, cmd)
             Case "hld"
-                Controller(0, 0, -0.5, 0, 0, 0, 0, 4)
+                Controller(0, 0, -0.5, 0, 0, 0, 0, 7, user, cmd)
 
             Case "hh"
-                Controller(0, 0, 0, 0, 0, 0, 0, 15)
+                Controller(0, 0, 0, 0, 0, 0, 0, 15, user, cmd)
             Case "h"
-                Controller(0, 0, 0, 0, 0, 0, 0, 30)
+                Controller(0, 0, 0, 0, 0, 0, 0, 30, user, cmd)
 
             Case "du"
-                Controller(&H10, 0, 0, 0, 0, 0, 0, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10)
+                Controller(&H10, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
             Case "dd"
-                Controller(&H40, 0, 0, 0, 0, 0, 0, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10)
+                Controller(&H40, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
             Case "dl"
-                Controller(&H80, 0, 0, 0, 0, 0, 0, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10)
+                Controller(&H80, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
             Case "dr"
-                Controller(&H20, 0, 0, 0, 0, 0, 0, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10)
+                Controller(&H20, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
 
             Case "share"
                 'Controller(&H1, 0, 0, 0, 0, 0, 0, 1)
             Case "options"
-                Controller(&H8, 0, 0, 0, 0, 0, 0, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10)
+                Controller(&H8, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
 
             Case "o"
-                Controller(&H2000, 0, 0, 0, 0, 0, 0, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10)
+                Controller(&H2000, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
             Case "x"
-                Controller(&H4000, 0, 0, 0, 0, 0, 0, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10)
+                Controller(&H4000, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
                 If chkHoldX.Checked Then outputChat("HoldX currently active")
             Case "sq"
-                Controller(&H8000, 0, 0, 0, 0, 0, 0, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10)
+                Controller(&H8000, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
                 If chkHoldSq.Checked Then outputChat("HoldSq currently active")
             Case "tri"
-                Controller(&H1000, 0, 0, 0, 0, 0, 0, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10)
+                Controller(&H1000, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
                 If chkHoldTri.Checked Then outputChat("HoldTri currently active")
 
             Case "l1"
-                Controller(&H400, 0, 0, 0, 0, 0, 0, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10)
+                Controller(&H400, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
             Case "l2"
-                Controller(&H100, 0, 0, 0, 0, 1, 0, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10)
+                Controller(&H100, 0, 0, 0, 0, 1, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
             Case "r1"
-                Controller(&H800, 0, 0, 0, 0, 0, 0, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10)
+                Controller(&H800, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 26, user, cmd)
             Case "r2"
-                Controller(&H200, 0, 0, 0, 0, 0, 1, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 20)
+                Controller(&H200, 0, 0, 0, 0, 0, 1, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 26, user, cmd)
 
             Case "ol1"
-                 Controller(&H2000, 0, 0, 0, 0, 0, 0, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10)
+                 Controller(&H2000, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
-                Controller(&H400, 0, 0, 0, 0, 0, 0, 2)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10)
+                Controller(&H400, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 24, user, cmd)
 
 
             Case "cr2"
-                Controller(&H200, 0, 0, 0, 0, 0, 1, 20)
-                Controller(0, 0, 0, 0, 0, 0, 0, 20)
+                Controller(&H200, 0, 0, 0, 0, 0, 1, 40, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 60, user, cmd)
 
             Case "fr1"
-                Controller(&H800, 0, 0, 0, 1, 0, 0, 10)
+                Controller(&H800, 0, 0, 0, 1, 0, 0, 20, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 10, user, cmd)
 
             Case "fr2"
-                Controller(&H200, 0, 0, 0, 1, 0, 1, 10)
+                Controller(&H200, 0, 0, 0, 1, 0, 1, 20, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 40, user, cmd)
 
             Case "l3"
-                Controller(&H2, 0, 0, 0, 0, 0, 0, 1)
-                Controller(0, 0, 0, 0, 0, 0, 0, 5)
+                Controller(&H2, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
 
             Case "r3"
-                Controller(&H4, 0, 0, 0, 0, 0, 0, 1)
-                Controller(0, 0, 0, 0, 0, 0, 0, 5)
+                Controller(&H4, 0, 0, 0, 0, 0, 0, 2, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd)
 
             Case "tp"
-                Controller(&H1000000, 0, 0, 0, 0, 0, 0, 5)
-                Controller(0, 0, 0, 0, 0, 0, 0, 5)
+                Controller(&H1000000, 0, 0, 0, 0, 0, 0, 5, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 5, user, cmd)
 
                 
             Case "holdx"
                 chkHoldX.Checked = Not chkHoldX.Checked
                 outputChat("Hold X = " & chkHoldX.Checked)
 
-            Case "holdo"
-                Controller(&H10000000, 0, 0, 0, 0, 0, 0, 1)
-            Case "noholdo"
-                Controller(&H20000000, 0, 0, 0, 0, 0, 0, 1)
+            Case "holdo", "ho"
+                Controller(&H10000000, 0, 0, 0, 0, 0, 0, 0, user, cmd)
+            Case "noholdo", "nho"
+                Controller(&H20000000, 0, 0, 0, 0, 0, 0, 0, user, cmd)
 
             Case "holdtri"
                 chkHoldTri.Checked = Not chkHoldTri.Checked
@@ -592,8 +668,13 @@
                 RestoreControl()
         End Select
     End Sub
-    Private Sub Controller(buttons As Integer, RLR As Single, RUD As Single, LLR As Single, LUD As Single, LT As Single, RT As Single, hold As Integer)
-        PushQ(buttons, RLR, RUD, LLR, LUD, LT, RT, hold)
+    Private Sub Controller(buttons As Integer, RLR As Single, RUD As Single, LLR As Single, LUD As Single, LT As Single, RT As Single, hold As Integer, user As String, cmd As string)
+
+        hold = hold * 33 'Fake 30fps
+        
+
+        PushQ(buttons, RLR, RUD, LLR, LUD, LT, RT, hold, user, cmd)
+        
     End Sub
 
     Private Sub TakeControl
@@ -795,6 +876,8 @@ Public Class QdInput
     Public LTrigger As Single
     Public RTrigger As Single
     Public time As Integer
+    Public user As String
+    Public cmd As string
 End Class
 
 
