@@ -111,6 +111,7 @@
 
     Private Sub frmPS4Twitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         wb.Navigate("http://www.twitch.tv/wulf2k/chat")
+        
 
         refTimerPress.Interval = 50
         refTimerPress.Enabled = True
@@ -671,6 +672,8 @@
     Private Sub Controller(buttons As Integer, RLR As Single, RUD As Single, LLR As Single, LUD As Single, LT As Single, RT As Single, hold As Integer, user As String, cmd As string)
 
         hold = hold * 33 'Fake 30fps
+
+        If hold > 60000 Then hold = 60000
         
 
         PushQ(buttons, RLR, RUD, LLR, LUD, LT, RT, hold, user, cmd)
