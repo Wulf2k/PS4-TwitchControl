@@ -122,12 +122,16 @@
         updTimer.Start()
 
         modlist.Add("daydahd")
+        modlist.Add("eternalvalley")
         modlist.Add("illusorywall")
         modlist.Add("jesterbo")
         modlist.Add("jesterpatches")
         modlist.Add("seannybee")
+        modlist.Add("superwaifubot")
+        modlist.Add("tompiet1")
         modlist.Add("wulf2k")
         modlist.Add("wulf2kbot")
+        modlist.Add("yuidesu")
         modlist.Add("zephyp")
         
 
@@ -196,6 +200,7 @@
         'xxxx4xxx	X
         'xxxx8xxx	Square
         'xx1xxxxx	Touchscreen push
+        Try
 
 
 
@@ -244,12 +249,17 @@
 
         WUInt32(hookmem + &H40C, buttons)
 
-        WUInt8(hookmem + &H410, &H7F& + LStickLR * &H7F&)
-        WUInt8(hookmem + &H411, &H7F& - LStickUD * &H7F&)
-        WUInt8(hookmem + &H412, &H7F& + RStickLR * &H7F&)
-        WUInt8(hookmem + &H413, &H7F& - RStickUD * &H7F&)
+        WUInt8(hookmem + &H410, &H7F& + LStickLR * &H7FUI)
+        WUInt8(hookmem + &H411, &H7F& - LStickUD * &H7FUI)
+        WUInt8(hookmem + &H412, &H7F& + RStickLR * &H7FUI)
+        WUInt8(hookmem + &H413, &H7F& - RStickUD * &H7FUI)
         WUInt8(hookmem + &H414, &HFF& * LTrigger)
         WUInt8(hookmem + &H415, &HFF& * RTrigger)
+
+        Catch ex As Exception
+
+        End Try
+
 
 
     End Sub
@@ -314,7 +324,8 @@
 
         Try
             Elems = wb.Document.GetElementsByTagName("button")
-            Elems(20).InvokeMember("click")
+            
+            Elems(Elems.Count-1).InvokeMember("click")
         Catch ex As Exception
             txtChat.Text += ex.Message & Environment.NewLine
         End Try
@@ -377,8 +388,13 @@
                     Return
                 End If
             Case "clearcmds"
-                If Not modlist.Contains(tmpuser) Then
-                    outputChat("Clearing command queue restricted to pre-approved users.")
+                If Not (modlist.Contains(tmpuser)) Then
+                    For i = QueuedInput.Count - 1 To 0 Step -1
+                        If QueuedInput(i).user = tmpuser Then
+                            QueuedInput.RemoveAt(i)
+                        End If
+                        outputChat("All commands for " & tmpuser & " removed from queue.")
+                    Next
                     Return
                 Else
                     QueuedInput.Clear
@@ -584,34 +600,34 @@
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
 
             Case "o"
-                Controller(&H2000, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
+                Controller(&H2000, 0, 0, 0, 0, 0, 0, 16, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
             Case "x"
-                Controller(&H4000, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
+                Controller(&H4000, 0, 0, 0, 0, 0, 0, 16, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
                 If chkHoldX.Checked Then outputChat("HoldX currently active")
             Case "sq"
-                Controller(&H8000, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
+                Controller(&H8000, 0, 0, 0, 0, 0, 0, 16, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
                 If chkHoldSq.Checked Then outputChat("HoldSq currently active")
             Case "tri"
-                Controller(&H1000, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
+                Controller(&H1000, 0, 0, 0, 0, 0, 0, 26, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
                 If chkHoldTri.Checked Then outputChat("HoldTri currently active")
 
             Case "l1"
                 Controller(&H400, 0, 0, 0, 0, 0, 0, 4, user, cmd)
                 Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
             Case "l2"
-                Controller(&H100, 0, 0, 0, 0, 1, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
+                Controller(&H100, 0, 0, 0, 0, 1, 0, 15, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 15, user, cmd)
             Case "r1"
-                Controller(&H800, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 26, user, cmd)
+                Controller(&H800, 0, 0, 0, 0, 0, 0, 15, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 15, user, cmd)
             Case "r2"
-                Controller(&H200, 0, 0, 0, 0, 0, 1, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 26, user, cmd)
+                Controller(&H200, 0, 0, 0, 0, 0, 1, 10, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 20, user, cmd)
 
             Case "ol1"
                  Controller(&H2000, 0, 0, 0, 0, 0, 0, 4, user, cmd)
@@ -622,16 +638,15 @@
 
 
             Case "cr2"
-                Controller(&H200, 0, 0, 0, 0, 0, 1, 40, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 60, user, cmd)
 
             Case "fr1"
                 Controller(&H800, 0, 0, 0, 1, 0, 0, 20, user, cmd)
                 Controller(0, 0, 0, 0, 0, 0, 0, 10, user, cmd)
 
             Case "fr2"
+                Controller(0,0,0,0,0,0,0,02,user,cmd)
                 Controller(&H200, 0, 0, 0, 1, 0, 1, 20, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 40, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 38, user, cmd)
 
             Case "l3"
                 Controller(&H2, 0, 0, 0, 0, 0, 0, 4, user, cmd)
