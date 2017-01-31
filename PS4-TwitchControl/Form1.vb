@@ -638,6 +638,8 @@
 
 
             Case "cr2"
+                Controller(&H200, 0, 0, 0, 0, 0, 1, 90, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 10, user, cmd)
 
             Case "fr1"
                 Controller(&H800, 0, 0, 0, 1, 0, 0, 20, user, cmd)
