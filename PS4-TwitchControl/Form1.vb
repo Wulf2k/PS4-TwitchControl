@@ -539,10 +539,10 @@
 
 
 
-        'If walk command has duration attached, use that, if not, default 38
-        If cmd.Length > 1 Then
+        'If command has duration attached, use that, if not....
+        If (duration = 0 And cmd.Length > 1) Then
             If (cmd(0) = "w") Or (cmd(0) = "h" And cmd(1) = "w") Then
-                If duration = 0 Then duration = 38
+                duration = 38
             End If
         End If
 
