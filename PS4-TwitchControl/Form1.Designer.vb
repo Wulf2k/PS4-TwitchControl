@@ -29,81 +29,153 @@ Partial Class frmPS4Twitch
         Me.chkHoldX = New System.Windows.Forms.CheckBox()
         Me.wb = New System.Windows.Forms.WebBrowser()
         Me.txtChat = New System.Windows.Forms.TextBox()
-        Me.SuspendLayout
+        Me.chkHoldR1 = New System.Windows.Forms.CheckBox()
+        Me.chkHoldL2 = New System.Windows.Forms.CheckBox()
+        Me.chkHoldR2 = New System.Windows.Forms.CheckBox()
+        Me.chkHoldL1 = New System.Windows.Forms.CheckBox()
+        Me.chkHoldR3 = New System.Windows.Forms.CheckBox()
+        Me.chkHoldL3 = New System.Windows.Forms.CheckBox()
+        Me.SuspendLayout()
         '
         'chkHoldSq
         '
-        Me.chkHoldSq.AutoSize = true
+        Me.chkHoldSq.AutoSize = True
         Me.chkHoldSq.Location = New System.Drawing.Point(16, 77)
         Me.chkHoldSq.Name = "chkHoldSq"
         Me.chkHoldSq.Size = New System.Drawing.Size(64, 17)
         Me.chkHoldSq.TabIndex = 67
         Me.chkHoldSq.Text = "Hold Sq"
-        Me.chkHoldSq.UseVisualStyleBackColor = true
+        Me.chkHoldSq.UseVisualStyleBackColor = True
         '
         'chkAttached
         '
-        Me.chkAttached.AutoSize = true
+        Me.chkAttached.AutoSize = True
         Me.chkAttached.Location = New System.Drawing.Point(235, 100)
         Me.chkAttached.Name = "chkAttached"
         Me.chkAttached.Size = New System.Drawing.Size(122, 17)
         Me.chkAttached.TabIndex = 66
         Me.chkAttached.Text = "Attached to Process"
-        Me.chkAttached.UseVisualStyleBackColor = true
+        Me.chkAttached.UseVisualStyleBackColor = True
         '
         'chkHoldO
         '
-        Me.chkHoldO.AutoSize = true
+        Me.chkHoldO.AutoSize = True
         Me.chkHoldO.Location = New System.Drawing.Point(16, 54)
         Me.chkHoldO.Name = "chkHoldO"
         Me.chkHoldO.Size = New System.Drawing.Size(59, 17)
         Me.chkHoldO.TabIndex = 65
         Me.chkHoldO.Text = "Hold O"
-        Me.chkHoldO.UseVisualStyleBackColor = true
+        Me.chkHoldO.UseVisualStyleBackColor = True
         '
         'chkHoldTri
         '
-        Me.chkHoldTri.AutoSize = true
+        Me.chkHoldTri.AutoSize = True
         Me.chkHoldTri.Location = New System.Drawing.Point(16, 100)
         Me.chkHoldTri.Name = "chkHoldTri"
         Me.chkHoldTri.Size = New System.Drawing.Size(63, 17)
         Me.chkHoldTri.TabIndex = 64
         Me.chkHoldTri.Text = "Hold Tri"
-        Me.chkHoldTri.UseVisualStyleBackColor = true
+        Me.chkHoldTri.UseVisualStyleBackColor = True
         '
         'chkHoldX
         '
-        Me.chkHoldX.AutoSize = true
+        Me.chkHoldX.AutoSize = True
         Me.chkHoldX.Location = New System.Drawing.Point(16, 31)
         Me.chkHoldX.Name = "chkHoldX"
         Me.chkHoldX.Size = New System.Drawing.Size(58, 17)
         Me.chkHoldX.TabIndex = 63
         Me.chkHoldX.Text = "Hold X"
-        Me.chkHoldX.UseVisualStyleBackColor = true
+        Me.chkHoldX.UseVisualStyleBackColor = True
         '
         'wb
         '
         Me.wb.Location = New System.Drawing.Point(235, 132)
         Me.wb.MinimumSize = New System.Drawing.Size(20, 20)
         Me.wb.Name = "wb"
-        Me.wb.ScriptErrorsSuppressed = true
+        Me.wb.ScriptErrorsSuppressed = True
         Me.wb.Size = New System.Drawing.Size(397, 448)
         Me.wb.TabIndex = 62
         '
         'txtChat
         '
         Me.txtChat.Location = New System.Drawing.Point(16, 132)
-        Me.txtChat.Multiline = true
+        Me.txtChat.Multiline = True
         Me.txtChat.Name = "txtChat"
         Me.txtChat.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtChat.Size = New System.Drawing.Size(205, 448)
         Me.txtChat.TabIndex = 61
         '
+        'chkHoldR1
+        '
+        Me.chkHoldR1.AutoSize = True
+        Me.chkHoldR1.Location = New System.Drawing.Point(80, 77)
+        Me.chkHoldR1.Name = "chkHoldR1"
+        Me.chkHoldR1.Size = New System.Drawing.Size(65, 17)
+        Me.chkHoldR1.TabIndex = 71
+        Me.chkHoldR1.Text = "Hold R1"
+        Me.chkHoldR1.UseVisualStyleBackColor = True
+        '
+        'chkHoldL2
+        '
+        Me.chkHoldL2.AutoSize = True
+        Me.chkHoldL2.Location = New System.Drawing.Point(80, 54)
+        Me.chkHoldL2.Name = "chkHoldL2"
+        Me.chkHoldL2.Size = New System.Drawing.Size(63, 17)
+        Me.chkHoldL2.TabIndex = 70
+        Me.chkHoldL2.Text = "Hold L2"
+        Me.chkHoldL2.UseVisualStyleBackColor = True
+        '
+        'chkHoldR2
+        '
+        Me.chkHoldR2.AutoSize = True
+        Me.chkHoldR2.Location = New System.Drawing.Point(80, 100)
+        Me.chkHoldR2.Name = "chkHoldR2"
+        Me.chkHoldR2.Size = New System.Drawing.Size(65, 17)
+        Me.chkHoldR2.TabIndex = 69
+        Me.chkHoldR2.Text = "Hold R2"
+        Me.chkHoldR2.UseVisualStyleBackColor = True
+        '
+        'chkHoldL1
+        '
+        Me.chkHoldL1.AutoSize = True
+        Me.chkHoldL1.Location = New System.Drawing.Point(80, 31)
+        Me.chkHoldL1.Name = "chkHoldL1"
+        Me.chkHoldL1.Size = New System.Drawing.Size(63, 17)
+        Me.chkHoldL1.TabIndex = 68
+        Me.chkHoldL1.Text = "Hold L1"
+        Me.chkHoldL1.UseVisualStyleBackColor = True
+        '
+        'chkHoldR3
+        '
+        Me.chkHoldR3.AutoSize = True
+        Me.chkHoldR3.Location = New System.Drawing.Point(149, 54)
+        Me.chkHoldR3.Name = "chkHoldR3"
+        Me.chkHoldR3.Size = New System.Drawing.Size(65, 17)
+        Me.chkHoldR3.TabIndex = 73
+        Me.chkHoldR3.Text = "Hold R3"
+        Me.chkHoldR3.UseVisualStyleBackColor = True
+        '
+        'chkHoldL3
+        '
+        Me.chkHoldL3.AutoSize = True
+        Me.chkHoldL3.Location = New System.Drawing.Point(149, 31)
+        Me.chkHoldL3.Name = "chkHoldL3"
+        Me.chkHoldL3.Size = New System.Drawing.Size(63, 17)
+        Me.chkHoldL3.TabIndex = 72
+        Me.chkHoldL3.Text = "Hold L3"
+        Me.chkHoldL3.UseVisualStyleBackColor = True
+        '
         'frmPS4Twitch
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6!, 13!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(642, 589)
+        Me.Controls.Add(Me.chkHoldR3)
+        Me.Controls.Add(Me.chkHoldL3)
+        Me.Controls.Add(Me.chkHoldR1)
+        Me.Controls.Add(Me.chkHoldL2)
+        Me.Controls.Add(Me.chkHoldR2)
+        Me.Controls.Add(Me.chkHoldL1)
         Me.Controls.Add(Me.chkHoldSq)
         Me.Controls.Add(Me.chkAttached)
         Me.Controls.Add(Me.chkHoldO)
@@ -125,4 +197,10 @@ End Sub
     Friend WithEvents chkHoldX As CheckBox
     Friend WithEvents wb As WebBrowser
     Friend WithEvents txtChat As TextBox
+    Friend WithEvents chkHoldR1 As CheckBox
+    Friend WithEvents chkHoldL2 As CheckBox
+    Friend WithEvents chkHoldR2 As CheckBox
+    Friend WithEvents chkHoldL1 As CheckBox
+    Friend WithEvents chkHoldR3 As CheckBox
+    Friend WithEvents chkHoldL3 As CheckBox
 End Class
