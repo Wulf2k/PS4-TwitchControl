@@ -499,6 +499,7 @@
 
 
 
+
         'Handle command multipliers
         If tmpcmd.Length > 2 Then
             If IsNumeric(tmpcmd(tmpcmd.Length - 1)) And tmpcmd(tmpcmd.Length - 2) = "x" Then
@@ -507,14 +508,23 @@
             End If
         End If
 
+        'TODO: Improve this handling to see if list contains command...
+        Dim shorttmpcmd As String
+        If tmpcmd.Contains("-") Then
+            shorttmpcmd = tmpcmd.Split("-")(0)
+        Else
+            shorttmpcmd = tmpcmd
+        End If
 
-        Select Case tmpcmd
+
+
+        Select Case shorttmpcmd
             Case "options"
-                If Not modlist.contains(tmpuser) Then
+                If Not modlist.Contains(tmpuser) Then
                     outputChat("Options menu restricted to pre-approved users.")
                     Return
                 End If
-            Case "tri", "holdtri"
+            Case "tri", "holdtri", "htri"
                 If Not modlist.Contains(tmpuser) Then
                     outputChat("Consumable use restricted to pre-approved users.")
                     Return
@@ -556,13 +566,6 @@
 
 
 
-        'TODO: Improve this handling to see if list contains command...
-        Dim shorttmpcmd As String
-        If tmpcmd.Contains("-") Then
-            shorttmpcmd = tmpcmd.Split("-")(0)
-        Else
-            shorttmpcmd = tmpcmd
-        End If
 
         'For direct analog stick inputs
         If CllCMDList.Contains(shorttmpcmd) Or (tmpcmd.Contains("-") And
