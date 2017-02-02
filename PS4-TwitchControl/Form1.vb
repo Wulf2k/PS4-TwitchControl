@@ -344,13 +344,18 @@
             WBytes(hookmem + &H310,
                    System.Text.Encoding.ASCII.GetBytes(cmd & "-" & refTimerPress.Interval & Chr(0)))
 
-            For i = 0 To 10
+            For i = 0 To 9
                 If (QueuedInput.Count) > i Then
                     WBytes(hookmem + &H320 + i * &H10,
                            System.Text.Encoding.ASCII.GetBytes(QueuedInput(i).cmd & "-" &
                                                                QueuedInput(i).time & Chr(0)))
+                Else
+                    WBytes(hookmem + &H320 + 8 * &H10, {0})
                 End If
             Next
+
+            WInt32(hookmem + &H3C0, QueuedInput.Count)
+
 
 
             WUInt32(hookmem + &H40C,
@@ -472,7 +477,7 @@
                         "htri", "nhtri",
                         "hx", "nhx",
                         "nha",
-                        "clearcmds", "clearallcmds", "csx"}
+                        "clearcmds", "clearallcmds", "csx", "casx"}
 
         Dim tmpuser = entry(0)
         Dim tmpcmd = entry(1)
@@ -531,6 +536,20 @@
                 Return
             Case "csx"
                 ProcessCMD({tmpuser, "clearcmds"})
+                ProcessCMD({tmpuser, "nha"})
+                ProcessCMD({tmpuser, "sq"})
+                ProcessCMD({tmpuser, "x"})
+                ProcessCMD({tmpuser, "sq"})
+                ProcessCMD({tmpuser, "x"})
+                ProcessCMD({tmpuser, "sq"})
+                ProcessCMD({tmpuser, "x"})
+            Case "casx"
+                ProcessCMD({tmpuser, "clearallcmds"})
+                ProcessCMD({tmpuser, "nha"})
+                ProcessCMD({tmpuser, "sq"})
+                ProcessCMD({tmpuser, "x"})
+                ProcessCMD({tmpuser, "sq"})
+                ProcessCMD({tmpuser, "x"})
                 ProcessCMD({tmpuser, "sq"})
                 ProcessCMD({tmpuser, "x"})
         End Select
