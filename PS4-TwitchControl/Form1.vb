@@ -235,11 +235,20 @@
                         chkHoldTri.Checked = False
                         chkHoldX.Checked = False
 
+                    Case "hl1"
+                        chkHoldL1.Checked = True
+                    Case "nhl1"
+                        chkHoldL1.Checked = False
 
-                    Case "ho", "holdo"
-                        chkHoldO.Checked = True
-                    Case "nho", "noholdo"
-                        chkHoldO.Checked = False
+                    Case "hl2"
+                        chkHoldL2.Checked = True
+                    Case "nhl2"
+                        chkHoldL2.Checked = False
+
+                    Case "hl3"
+                        chkHoldL3.Checked = True
+                    Case "nhl3"
+                        chkHoldL3.Checked = False
 
 
                     Case "hr1"
@@ -252,11 +261,32 @@
                     Case "nhr2"
                         chkHoldR2.Checked = False
 
+                    Case "hr3"
+                        chkHoldR3.Checked = True
+                    Case "nhr3"
+                        chkHoldR3.Checked = False
 
-                    Case "hl2"
-                        chkHoldL2.Checked = True
-                    Case "nhl2"
-                        chkHoldL2.Checked = False
+
+                    Case "ho", "holdo"
+                        chkHoldO.Checked = True
+                    Case "nho", "noholdo"
+                        chkHoldO.Checked = False
+
+                    Case "hsq"
+                        chkHoldSq.Checked = True
+                    Case "nhsq"
+                        chkHoldSq.Checked = False
+
+                    Case "htri"
+                        chkHoldTri.Checked = True
+                    Case "nhtri"
+                        chkHoldTri.Checked = False
+
+                    Case "hx"
+                        chkHoldX.Checked = True
+                    Case "nhx"
+                        chkHoldX.Checked = False
+
 
                 End Select
 
@@ -308,17 +338,37 @@
                 refTimerPress.Interval = 33
             End If
 
-            WBytes(hookmem + &H300, System.Text.Encoding.ASCII.GetBytes(user + Chr(0)))
-            WBytes(hookmem + &H310, System.Text.Encoding.ASCII.GetBytes(cmd + Chr(0)))
+            WBytes(hookmem + &H300,
+                   System.Text.Encoding.ASCII.GetBytes(user + Chr(0)))
 
-            WUInt32(hookmem + &H40C, buttons)
+            WBytes(hookmem + &H310,
+                   System.Text.Encoding.ASCII.GetBytes(cmd & "-" & refTimerPress.Interval & Chr(0)))
 
-            WUInt8(hookmem + &H410, &H7FUI + LStickLR * &H7FUI)
-            WUInt8(hookmem + &H411, &H7FUI - LStickUD * &H7FUI)
-            WUInt8(hookmem + &H412, &H7FUI + RStickLR * &H7FUI)
-            WUInt8(hookmem + &H413, &H7FUI - RStickUD * &H7FUI)
-            WUInt8(hookmem + &H414, &HFFUI * LTrigger)
-            WUInt8(hookmem + &H415, &HFFUI * RTrigger)
+            For i = 0 To 10
+                If (QueuedInput.Count) > i Then
+                    WBytes(hookmem + &H320 + i * &H10,
+                           System.Text.Encoding.ASCII.GetBytes(QueuedInput(i).cmd & "-" &
+                                                               QueuedInput(i).time & Chr(0)))
+                End If
+            Next
+
+
+            WUInt32(hookmem + &H40C,
+                    buttons)
+
+            WUInt8(hookmem + &H410,
+                   &H7FUI + LStickLR * &H7FUI)
+            WUInt8(hookmem + &H411,
+                   &H7FUI - LStickUD * &H7FUI)
+            WUInt8(hookmem + &H412,
+                   &H7FUI + RStickLR * &H7FUI)
+            WUInt8(hookmem + &H413,
+                   &H7FUI - RStickUD * &H7FUI)
+
+            WUInt8(hookmem + &H414,
+                   &HFFUI * LTrigger)
+            WUInt8(hookmem + &H415,
+                   &HFFUI * RTrigger)
 
         Catch ex As Exception
 
@@ -410,11 +460,17 @@
                         "l1", "l2", "r1", "r2", "fr1", "fr2", "cr2", "tp",
                         "takecontrol", "restorecontrol",
                         "hh", "h",
-                        "holdx", "holdo", "noholdo", "holdsq", "holdtri",
+                        "holdo", "noholdo",
                         "ho", "nho",
+                        "hl1", "nhl1",
                         "hl2", "nhl2",
+                        "hl3", "nhl3",
                         "hr1", "nhr1",
                         "hr2", "nhr2",
+                        "hr3", "nhr3",
+                        "hsq", "nhsq",
+                        "htri", "nhtri",
+                        "hx", "nhx",
                         "nha",
                         "clearcmds", "clearallcmds", "csx"}
 
@@ -536,11 +592,15 @@
         End If
 
         If (cmd(0) = "w" And cmd.Length = 3) Then
-            Dim axis(1) As Single
-            For i = 0 To 1
-                axis(i) = (5 - Val(cmd(i + 1))) / 4
-            Next
-            Controller(0, 0, 0, axis(0), axis(1), 0, 0, duration, user, cmd)
+            'Check to confirm it's a stick value instead of a diagonal walk command
+            If (Val(cmd(1)) >= 1 And Val(cmd(1)) <= 9) Then
+                Dim axis(1) As Single
+                For i = 0 To 1
+                    axis(i) = (5 - Val(cmd(i + 1))) / 4
+                Next
+                Controller(0, 0, 0, axis(0), axis(1), 0, 0, duration, user, cmd)
+                Return
+            End If
         End If
 
 
@@ -595,51 +655,51 @@
                 Controller(0, 0, 0, 0, 1, 0, 0, 114, user, cmd)
 
             Case "rof"
-                Controller(0, 0, 0, 0, 1, 0, 0, 2, user, cmd)
-                Controller(&H2000, 0, 0, 0, 1, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 1, 0, 0, 18, user, cmd)
+                Controller(0, 0, 0, 0, 1, 0, 0, 2, user, cmd & "(-)")
+                Controller(&H2000, 0, 0, 0, 1, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 1, 0, 0, 18, user, cmd & "(-)")
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
 
             Case "rofl"
-                Controller(0, 0, 0, -1, 1, 0, 0, 2, user, cmd)
-                Controller(&H2000, 0, 0, -1, 1, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, -1, 1, 0, 0, 18, user, cmd)
+                Controller(0, 0, 0, -1, 1, 0, 0, 2, user, cmd & "(-)")
+                Controller(&H2000, 0, 0, -1, 1, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, -1, 1, 0, 0, 18, user, cmd & "(-)")
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
 
             Case "rol"
-                Controller(0, 0, 0, -1, 0, 0, 0, 2, user, cmd)
-                Controller(&H2000, 0, 0, -1, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, -1, 0, 0, 0, 18, user, cmd)
+                Controller(0, 0, 0, -1, 0, 0, 0, 2, user, cmd & "(-)")
+                Controller(&H2000, 0, 0, -1, 0, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, -1, 0, 0, 0, 18, user, cmd & "(-)")
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
 
             Case "robl"
-                Controller(0, 0, 0, -1, -1, 0, 0, 2, user, cmd)
-                Controller(&H2000, 0, 0, -1, -1, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, -1, -1, 0, 0, 18, user, cmd)
+                Controller(0, 0, 0, -1, -1, 0, 0, 2, user, cmd & "(-)")
+                Controller(&H2000, 0, 0, -1, -1, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, -1, -1, 0, 0, 18, user, cmd & "(-)")
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
 
             Case "rob"
-                Controller(0, 0, 0, 0, -1, 0, 0, 2, user, cmd)
-                Controller(&H2000, 0, 0, 0, -1, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, -1, 0, 0, 18, user, cmd)
+                Controller(0, 0, 0, 0, -1, 0, 0, 2, user, cmd & "(-)")
+                Controller(&H2000, 0, 0, 0, -1, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, -1, 0, 0, 18, user, cmd & "(-)")
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
 
             Case "robr"
-                Controller(0, 0, 0, 1, -1, 0, 0, 2, user, cmd)
-                Controller(&H2000, 0, 0, 1, -1, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 1, -1, 0, 0, 18, user, cmd)
+                Controller(0, 0, 0, 1, -1, 0, 0, 2, user, cmd & "(-)")
+                Controller(&H2000, 0, 0, 1, -1, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 1, -1, 0, 0, 18, user, cmd & "(-)")
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
 
             Case "ror"
-                Controller(0, 0, 0, 1, 0, 0, 0, 2, user, cmd)
-                Controller(&H2000, 0, 0, 1, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 1, 0, 0, 0, 18, user, cmd)
+                Controller(0, 0, 0, 1, 0, 0, 0, 2, user, cmd & "(-)")
+                Controller(&H2000, 0, 0, 1, 0, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 1, 0, 0, 0, 18, user, cmd & "(-)")
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
 
             Case "rofr"
-                Controller(0, 0, 0, 1, 1, 0, 0, 2, user, cmd)
-                Controller(&H2000, 0, 0, 1, 1, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 1, 1, 0, 0, 18, user, cmd)
+                Controller(0, 0, 0, 1, 1, 0, 0, 2, user, cmd & "(-)")
+                Controller(&H2000, 0, 0, 1, 1, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 1, 1, 0, 0, 18, user, cmd & "(-)")
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
 
             Case "lu"
@@ -667,107 +727,106 @@
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
 
             Case "du"
-                Controller(&H10, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(&H10, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
             Case "dd"
-                Controller(&H40, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(&H40, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
             Case "dl"
-                Controller(&H80, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(&H80, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
             Case "dr"
-                Controller(&H20, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(&H20, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
 
             Case "share"
                 'Controller(&H1, 0, 0, 0, 0, 0, 0, 1)
             Case "options"
-                Controller(&H8, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(&H8, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
 
             Case "o"
-                Controller(&H2000, 0, 0, 0, 0, 0, 0, 16, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(&H2000, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
             Case "x"
-                Controller(&H4000, 0, 0, 0, 0, 0, 0, 16, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(&H4000, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
                 If chkHoldX.Checked Then outputChat("HoldX currently active")
             Case "sq"
-                Controller(&H8000, 0, 0, 0, 0, 0, 0, 16, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(&H8000, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
                 If chkHoldSq.Checked Then outputChat("HoldSq currently active")
             Case "tri"
-                Controller(&H1000, 0, 0, 0, 0, 0, 0, 26, user, cmd)
+                Controller(&H1000, 0, 0, 0, 0, 0, 0, 26, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
                 If chkHoldTri.Checked Then outputChat("HoldTri currently active")
 
             Case "l1"
-                Controller(&H400, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
+                Controller(&H400, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(-)")
             Case "l2"
-                Controller(&H100, 0, 0, 0, 0, 1, 0, 15, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 15, user, cmd)
+                Controller(&H100, 0, 0, 0, 0, 1, 0, 15, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 15, user, cmd & "(-)")
             Case "r1"
-                Controller(&H800, 0, 0, 0, 0, 0, 0, 15, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 15, user, cmd)
+                Controller(&H800, 0, 0, 0, 0, 0, 0, 15, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 15, user, cmd & "(-)")
             Case "r2"
-                Controller(&H200, 0, 0, 0, 0, 0, 1, 10, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 20, user, cmd)
+                Controller(&H200, 0, 0, 0, 0, 0, 1, 10, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 20, user, cmd & "(-)")
 
             Case "ol1"
-                 Controller(&H2000, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd)
+                Controller(&H2000, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(-)")
                 If chkHoldO.Checked Then outputChat("HoldO currently active")
-                Controller(&H400, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 24, user, cmd)
+                Controller(&H400, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 24, user, cmd & "(-)")
 
 
             Case "cr2"
-                Controller(&H200, 0, 0, 0, 0, 0, 1, 90, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10, user, cmd)
+                Controller(&H200, 0, 0, 0, 0, 0, 1, 90, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(-)")
 
             Case "fr1"
-                Controller(&H800, 0, 0, 0, 1, 0, 0, 20, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 10, user, cmd)
+                Controller(&H800, 0, 0, 0, 1, 0, 0, 20, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(-)")
 
             Case "fr2"
-                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd)
-                Controller(&H200, 0, 0, 0, 1, 0, 1, 20, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 38, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
+                Controller(&H200, 0, 0, 0, 1, 0, 1, 20, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 38, user, cmd & "(-)")
 
             Case "l3"
-                Controller(&H2, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Controller(&H2, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
 
             Case "r3"
-                Controller(&H4, 0, 0, 0, 0, 0, 0, 2, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd)
+                Controller(&H4, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
 
             Case "tp"
-                Controller(&H1000000, 0, 0, 0, 0, 0, 0, 5, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 5, user, cmd)
+                Controller(&H1000000, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(-)")
 
-                
-            Case "holdx"
 
 
             Case "nha",
                  "holdo", "ho", "noholdo", "nho",
+                 "hl1", "nhl1",
+                 "hl2", "nhl2",
+                 "hl3", "nhl3",
                  "hr1", "nhr1",
                  "hr2", "nhr2",
-                 "hl2", "nhl2"
+                 "hr3", "nhr3",
+                 "hsq", "nhsq",
+                 "htri", "nhtri",
+                 "hx", "nhx"
+
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
 
                 If duration > 0 Then
                     Controller(0, 0, 0, 0, 0, 0, 0, 0, user, "n" & cmd)
                 End If
-
-            Case "holdtri"
-
-
-            Case "holdsq"
-
 
 
             Case "takecontrol"
