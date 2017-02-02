@@ -274,11 +274,11 @@
 
                 If chkHoldL2.Checked Then
                     buttons = (buttons Or &H100)
-                    LTrigger = 1
+                    QueuedInput(0).LTrigger = 1
                 End If
                 If chkHoldR2.Checked Then
                     buttons = (buttons Or &H200)
-                    RTrigger = 1
+                    QueuedInput(0).RTrigger = 1
                 End If
                 If chkHoldL1.Checked Then buttons = (buttons Or &H400)
                 If chkHoldR1.Checked Then buttons = (buttons Or &H800)
@@ -413,6 +413,7 @@
                         "holdx", "holdo", "noholdo", "holdsq", "holdtri",
                         "ho", "nho",
                         "hl2", "nhl2",
+                        "hr1", "nhr1",
                         "hr2", "nhr2",
                         "nha",
                         "clearcmds", "clearallcmds", "csx"}
@@ -426,9 +427,9 @@
         If tmpcmd.Contains(",") Then
             For Each cmd In tmpcmd.Split(",")
                 'If first part of message isn't a command, stop processing
-                If Not (CllCMDList.Contains(cmd) Or cmd.Contains("-")) Then
-                    Return
-                End If
+                'If Not (CllCMDList.Contains(cmd) Or cmd.Contains("-") Or (cmd(cmd.Length-2) = "x")) Then
+                '    Return
+                'd If
 
                 ProcessCMD({tmpuser, cmd.Replace(" ", "")})
             Next
@@ -480,16 +481,24 @@
 
 
 
+        'TODO: Improve this handling to see if list contains command...
+        Dim shorttmpcmd As String
+        If tmpcmd.Contains("-") Then
+            shorttmpcmd = tmpcmd.Split("-")(0)
+        Else
+            shorttmpcmd = tmpcmd
+        End If
 
         'For direct analog stick inputs
-        If CllCMDList.Contains(tmpcmd) Or (tmpcmd.Contains("-") And
+        If CllCMDList.Contains(shorttmpcmd) Or (tmpcmd.Contains("-") And
             (tmpcmd(0) = "a" Or tmpcmd(0) = "w" Or tmpcmd(0) = "l")) Then
 
             For i = 0 To CMDmulti - 1
                 execCMD(tmpuser, tmpcmd)
             Next
-
+            return
         End If
+
 
     End Sub
 
@@ -515,7 +524,6 @@
             For i = 0 To 3
                 axis(i) = (5 - Val(cmd(i + 1))) / 4
             Next
-            duration = cmd.Split("-")(1)
             Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
         End If
 
@@ -524,7 +532,6 @@
             For i = 0 To 1
                 axis(i) = (5 - Val(cmd(i + 1))) / 4
             Next
-            duration = cmd.Split("-")(1)
             Controller(0, axis(0), axis(1), 0, 0, 0, 0, duration, user, cmd)
         End If
 
@@ -533,7 +540,6 @@
             For i = 0 To 1
                 axis(i) = (5 - Val(cmd(i + 1))) / 4
             Next
-            duration = cmd.Split("-")(1)
             Controller(0, 0, 0, axis(0), axis(1), 0, 0, duration, user, cmd)
         End If
 
@@ -752,6 +758,10 @@
                  "hr2", "nhr2",
                  "hl2", "nhl2"
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
+
+                If duration > 0 Then
+                    Controller(0, 0, 0, 0, 0, 0, 0, 0, user, "n" & cmd)
+                End If
 
             Case "holdtri"
 
