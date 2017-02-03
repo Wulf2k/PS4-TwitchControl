@@ -341,14 +341,19 @@
             WBytes(hookmem + &H300,
                    System.Text.Encoding.ASCII.GetBytes(user + Chr(0)))
 
+            Dim tmpcmd
+            tmpcmd = cmd & "-" & refTimerPress.Interval/33
+
+            If tmpcmd = "-1" Then tmpcmd = ""
+
             WBytes(hookmem + &H310,
-                   System.Text.Encoding.ASCII.GetBytes(cmd & "-" & refTimerPress.Interval & Chr(0)))
+                   System.Text.Encoding.ASCII.GetBytes(tmpcmd & Chr(0)))
 
             For i = 0 To 9
                 If (QueuedInput.Count) > i Then
                     WBytes(hookmem + &H320 + i * &H10,
                            System.Text.Encoding.ASCII.GetBytes(QueuedInput(i).cmd & "-" &
-                                                               QueuedInput(i).time & Chr(0)))
+                                                               Chr(0)))
                 Else
                     WBytes(hookmem + &H320 + 8 * &H10, {0})
                 End If
