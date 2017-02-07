@@ -35,6 +35,8 @@ Partial Class frmPS4Twitch
         Me.chkHoldL1 = New System.Windows.Forms.CheckBox()
         Me.chkHoldR3 = New System.Windows.Forms.CheckBox()
         Me.chkHoldL3 = New System.Windows.Forms.CheckBox()
+        Me.txtTwitchChat = New System.Windows.Forms.TextBox()
+        Me.btnJoinTwitchChat = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'chkHoldSq
@@ -165,11 +167,30 @@ Partial Class frmPS4Twitch
         Me.chkHoldL3.Text = "Hold L3"
         Me.chkHoldL3.UseVisualStyleBackColor = True
         '
+        'txtTwitchChat
+        '
+        Me.txtTwitchChat.Location = New System.Drawing.Point(235, 31)
+        Me.txtTwitchChat.Name = "txtTwitchChat"
+        Me.txtTwitchChat.Size = New System.Drawing.Size(397, 20)
+        Me.txtTwitchChat.TabIndex = 74
+        Me.txtTwitchChat.Text = "http://www.twitch.tv/wulf2k/chat"
+        '
+        'btnJoinTwitchChat
+        '
+        Me.btnJoinTwitchChat.Location = New System.Drawing.Point(235, 58)
+        Me.btnJoinTwitchChat.Name = "btnJoinTwitchChat"
+        Me.btnJoinTwitchChat.Size = New System.Drawing.Size(122, 23)
+        Me.btnJoinTwitchChat.TabIndex = 75
+        Me.btnJoinTwitchChat.Text = "Connect Chat"
+        Me.btnJoinTwitchChat.UseVisualStyleBackColor = True
+        '
         'frmPS4Twitch
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(642, 589)
+        Me.Controls.Add(Me.btnJoinTwitchChat)
+        Me.Controls.Add(Me.txtTwitchChat)
         Me.Controls.Add(Me.chkHoldR3)
         Me.Controls.Add(Me.chkHoldL3)
         Me.Controls.Add(Me.chkHoldR1)
@@ -203,4 +224,6 @@ End Sub
     Friend WithEvents chkHoldL1 As CheckBox
     Friend WithEvents chkHoldR3 As CheckBox
     Friend WithEvents chkHoldL3 As CheckBox
+    Friend WithEvents txtTwitchChat As TextBox
+    Friend WithEvents btnJoinTwitchChat As Button
 End Class

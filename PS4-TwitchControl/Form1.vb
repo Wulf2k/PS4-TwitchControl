@@ -110,16 +110,6 @@
     End Sub
 
     Private Sub frmPS4Twitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        wb.Navigate("http://www.twitch.tv/wulf2k/chat")
-        
-
-        refTimerPress.Interval = 50
-        refTimerPress.Enabled = True
-        refTimerPress.Start()
-
-        updTimer.Interval = 500
-        updTimer.Enabled = True
-        updTimer.Start()
 
         modlist.Add("byrdshot")
         modlist.Add("daydahd")
@@ -135,9 +125,24 @@
         modlist.Add("wulf2kbot")
         modlist.Add("yuidesu")
         modlist.Add("zephyp")
-        
+
 
     End Sub
+
+    Private Sub btnJoinTwitchChat_Click(sender As Object, e As EventArgs) Handles btnJoinTwitchChat.Click
+        wb.Navigate(txtTwitchChat.Text)
+
+
+        refTimerPress.Interval = 50
+        refTimerPress.Enabled = True
+        refTimerPress.Start()
+
+        updTimer.Interval = 500
+        updTimer.Enabled = True
+        updTimer.Start()
+
+    End Sub
+
     Private Sub updTimer_Tick() Handles updTimer.Tick
         Dim Elems As HtmlElementCollection
         Dim ember As Integer
@@ -167,38 +172,6 @@
         press()
     End Sub
     Private Sub press()
-        Dim buttons = 0
-        Dim LStickLR As Single = 0
-        Dim LStickUD As Single = 0
-        Dim RStickLR As Single = 0
-        Dim RStickUD As Single = 0
-        Dim LTrigger As Single = 0
-        Dim RTrigger As Single = 0
-        Dim user As String = ""
-        Dim cmd As String = ""
-
-
-
-        'TODO:  Pretty this up, less duplication between no input and queued input
-        If chkHoldL3.Checked Then buttons = (buttons Or &H2)
-        If chkHoldR3.Checked Then buttons = (buttons Or &H4)
-
-        If chkHoldL2.Checked Then
-            buttons = (buttons Or &H100)
-            LTrigger = 1
-        End If
-        If chkHoldR2.Checked Then
-            buttons = (buttons Or &H200)
-            RTrigger = 1
-        End If
-        If chkHoldL1.Checked Then buttons = (buttons Or &H400)
-        If chkHoldR1.Checked Then buttons = (buttons Or &H800)
-
-        If chkHoldTri.Checked Then buttons = (buttons Or &H1000)
-        If chkHoldO.Checked Then buttons = (buttons Or &H2000)
-        If chkHoldX.Checked Then buttons = (buttons Or &H4000)
-        If chkHoldSq.Checked Then buttons = (buttons Or &H8000)
-
 
         'xxxxxxx1	Share
         'xxxxxxx2	L3
@@ -217,133 +190,165 @@
         'xxxx4xxx	X
         'xxxx8xxx	Square
         'xx1xxxxx	Touchscreen push
+
+
+        Dim buttons = 0
+        Dim LStickLR As Single = 0
+        Dim LStickUD As Single = 0
+        Dim RStickLR As Single = 0
+        Dim RStickUD As Single = 0
+        Dim LTrigger As Single = 0
+        Dim RTrigger As Single = 0
+        Dim user As String = ""
+        Dim cmd As String = ""
+
+
+
+
+        'If nothing in queue, push a 'nothing'-press onto it for 1 frame
+        If QueuedInput.Count = 0 Then
+            Controller(0, 0, 0, 0, 0, 0, 0, 1, "", "")
+        End If
+
+
+
+
+
         Try
-            If QueuedInput.Count > 0 Then
+            buttons = QueuedInput(0).buttons
 
-                buttons = buttons Or QueuedInput(0).buttons
+            'Handle hold-toggles
+            Select Case QueuedInput(0).cmd
+                Case "nha"
+                    chkHoldL1.Checked = False
+                    chkHoldL2.Checked = False
+                    chkHoldL3.Checked = False
+                    chkHoldR1.Checked = False
+                    chkHoldR2.Checked = False
+                    chkHoldR3.Checked = False
+                    chkHoldO.Checked = False
+                    chkHoldSq.Checked = False
+                    chkHoldTri.Checked = False
+                    chkHoldX.Checked = False
 
+                Case "hl1"
+                    chkHoldL1.Checked = True
+                Case "nhl1"
+                    chkHoldL1.Checked = False
 
-                Select Case QueuedInput(0).cmd
-                    Case "nha"
-                        chkHoldL1.Checked = False
-                        chkHoldL2.Checked = False
-                        chkHoldL3.Checked = False
-                        chkHoldR1.Checked = False
-                        chkHoldR2.Checked = False
-                        chkHoldR3.Checked = False
-                        chkHoldO.Checked = False
-                        chkHoldSq.Checked = False
-                        chkHoldTri.Checked = False
-                        chkHoldX.Checked = False
+                Case "hl2"
+                    chkHoldL2.Checked = True
+                Case "nhl2"
+                    chkHoldL2.Checked = False
 
-                    Case "hl1"
-                        chkHoldL1.Checked = True
-                    Case "nhl1"
-                        chkHoldL1.Checked = False
-
-                    Case "hl2"
-                        chkHoldL2.Checked = True
-                    Case "nhl2"
-                        chkHoldL2.Checked = False
-
-                    Case "hl3"
-                        chkHoldL3.Checked = True
-                    Case "nhl3"
-                        chkHoldL3.Checked = False
+                Case "hl3"
+                    chkHoldL3.Checked = True
+                Case "nhl3"
+                    chkHoldL3.Checked = False
 
 
-                    Case "hr1"
-                        chkHoldR1.Checked = True
-                    Case "nhr1"
-                        chkHoldR1.Checked = False
+                Case "hr1"
+                    chkHoldR1.Checked = True
+                Case "nhr1"
+                    chkHoldR1.Checked = False
 
-                    Case "hr2"
-                        chkHoldR2.Checked = True
-                    Case "nhr2"
-                        chkHoldR2.Checked = False
+                Case "hr2"
+                    chkHoldR2.Checked = True
+                Case "nhr2"
+                    chkHoldR2.Checked = False
 
-                    Case "hr3"
-                        chkHoldR3.Checked = True
-                    Case "nhr3"
-                        chkHoldR3.Checked = False
-
-
-                    Case "ho", "holdo"
-                        chkHoldO.Checked = True
-                    Case "nho", "noholdo"
-                        chkHoldO.Checked = False
-
-                    Case "hsq"
-                        chkHoldSq.Checked = True
-                    Case "nhsq"
-                        chkHoldSq.Checked = False
-
-                    Case "htri"
-                        chkHoldTri.Checked = True
-                    Case "nhtri"
-                        chkHoldTri.Checked = False
-
-                    Case "hx"
-                        chkHoldX.Checked = True
-                    Case "nhx"
-                        chkHoldX.Checked = False
+                Case "hr3"
+                    chkHoldR3.Checked = True
+                Case "nhr3"
+                    chkHoldR3.Checked = False
 
 
-                End Select
+                Case "ho", "holdo"
+                    chkHoldO.Checked = True
+                Case "nho", "noholdo"
+                    chkHoldO.Checked = False
 
-                'If command was a hold, handled above, with no duration, skip to next command.
-                If QueuedInput(0).time = 0 Then
-                    PopQ()
-                    press()
-                    Return
-                End If
+                Case "hsq"
+                    chkHoldSq.Checked = True
+                Case "nhsq"
+                    chkHoldSq.Checked = False
 
+                Case "htri"
+                    chkHoldTri.Checked = True
+                Case "nhtri"
+                    chkHoldTri.Checked = False
 
-                'TODO:  Pretty this up, less duplication between held and queued input
-                If chkHoldL3.Checked Then buttons = (buttons Or &H2)
-                If chkHoldR3.Checked Then buttons = (buttons Or &H4)
-
-                If chkHoldL2.Checked Then
-                    buttons = (buttons Or &H100)
-                    QueuedInput(0).LTrigger = 1
-                End If
-                If chkHoldR2.Checked Then
-                    buttons = (buttons Or &H200)
-                    QueuedInput(0).RTrigger = 1
-                End If
-                If chkHoldL1.Checked Then buttons = (buttons Or &H400)
-                If chkHoldR1.Checked Then buttons = (buttons Or &H800)
-
-                If chkHoldTri.Checked Then buttons = (buttons Or &H1000)
-                If chkHoldO.Checked Then buttons = (buttons Or &H2000)
-                If chkHoldX.Checked Then buttons = (buttons Or &H4000)
-                If chkHoldSq.Checked Then buttons = (buttons Or &H8000)
+                Case "hx"
+                    chkHoldX.Checked = True
+                Case "nhx"
+                    chkHoldX.Checked = False
+            End Select
 
 
 
-
-
-                LStickLR = QueuedInput(0).LStickLR
-                LStickUD = QueuedInput(0).LStickUD
-                RStickLR = QueuedInput(0).RstickLR
-                RStickUD = QueuedInput(0).RstickUD
-                LTrigger = QueuedInput(0).LTrigger
-                RTrigger = QueuedInput(0).RTrigger
-                user = QueuedInput(0).user
-                cmd = QueuedInput(0).cmd
-                refTimerPress.Interval = QueuedInput(0).time
+            'If command has no duration, skip to next command.
+            If QueuedInput(0).time = 0 Then
                 PopQ()
-                txtChat.Text = txtChat.Text + Hex(CInt(hookmem)) & " q:" & QueuedInput.Count & Environment.NewLine
-
-            Else
-                refTimerPress.Interval = 33
+                press()
+                Return
             End If
 
+
+
+
+            'Combine held inputs with specified presses
+            If chkHoldL3.Checked Then buttons = (buttons Or &H2)
+            If chkHoldR3.Checked Then buttons = (buttons Or &H4)
+
+            If chkHoldL2.Checked Then
+                buttons = (buttons Or &H100)
+                QueuedInput(0).LTrigger = 1
+            End If
+            If chkHoldR2.Checked Then
+                buttons = (buttons Or &H200)
+                QueuedInput(0).RTrigger = 1
+            End If
+            If chkHoldL1.Checked Then buttons = (buttons Or &H400)
+            If chkHoldR1.Checked Then buttons = (buttons Or &H800)
+
+            If chkHoldTri.Checked Then buttons = (buttons Or &H1000)
+            If chkHoldO.Checked Then buttons = (buttons Or &H2000)
+            If chkHoldX.Checked Then buttons = (buttons Or &H4000)
+            If chkHoldSq.Checked Then buttons = (buttons Or &H8000)
+
+
+
+
+            'Process specified axises
+            LStickLR = QueuedInput(0).LStickLR
+            LStickUD = QueuedInput(0).LStickUD
+            RStickLR = QueuedInput(0).RstickLR
+            RStickUD = QueuedInput(0).RstickUD
+            LTrigger = QueuedInput(0).LTrigger
+            RTrigger = QueuedInput(0).RTrigger
+            user = QueuedInput(0).user
+            cmd = QueuedInput(0).cmd
+            refTimerPress.Interval = QueuedInput(0).time
+            PopQ()
+
+
+
+
+            'check for rolls during holdo
+            If cmd >= 2 And chkHoldO.Checked Then
+                If (cmd(0) = "r" And cmd(1) = "o") Or (cmd(0) = "o") Then
+                    outputChat("Evade failed due to HoldO being active.")
+                End If
+            End If
+
+
+
+            'Output queue info and pass to overlay program
             WBytes(hookmem + &H300,
                    System.Text.Encoding.ASCII.GetBytes(user + Chr(0)))
 
             Dim tmpcmd
-            tmpcmd = cmd & "-" & refTimerPress.Interval/33
+            tmpcmd = cmd & "-" & refTimerPress.Interval / 33
 
             If tmpcmd = "-1" Then tmpcmd = ""
 
@@ -352,9 +357,14 @@
 
             For i = 0 To 9
                 If (QueuedInput.Count) > i Then
-                    WBytes(hookmem + &H320 + i * &H10,
-                           System.Text.Encoding.ASCII.GetBytes(QueuedInput(i).cmd & "-" &
-                                                               Chr(0)))
+                    Dim str As String
+                    str = QueuedInput(i).cmd & "-" & QueuedInput(i).time
+
+                    'if command too long, shorten it
+                    If str.Length > 15 Then str = Strings.Left(str, 15)
+                    str = str & Chr(0)
+
+                    WBytes(hookmem + &H320 + i * &H10, System.Text.Encoding.ASCII.GetBytes(str))
                 Else
                     WBytes(hookmem + &H320 + 8 * &H10, {0})
                 End If
@@ -418,12 +428,6 @@
         username = txt.Split(":")(0).Trim(" ")
         cmd = txt.Split(":")(txt.Split(":").Count-1).Trim(" ")
 
-        txtChat.Text = txtChat.Text & username & "." & cmd & Environment.NewLine
-        If txtChat.Text.Length > 100 Then txtChat.Text = ""
-        'txtChat.Text += txt & Environment.NewLine
-
-
-
         Return {username, cmd}
     End Function
     Private Sub outputChat(ByVal txt As String)
@@ -457,33 +461,8 @@
 
     Private Sub ProcessCMD(entry() As String)
 
-        Dim CllCMDList As String()
 
-        CllCMDList = {"wf", "wl", "wb", "wr", "wfl", "wfr", "wbl", "wbr", "flong",
-                        "hwf", "hwl", "hwr", "hwb",
-                        "hwfl", "hwfr", "hwbl", "hwbr",
-                        "rof", "rol", "rob", "ror",
-                        "rofr", "rofl", "robr", "robl",
-                        "lu", "ll", "lr", "ld", "r3",
-                        "hlu", "hll", "hlr", "hld",
-                        "du", "dd", "dl", "dr",
-                        "share", "options", "sq", "x", "o", "tri", "l3", "ol1",
-                        "l1", "l2", "r1", "r2", "fr1", "fr2", "cr2", "tp",
-                        "takecontrol", "restorecontrol",
-                        "hh", "h",
-                        "holdo", "noholdo",
-                        "ho", "nho",
-                        "hl1", "nhl1",
-                        "hl2", "nhl2",
-                        "hl3", "nhl3",
-                        "hr1", "nhr1",
-                        "hr2", "nhr2",
-                        "hr3", "nhr3",
-                        "hsq", "nhsq",
-                        "htri", "nhtri",
-                        "hx", "nhx",
-                        "nha",
-                        "clearcmds", "clearallcmds", "csx", "casx"}
+
 
         Dim tmpuser = entry(0)
         Dim tmpcmd = entry(1)
@@ -493,12 +472,12 @@
         'Handle multi-command entries
         If tmpcmd.Contains(",") Then
             For Each cmd In tmpcmd.Split(",")
-                'If first part of message isn't a command, stop processing
-                'If Not (CllCMDList.Contains(cmd) Or cmd.Contains("-") Or (cmd(cmd.Length-2) = "x")) Then
-                '    Return
-                'd If
+                'Prevent buffer overflow in RemotePlay memory
+                If tmpuser.Length > 15 Then tmpuser = Strings.Left(tmpuser, 15)
+                If cmd.Length > 15 Then cmd = Strings.Left(cmd, 15)
+                cmd = cmd.Replace(" ", "")
 
-                ProcessCMD({tmpuser, cmd.Replace(" ", "")})
+                ProcessCMD({tmpuser, cmd})
             Next
             Return
         End If
@@ -514,7 +493,9 @@
             End If
         End If
 
-        'TODO: Improve this handling to see if list contains command...
+
+
+        'TODO: Improve this handling
         Dim shorttmpcmd As String
         If tmpcmd.Contains("-") Then
             shorttmpcmd = tmpcmd.Split("-")(0)
@@ -574,25 +555,23 @@
 
 
         'For direct analog stick inputs
-        If CllCMDList.Contains(shorttmpcmd) Or (tmpcmd.Contains("-") And
-            (tmpcmd(0) = "a" Or tmpcmd(0) = "w" Or tmpcmd(0) = "l")) Then
-
-            For i = 0 To CMDmulti - 1
-                execCMD(tmpuser, tmpcmd)
-            Next
-            return
-        End If
-
-
+        For i = 0 To CMDmulti - 1
+            execCMD(tmpuser, tmpcmd)
+        Next
     End Sub
 
 
     Private Sub execCMD(user As String, cmd As String)
 
-        REM PS3Controller ( buttons, R stick left/right, R stick up/down, L stick left/right, L stick up/down, _
-        REM                 hold button length)
+        Dim buttons = 0
+        Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}
+        Dim halfhold As Boolean = False
+        Dim duration As Integer = 0
 
-        Dim duration
+        Dim partcmd As String = ""
+        Dim cmdparams As String = "5555"
+
+
         If cmd.Contains("-") Then
             duration = cmd.Split("-")(1)
             cmd = cmd.Split("-")(0)
@@ -602,157 +581,44 @@
 
 
 
-        'Analog stick controls
-        If (cmd(0) = "a" And cmd.Length = 5) Then
-            Dim axis(3) As Single
-            For i = 0 To 3
-                axis(i) = (5 - Val(cmd(i + 1))) / 4
-            Next
-            Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
-        End If
-
-        If (cmd(0) = "l" And cmd.Length = 3) Then
-            Dim axis(1) As Single
-            For i = 0 To 1
-                axis(i) = (5 - Val(cmd(i + 1))) / 4
-            Next
-            Controller(0, axis(0), axis(1), 0, 0, 0, 0, duration, user, cmd)
-        End If
-
-        If (cmd(0) = "w" And cmd.Length = 3) Then
-            'Check to confirm it's a stick value instead of a diagonal walk command
-            If (Val(cmd(1)) >= 1 And Val(cmd(1)) <= 9) Then
-                Dim axis(1) As Single
-                For i = 0 To 1
-                    axis(i) = (5 - Val(cmd(i + 1))) / 4
-                Next
-                Controller(0, 0, 0, axis(0), axis(1), 0, 0, duration, user, cmd)
-                Return
-            End If
-        End If
-
-
-
-        'If command has duration attached, use that, if not....
-        If (duration = 0 And cmd.Length > 1) Then
-            If (cmd(0) = "w") Or (cmd(0) = "h" And cmd(1) = "w") Then
-                duration = 38
-            End If
-        End If
-
-
-
         Select Case cmd
-            Case "wf"
-                Controller(0, 0, 0, 0, 1, 0, 0, duration, user, cmd)
-            Case "wl"
-                Controller(0, 0, 0, -1, 0, 0, 0, duration, user, cmd)
-            Case "wb"
-                Controller(0, 0, 0, 0, -1, 0, 0, duration, user, cmd)
-            Case "wr"
-                Controller(0, 0, 0, 1, 0, 0, 0, duration, user, cmd)
+            'Hold toggles
+            Case "nha",
+                 "holdo", "ho", "noholdo", "nho",
+                 "hl1", "nhl1",
+                 "hl2", "nhl2",
+                 "hl3", "nhl3",
+                 "hr1", "nhr1",
+                 "hr2", "nhr2",
+                 "hr3", "nhr3",
+                 "hsq", "nhsq",
+                 "htri", "nhtri",
+                 "hx", "nhx"
 
-            Case "wfl"
-                Controller(0, 0, 0, -1, 1, 0, 0, duration, user, cmd)
-            Case "wfr"
-                Controller(0, 0, 0, 1, 1, 0, 0, duration, user, cmd)
-            Case "wbl"
-                Controller(0, 0, 0, -1, -1, 0, 0, duration, user, cmd)
-            Case "wbr"
-                Controller(0, 0, 0, 1, -1, 0, 0, duration, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
 
-            Case "hwf"
-                Controller(0, 0, 0, 0, 0.5, 0, 0, duration, user, cmd)
-            Case "hwl"
-                Controller(0, 0, 0, -0.5, 0, 0, 0, duration, user, cmd)
-            Case "hwb"
-                Controller(0, 0, 0, 0, -0.5, 0, 0, duration, user, cmd)
-            Case "hwr"
-                Controller(0, 0, 0, 0.5, 0, 0, 0, duration, user, cmd)
+                If duration > 0 Then
+                    Controller(0, 0, 0, 0, 0, 0, 0, 0, user, "n" & cmd)
+                End If
+                Return
 
-            Case "hwfl"
-                Controller(0, 0, 0, -0.5, 0.5, 0, 0, duration, user, cmd)
-            Case "hwfr"
-                Controller(0, 0, 0, 0.5, 0.5, 0, 0, duration, user, cmd)
-            Case "hwbl"
-                Controller(0, 0, 0, -0.5, -0.5, 0, 0, duration, user, cmd)
-            Case "hwbr"
-                Controller(0, 0, 0, 0.5, -0.5, 0, 0, duration, user, cmd)
-
-            Case "flong"
-                Controller(0, 0, 0, 0, 1, 0, 0, 114, user, cmd)
-
-            Case "rof"
-                Controller(0, 0, 0, 0, 1, 0, 0, 2, user, cmd & "(-)")
-                Controller(&H2000, 0, 0, 0, 1, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 1, 0, 0, 18, user, cmd & "(-)")
-                If chkHoldO.Checked Then outputChat("HoldO currently active")
-
-            Case "rofl"
-                Controller(0, 0, 0, -1, 1, 0, 0, 2, user, cmd & "(-)")
-                Controller(&H2000, 0, 0, -1, 1, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, -1, 1, 0, 0, 18, user, cmd & "(-)")
-                If chkHoldO.Checked Then outputChat("HoldO currently active")
-
-            Case "rol"
-                Controller(0, 0, 0, -1, 0, 0, 0, 2, user, cmd & "(-)")
-                Controller(&H2000, 0, 0, -1, 0, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, -1, 0, 0, 0, 18, user, cmd & "(-)")
-                If chkHoldO.Checked Then outputChat("HoldO currently active")
-
-            Case "robl"
-                Controller(0, 0, 0, -1, -1, 0, 0, 2, user, cmd & "(-)")
-                Controller(&H2000, 0, 0, -1, -1, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, -1, -1, 0, 0, 18, user, cmd & "(-)")
-                If chkHoldO.Checked Then outputChat("HoldO currently active")
-
-            Case "rob"
-                Controller(0, 0, 0, 0, -1, 0, 0, 2, user, cmd & "(-)")
-                Controller(&H2000, 0, 0, 0, -1, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, -1, 0, 0, 18, user, cmd & "(-)")
-                If chkHoldO.Checked Then outputChat("HoldO currently active")
-
-            Case "robr"
-                Controller(0, 0, 0, 1, -1, 0, 0, 2, user, cmd & "(-)")
-                Controller(&H2000, 0, 0, 1, -1, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, 1, -1, 0, 0, 18, user, cmd & "(-)")
-                If chkHoldO.Checked Then outputChat("HoldO currently active")
-
-            Case "ror"
-                Controller(0, 0, 0, 1, 0, 0, 0, 2, user, cmd & "(-)")
-                Controller(&H2000, 0, 0, 1, 0, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, 1, 0, 0, 0, 18, user, cmd & "(-)")
-                If chkHoldO.Checked Then outputChat("HoldO currently active")
-
-            Case "rofr"
-                Controller(0, 0, 0, 1, 1, 0, 0, 2, user, cmd & "(-)")
-                Controller(&H2000, 0, 0, 1, 1, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, 1, 1, 0, 0, 18, user, cmd & "(-)")
-                If chkHoldO.Checked Then outputChat("HoldO currently active")
-
-            Case "lu"
-                Controller(0, 0, 1, 0, 0, 0, 0, 7, user, cmd)
-            Case "ll"
-                Controller(0, -1, 0, 0, 0, 0, 0, 7, user, cmd)
-            Case "lr"
-                Controller(0, 1, 0, 0, 0, 0, 0, 7, user, cmd)
-            Case "ld"
-                Controller(0, 0, -1, 0, 0, 0, 0, 7, user, cmd)
-
-            Case "hlu"
-                Controller(0, 0, 0.5, 0, 0, 0, 0, 7, user, cmd)
-            Case "hll"
-                Controller(0, -0.5, 0, 0, 0, 0, 0, 7, user, cmd)
-            Case "hlr"
-                Controller(0, 0.5, 0, 0, 0, 0, 0, 7, user, cmd)
-            Case "hld"
-                Controller(0, 0, -0.5, 0, 0, 0, 0, 7, user, cmd)
-
+            'Half halt
             Case "hh"
                 Controller(0, 0, 0, 0, 0, 0, 0, 15, user, cmd)
+                Return
+
+            'Halt
             Case "h"
                 If duration = 0 Then duration = 30
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
+                Return
+
+            'Our old, archaic friend 'flong', "forward long"
+            Case "flong"
+                Controller(0, 0, 0, 0, 1, 0, 0, 114, user, cmd)
+
+
+
 
             Case "du"
                 Controller(&H10, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
@@ -776,19 +642,19 @@
             Case "o"
                 Controller(&H2000, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
-                If chkHoldO.Checked Then outputChat("HoldO currently active")
+
             Case "x"
                 Controller(&H4000, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
-                If chkHoldX.Checked Then outputChat("HoldX currently active")
+
             Case "sq"
                 Controller(&H8000, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
-                If chkHoldSq.Checked Then outputChat("HoldSq currently active")
+
             Case "tri"
                 Controller(&H1000, 0, 0, 0, 0, 0, 0, 26, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
-                If chkHoldTri.Checked Then outputChat("HoldTri currently active")
+
 
             Case "l1"
                 Controller(&H400, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
@@ -806,7 +672,6 @@
             Case "ol1"
                 Controller(&H2000, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(-)")
-                If chkHoldO.Checked Then outputChat("HoldO currently active")
                 Controller(&H400, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 24, user, cmd & "(-)")
 
@@ -835,50 +700,113 @@
             Case "tp"
                 Controller(&H1000000, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(-)")
-
-
-
-            Case "nha",
-                 "holdo", "ho", "noholdo", "nho",
-                 "hl1", "nhl1",
-                 "hl2", "nhl2",
-                 "hl3", "nhl3",
-                 "hr1", "nhr1",
-                 "hr2", "nhr2",
-                 "hr3", "nhr3",
-                 "hsq", "nhsq",
-                 "htri", "nhtri",
-                 "hx", "nhx"
-
-                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
-
-                If duration > 0 Then
-                    Controller(0, 0, 0, 0, 0, 0, 0, 0, user, "n" & cmd)
-                End If
-
-
-            Case "takecontrol"
-                TakeControl()
-            Case "restorecontrol"
-                RestoreControl()
         End Select
+
+
+
+
+        'If not handled above, proceed below.
+        'pad to at least 5 characters
+        If cmd.Length < 6 Then cmd = cmd & "....."
+
+
+
+        'parse out half-hold
+        If cmd(0) = "h" Then
+            halfhold = True
+            cmd = Strings.Right(cmd, cmd.Length - 1)
+        End If
+
+
+
+
+
+        'parse 'walks', 'looks', 'analog's, and 'rolls'
+        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
+            (cmd(0) = "r" And cmd(1) = "o") Then
+
+            Dim axispad = 0
+            Dim cmdpad = 0
+            Dim roll As Boolean = False
+
+
+            'Set default walk duration if none specified
+            If duration = 0 Then duration = 38
+
+
+            'If 'roll', then roll params will be offset 1 character
+            If cmd(0) = "r" And cmd(1) = "o" Then
+                cmdpad = 1
+                duration = 20
+                roll = True
+            End If
+
+            'If 'look', then modify right stick's axises
+            If cmd(0) = "l" Then
+                axispad = 2
+                If duration = 0 Then duration = 7
+            End If
+
+
+
+            'Return if garbage data
+            For i = 1 To 5
+                If Not {"f", "u", "b", "d", "l", "r", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."
+                        }.Contains(cmd(cmdpad + i)) Then
+                    Return
+                End If
+            Next
+
+
+
+
+
+
+            For i = 1 To 2
+                'Handle lettered values
+                Select Case cmd(cmdpad + i)
+                    Case "f", "u"
+                        mid(cmdparams, axispad + 1) = "1"
+                    Case "b", "d"
+                        mid(cmdparams, axispad + 1) = "9"
+                    Case "l"
+                        mid(cmdparams, axispad + 0) = "9"
+                    Case "r"
+                        mid(cmdparams, axispad + 0) = "1"
+                End Select
+            Next
+
+
+            'Convert to stick values
+            For i = 0 To 3
+                axis(i) = (5 - Val(cmdparams(i))) / 4
+                If halfhold Then axis(i) = axis(i) / 2
+            Next
+
+            If roll Then Controller(&H2000, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
+            Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
+
+        End If
+
+
     End Sub
-    Private Sub Controller(buttons As Integer, RLR As Single, RUD As Single, LLR As Single, LUD As Single, LT As Single, RT As Single, hold As Integer, user As String, cmd As string)
+    Private Sub Controller(buttons As Integer, RLR As Single, RUD As Single, LLR As Single, LUD As Single, LT As Single, RT As Single, hold As Integer, user As String, cmd As String)
 
         hold = hold * 33 'Fake 30fps
 
         If hold > 60000 Then hold = 60000
-        
 
+        If QueuedInput.Count > 0 Then
+            If QueuedInput(QueuedInput.Count - 1).cmd = cmd Then
+                QueuedInput(QueuedInput.Count - 1).time = QueuedInput(QueuedInput.Count - 1).time + hold
+                Return
+            End If
+        End If
         PushQ(buttons, RLR, RUD, LLR, LUD, LT, RT, hold, user, cmd)
-        
     End Sub
 
     Private Sub TakeControl
         If ctrlPtr Then
-
-
-
             hookmem = VirtualAllocEx(_targetProcessHandle, 0, &H8000, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
             Dim oldProtectionOut As UInteger
             VirtualProtectEx(_targetProcessHandle, hookmem, &H8000, PAGE_EXECUTE_READWRITE, oldProtectionOut)
@@ -910,8 +838,7 @@
         End If
     End Sub
     Private Sub RestoreControl
-        'Buttons value
-        WBytes(rpCtrlWrap + &H1D0980, {&H8B, &H55, &H0C, &H83, &Hc4, &H0c})
+        WBytes(rpCtrlWrap + &H1D0980, {&H8B, &H55, &HC, &H83, &HC4, &HC})
     End Sub
     Private Sub chkAttached_CheckedChanged(sender As Object, e As EventArgs) Handles chkAttached.CheckedChanged
         If chkAttached.Checked Then
@@ -1061,6 +988,8 @@
     Public Sub WAscStr(addr As UInteger, str As String)
         WriteProcessMemory(_targetProcessHandle, addr, System.Text.Encoding.ASCII.GetBytes(str), str.Length, Nothing)
     End Sub
+
+
 End Class
 
 
