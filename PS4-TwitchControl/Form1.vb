@@ -473,9 +473,9 @@
         If tmpcmd.Contains(",") Then
             For Each cmd In tmpcmd.Split(",")
                 'Prevent buffer overflow in RemotePlay memory
-                If tmpuser.Length > 15 Then tmpuser = Strings.Left(tmpuser, 15)
-                If cmd.Length > 15 Then cmd = Strings.Left(cmd, 15)
+                tmpuser = Strings.Left(tmpuser, 15)
                 cmd = cmd.Replace(" ", "")
+                cmd = Strings.Left(cmd, 15)
 
                 ProcessCMD({tmpuser, cmd})
             Next
