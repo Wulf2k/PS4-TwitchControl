@@ -511,19 +511,19 @@
                     outputChat("Options menu restricted to pre-approved users.")
                     Return
                 End If
-            Case "tri", "holdtri", "htri"
+            Case "tri", "htri"
                 If Not modlist.Contains(tmpuser) Then
                     outputChat("Consumable use restricted to pre-approved users.")
                     Return
                 End If
-            Case "clearallcmds"
+            Case "clearallcmds", "ca"
                 If Not (modlist.Contains(tmpuser)) Then
                     outputChat("Clearing all commands restricted to pre-approved users.")
                 Else
                     QueuedInput.Clear()
                     refTimerPress.Interval = 1
                 End If
-            Case "clearcmds"
+            Case "clearcmds", "c"
                 For i = QueuedInput.Count - 1 To 0 Step -1
                     If QueuedInput(i).user = tmpuser Then
                         QueuedInput.RemoveAt(i)
