@@ -783,6 +783,9 @@
                 If halfhold Then axis(i) = axis(i) / 2
             Next
 
+            'Remove cmd padding
+            cmd = cmd.Replace(".", "")
+
             If roll Then Controller(&H2000, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
             Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
 
