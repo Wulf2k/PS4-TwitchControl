@@ -121,6 +121,7 @@
         updTimer.Enabled = True
         updTimer.Start()
 
+        modlist.Add("byrdshot")
         modlist.Add("daydahd")
         modlist.Add("eternalvalley")
         modlist.Add("illusorywall")
