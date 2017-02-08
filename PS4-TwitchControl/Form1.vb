@@ -149,7 +149,7 @@
 
         Dim entry(2) As String
 
-        'Try
+        Try
             Elems = wb.Document.GetElementsByTagName("li")
             For Each elem As HtmlElement In Elems
                 If elem.GetAttribute("id").Contains("ember") Then
@@ -164,9 +164,9 @@
                 End If
             Next
 
-        'Catch ex As Exception
-            'txtChat.Text += ex.Message & Environment.NewLine
-        'End Try
+        Catch ex As Exception
+            txtChat.Text += ex.Message & Environment.NewLine
+        End Try
     End Sub
     Private Sub refTimerPress_Tick() Handles refTimerPress.Tick
         press()
@@ -214,7 +214,7 @@
 
 
 
-        'Try
+        Try
             buttons = QueuedInput(0).buttons
 
             'Handle hold-toggles
@@ -391,9 +391,9 @@
             WUInt8(hookmem + &H415,
                    &HFFUI * RTrigger)
 
-        'Catch ex As Exception
+        Catch ex As Exception
 
-        'End Try
+        End Try
     End Sub
     Private Sub PushQ(ByRef buttons As Integer, RStickLR As Single, RStickUD As Single, LStickLR As Single, _
                       LStickUD As Single, LTrigger As Single, RTrigger As Single, time As Integer, user As String, _
@@ -756,6 +756,11 @@
             If cmd(0) = "w" Then
                 If duration = 0 Then duration = 38
             End If
+
+            if cmd(0) = "a" then
+                cmdparams = Mid(cmd, 2,4)
+            End If
+
             
             'If 'roll', then roll params will be offset 1 character
             If cmd(0) = "r" And cmd(1) = "o" Then
