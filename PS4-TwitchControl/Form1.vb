@@ -149,7 +149,7 @@
 
         Dim entry(2) As String
 
-        Try
+        'Try
             Elems = wb.Document.GetElementsByTagName("li")
             For Each elem As HtmlElement In Elems
                 If elem.GetAttribute("id").Contains("ember") Then
@@ -164,9 +164,9 @@
                 End If
             Next
 
-        Catch ex As Exception
-            txtChat.Text += ex.Message & Environment.NewLine
-        End Try
+        'Catch ex As Exception
+            'txtChat.Text += ex.Message & Environment.NewLine
+        'End Try
     End Sub
     Private Sub refTimerPress_Tick() Handles refTimerPress.Tick
         press()
@@ -214,7 +214,7 @@
 
 
 
-        Try
+        'Try
             buttons = QueuedInput(0).buttons
 
             'Handle hold-toggles
@@ -335,7 +335,7 @@
 
 
             'check for rolls during holdo
-            If cmd >= 2 And chkHoldO.Checked Then
+            If cmd.length >= 2 And chkHoldO.Checked Then
                 If (cmd(0) = "r" And cmd(1) = "o") Or (cmd(0) = "o") Then
                     outputChat("Evade failed due to HoldO being active.")
                 End If
@@ -391,9 +391,9 @@
             WUInt8(hookmem + &H415,
                    &HFFUI * RTrigger)
 
-        Catch ex As Exception
+        'Catch ex As Exception
 
-        End Try
+        'End Try
     End Sub
     Private Sub PushQ(ByRef buttons As Integer, RStickLR As Single, RStickUD As Single, LStickLR As Single, _
                       LStickUD As Single, LTrigger As Single, RTrigger As Single, time As Integer, user As String, _
@@ -616,90 +616,112 @@
             'Our old, archaic friend 'flong', "forward long"
             Case "flong"
                 Controller(0, 0, 0, 0, 1, 0, 0, 114, user, cmd)
-
+                Return
 
 
 
             Case "du"
                 Controller(&H10, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                Return
             Case "dd"
                 Controller(&H40, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                Return
             Case "dl"
                 Controller(&H80, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                Return
             Case "dr"
                 Controller(&H20, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                Return
 
             Case "share"
                 'Controller(&H1, 0, 0, 0, 0, 0, 0, 1)
+                Return
+
             Case "options"
                 Controller(&H8, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                Return
 
             Case "o"
                 Controller(&H2000, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                Return
 
             Case "x"
                 Controller(&H4000, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                Return
 
             Case "sq"
                 Controller(&H8000, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                Return
 
             Case "tri"
                 Controller(&H1000, 0, 0, 0, 0, 0, 0, 26, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                Return
 
 
             Case "l1"
                 Controller(&H400, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(-)")
+                Return
             Case "l2"
                 Controller(&H100, 0, 0, 0, 0, 1, 0, 15, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 15, user, cmd & "(-)")
+                Return
             Case "r1"
                 Controller(&H800, 0, 0, 0, 0, 0, 0, 15, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 15, user, cmd & "(-)")
+                Return
             Case "r2"
                 Controller(&H200, 0, 0, 0, 0, 0, 1, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 20, user, cmd & "(-)")
+                Return
 
             Case "ol1"
                 Controller(&H2000, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(-)")
                 Controller(&H400, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 24, user, cmd & "(-)")
+                Return
 
 
             Case "cr2"
                 Controller(&H200, 0, 0, 0, 0, 0, 1, 90, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(-)")
+                Return
 
             Case "fr1"
                 Controller(&H800, 0, 0, 0, 1, 0, 0, 20, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(-)")
+                Return
 
             Case "fr2"
                 Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
                 Controller(&H200, 0, 0, 0, 1, 0, 1, 20, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 38, user, cmd & "(-)")
+                Return
 
             Case "l3"
                 Controller(&H2, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                Return
 
             Case "r3"
                 Controller(&H4, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
+                Return
 
             Case "tp"
                 Controller(&H1000000, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(-)")
+                Return
         End Select
 
 
@@ -731,9 +753,10 @@
 
 
             'Set default walk duration if none specified
-            If duration = 0 Then duration = 38
-
-
+            If cmd(0) = "w" Then
+                If duration = 0 Then duration = 38
+            End If
+            
             'If 'roll', then roll params will be offset 1 character
             If cmd(0) = "r" And cmd(1) = "o" Then
                 cmdpad = 1
@@ -766,14 +789,17 @@
                 'Handle lettered values
                 Select Case cmd(cmdpad + i)
                     Case "f", "u"
-                        mid(cmdparams, axispad + 1) = "1"
+                        mid(cmdparams, axispad + 2) = "1"
                     Case "b", "d"
-                        mid(cmdparams, axispad + 1) = "9"
+                        mid(cmdparams, axispad + 2) = "9"
                     Case "l"
-                        mid(cmdparams, axispad + 0) = "9"
+                        mid(cmdparams, axispad + 1) = "9"
                     Case "r"
-                        mid(cmdparams, axispad + 0) = "1"
+                        mid(cmdparams, axispad + 1) = "1"
                 End Select
+                If cmd(cmdpad + i) >= "1" And cmd(cmdpad + i) <= "9" Then
+                    Mid(cmdparams, axispad + i) = cmd(cmdpad + i)
+                End If
             Next
 
 
