@@ -604,7 +604,8 @@
 
             'Half halt
             Case "hh"
-                Controller(0, 0, 0, 0, 0, 0, 0, 15, user, cmd)
+                If duration = 0 Then duration = 15
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
                 Return
 
             'Halt
@@ -615,7 +616,8 @@
 
             'Our old, archaic friend 'flong', "forward long"
             Case "flong"
-                Controller(0, 0, 0, 0, 1, 0, 0, 114, user, cmd)
+                If duration = 0 Then duration = 114
+                Controller(0, 0, 0, 0, 1, 0, 0, duration, user, cmd)
                 Return
 
 
