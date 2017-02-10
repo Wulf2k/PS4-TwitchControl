@@ -359,7 +359,7 @@
             For i = 0 To 9
                 If (QueuedInput.Count) > i Then
                     Dim str As String
-                    str = QueuedInput(i).cmd & "-" & QueuedInput(i).time
+                    str = QueuedInput(i).cmd & "-" & Math.floor(QueuedInput(i).time / 33)
 
                     'if command too long, shorten it
                     If str.Length > 15 Then str = Strings.Left(str, 15)
@@ -367,7 +367,7 @@
 
                     WBytes(hookmem + &H320 + i * &H10, System.Text.Encoding.ASCII.GetBytes(str))
                 Else
-                    WBytes(hookmem + &H320 + 8 * &H10, {0})
+                    WBytes(hookmem + &H320 + i * &H10, {0})
                 End If
             Next
 
