@@ -350,6 +350,7 @@
             Dim tmpcmd
             tmpcmd = cmd & "-" & refTimerPress.Interval / 33
 
+            
             If tmpcmd = "-1" Then tmpcmd = ""
 
             WBytes(hookmem + &H310,
@@ -825,9 +826,12 @@
             'Convert to stick values
             For i = 0 To 3
                 axis(i) = (5 - Val(cmdparams(i))) / 4
-                If halfhold Then axis(i) = axis(i) / 2
+                If halfhold Then
+                    axis(i) = axis(i) / 2
+                End If
             Next
 
+            If halfhold Then cmd = "h" & cmd
             'Remove cmd padding
             cmd = cmd.Replace(".", "")
 
