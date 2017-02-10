@@ -413,10 +413,19 @@
         Return ember
     End Function
     Private Function parseChat(ByVal txt As String) As String()
-        txt = Microsoft.VisualBasic.Right(txt, txt.Length - InStr(2, txt, Chr(13))).ToLower
+        txt = Microsoft.VisualBasic.Right(txt, txt.Length - InStr(2, txt, Chr(13)))
+
+        If txt.Contains("LUL") Or txt.Contains(",,") Or txt.Contains(".") Or 
+            txt.Contains ("!") or txt.Contains("?") Then 
+            return {"", ""}
+        End If
+
+        txt = txt.ToLower
+
+
+
+
         If Asc(txt(0)) = 10 Then txt = Microsoft.VisualBasic.Right(txt, txt.Length - 1)
-
-
 
 
         If txt.Contains(ChrW(10)) Then
@@ -427,6 +436,8 @@
         Dim cmd As string
         username = txt.Split(":")(0).Trim(" ")
         cmd = txt.Split(":")(txt.Split(":").Count-1).Trim(" ")
+
+        If cmd.Contains("wulf") Then Return {"", ""}
 
         Return {username, cmd}
     End Function
@@ -760,6 +771,7 @@
             End If
 
             if cmd(0) = "a" then
+                If duration = 0 Then duration = 38
                 cmdparams = Mid(cmd, 2,4)
             End If
 
