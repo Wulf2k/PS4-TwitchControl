@@ -118,6 +118,7 @@
         modlist.Add("jesterbo")
         modlist.Add("jesterpatches")
         modlist.Add("seannybee")
+        modlist.Add("shippo62")
         modlist.Add("superwaifubot")
         modlist.Add("tompiet1")
         modlist.Add("wea000")
@@ -372,6 +373,24 @@
             Next
 
             WInt32(hookmem + &H3C0, QueuedInput.Count)
+
+            'TODO:  Pass tpad values as part of controller queued input
+            Select Case cmd
+                Case "tpl"
+                    WUInt8(hookmem + &H427, &H70)
+                    WUInt16(hookmem + &H42A, &H100)
+                    WUInt16(hookmem + &H42C, &H100)
+
+                Case "tpr"
+                    WUInt8(hookmem + &H427, &H70)
+                    WUInt16(hookmem + &H42A, &H400)
+                    WUInt16(hookmem + &H42C, &H100)
+
+                Case Else
+                    WUInt8(hookmem + &H427, &H80)
+                    WUInt16(hookmem + &H42A, 0)
+                    WUInt16(hookmem + &H42C, 0)
+            End Select
 
 
 
@@ -732,9 +751,11 @@
                 Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
                 Return
 
-            Case "tp"
-                Controller(&H1000000, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(-)")
+            Case "tpl"
+                Controller(&H100000, 0, 0, 0, 0, 0, 0, 5, user, cmd)
+                Return
+            Case "tpr"
+                Controller(&H100000, 0, 0, 0, 0, 0, 0, 5, user, cmd)
                 Return
         End Select
 
@@ -1027,6 +1048,9 @@
     End Sub
     Public Sub WUInt8(ByVal addr As IntPtr, val As Byte)
         WriteProcessMemory(_targetProcessHandle, addr, {val}, 1, Nothing)
+    End Sub
+    Public Sub WUInt16(ByVal addr As IntPtr, val As UInt16)
+        WriteProcessMemory(_targetProcessHandle, addr, BitConverter.GetBytes(val), 2, Nothing)
     End Sub
     Public Sub WUInt32(ByVal addr As IntPtr, val As UInt32)
         WriteProcessMemory(_targetProcessHandle, addr, BitConverter.GetBytes(val), 4, Nothing)
