@@ -2,6 +2,7 @@
 
     Dim a As New asm
 
+    'ember used to differentiate Twitch messages
     Dim lastEmber As Integer = 0
     Dim repeatCount As Integer
 
@@ -39,12 +40,15 @@
     Dim ignorelist As New List(Of String)
 
 
-
+    'RemotePlay app addresses
     Private rpBase As IntPtr = 0
     Private rpCtrlWrap As IntPtr = 0
     Private wow64 As IntPtr = 0
 
+    'Our newly created memory
     Dim hookmem As IntPtr
+
+    'Hook in RemotePlay's code
     Dim hookloc As IntPtr
 
 
@@ -103,7 +107,7 @@
                 Case "rpctrlwrapper.dll"
                     rpCtrlWrap = dll.BaseAddress
 
-                Case "wow64.dll" 'Find steam_api.dll for ability to directly add SteamIDs as nodes
+                Case "wow64.dll"
                     wow64 = dll.BaseAddress
             End Select
         Next
@@ -111,6 +115,7 @@
 
     Private Sub frmPS4Twitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+        'TODO:  Handle this with a text file for god's sake....
         modlist.Add("byrdshot")
         modlist.Add("daydahd")
         modlist.Add("eternalvalley")
@@ -133,11 +138,13 @@
     Private Sub btnJoinTwitchChat_Click(sender As Object, e As EventArgs) Handles btnJoinTwitchChat.Click
         wb.Navigate(txtTwitchChat.Text)
 
-
+        'Timer to press buttons at
+        'Initial value fairly irrelevant
         refTimerPress.Interval = 50
         refTimerPress.Enabled = True
         refTimerPress.Start()
 
+        'Timer to check chat messages
         updTimer.Interval = 500
         updTimer.Enabled = True
         updTimer.Start()
@@ -231,6 +238,11 @@
                     chkHoldSq.Checked = False
                     chkHoldTri.Checked = False
                     chkHoldX.Checked = False
+                    chkHoldDU.Checked = False
+                    chkHoldDD.Checked = False
+                    chkHoldDL.Checked = False
+                    chkHoldDR.Checked = False
+
 
                 Case "hl1"
                     chkHoldL1.Checked = True
@@ -283,6 +295,26 @@
                     chkHoldX.Checked = True
                 Case "nhx"
                     chkHoldX.Checked = False
+
+                Case "hdu"
+                    chkHoldDU.Checked = True
+                Case "nhdu"
+                    chkHoldDU.Checked = False
+                Case "hdd"
+                    chkHoldDD.Checked = True
+                Case "nhdd"
+                    chkHoldDD.Checked = False
+                Case "hdl"
+                    chkHoldDL.Checked = True
+                Case "nhdl"
+                    chkHoldDL.Checked = False
+                Case "hdr"
+                    chkHoldDR.Checked = True
+                Case "nhdr"
+                    chkHoldDR.Checked = False
+
+
+
             End Select
 
 
@@ -300,6 +332,11 @@
             'Combine held inputs with specified presses
             If chkHoldL3.Checked Then buttons = (buttons Or &H2)
             If chkHoldR3.Checked Then buttons = (buttons Or &H4)
+
+            If chkHoldDU.Checked Then buttons = (buttons Or &H10)
+            If chkHoldDD.Checked Then buttons = (buttons Or &H40)
+            If chkHoldDL.Checked Then buttons = (buttons Or &H80)
+            If chkHoldDR.Checked Then buttons = (buttons Or &H20)
 
             If chkHoldL2.Checked Then
                 buttons = (buttons Or &H100)
@@ -435,9 +472,11 @@
     Private Function parseChat(ByVal txt As String) As String()
         txt = Microsoft.VisualBasic.Right(txt, txt.Length - InStr(2, txt, Chr(13)))
 
-        If txt.Contains("LUL") Or txt.Contains(",,") Or txt.Contains(".") Or 
-            txt.Contains ("!") or txt.Contains("?") Then 
-            return {"", ""}
+        'LUL is a dumb BTTV emoticon people say a fair bit
+        'lul is also look up left.  Ignore the caps version.
+        If txt.Contains("LUL") Or txt.Contains(",,") Or txt.Contains(".") Or
+            txt.Contains("!") Or txt.Contains("?") Then
+            Return {"", ""}
         End If
 
         txt = txt.ToLower
@@ -457,7 +496,9 @@
         username = txt.Split(":")(0).Trim(" ")
         cmd = txt.Split(":")(txt.Split(":").Count-1).Trim(" ")
 
-        If cmd.Contains("wulf") Then Return {"", ""}
+        'yes, wulf and hard turn out to be valid commands.
+        'ignore them.
+        If cmd.Contains("wulf") Or cmd.Contains("hard") Then Return {"", ""}
 
         Return {username, cmd}
     End Function
@@ -481,7 +522,8 @@
 
         Try
             Elems = wb.Document.GetElementsByTagName("button")
-            
+
+            'Button to post "should" always be the last one
             Elems(Elems.Count-1).InvokeMember("click")
         Catch ex As Exception
             txtChat.Text += ex.Message & Environment.NewLine
@@ -600,6 +642,8 @@
         Dim duration As Integer = 0
 
         Dim partcmd As String = ""
+
+        'Expect neutral stick values by default
         Dim cmdparams As String = "5555"
 
 
@@ -624,7 +668,11 @@
                  "hr3", "nhr3",
                  "hsq", "nhsq",
                  "htri", "nhtri",
-                 "hx", "nhx"
+                 "hx", "nhx",
+                 "hdu", "nhdu",
+                 "hdd", "nhdd",
+                 "hdl", "nhdl",
+                 "hdr", "nhdr"
 
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
 

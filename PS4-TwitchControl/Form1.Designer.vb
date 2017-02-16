@@ -37,6 +37,10 @@ Partial Class frmPS4Twitch
         Me.chkHoldL3 = New System.Windows.Forms.CheckBox()
         Me.txtTwitchChat = New System.Windows.Forms.TextBox()
         Me.btnJoinTwitchChat = New System.Windows.Forms.Button()
+        Me.chkHoldDL = New System.Windows.Forms.CheckBox()
+        Me.chkHoldDD = New System.Windows.Forms.CheckBox()
+        Me.chkHoldDR = New System.Windows.Forms.CheckBox()
+        Me.chkHoldDU = New System.Windows.Forms.CheckBox()
         Me.SuspendLayout()
         '
         'chkHoldSq
@@ -100,11 +104,11 @@ Partial Class frmPS4Twitch
         '
         'txtChat
         '
-        Me.txtChat.Location = New System.Drawing.Point(16, 132)
+        Me.txtChat.Location = New System.Drawing.Point(16, 327)
         Me.txtChat.Multiline = True
         Me.txtChat.Name = "txtChat"
         Me.txtChat.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txtChat.Size = New System.Drawing.Size(205, 448)
+        Me.txtChat.Size = New System.Drawing.Size(205, 253)
         Me.txtChat.TabIndex = 61
         '
         'chkHoldR1
@@ -184,11 +188,55 @@ Partial Class frmPS4Twitch
         Me.btnJoinTwitchChat.Text = "Connect Chat"
         Me.btnJoinTwitchChat.UseVisualStyleBackColor = True
         '
+        'chkHoldDL
+        '
+        Me.chkHoldDL.AutoSize = True
+        Me.chkHoldDL.Location = New System.Drawing.Point(16, 178)
+        Me.chkHoldDL.Name = "chkHoldDL"
+        Me.chkHoldDL.Size = New System.Drawing.Size(102, 17)
+        Me.chkHoldDL.TabIndex = 79
+        Me.chkHoldDL.Text = "Hold D-Pad Left"
+        Me.chkHoldDL.UseVisualStyleBackColor = True
+        '
+        'chkHoldDD
+        '
+        Me.chkHoldDD.AutoSize = True
+        Me.chkHoldDD.Location = New System.Drawing.Point(16, 155)
+        Me.chkHoldDD.Name = "chkHoldDD"
+        Me.chkHoldDD.Size = New System.Drawing.Size(112, 17)
+        Me.chkHoldDD.TabIndex = 78
+        Me.chkHoldDD.Text = "Hold D-Pad Down"
+        Me.chkHoldDD.UseVisualStyleBackColor = True
+        '
+        'chkHoldDR
+        '
+        Me.chkHoldDR.AutoSize = True
+        Me.chkHoldDR.Location = New System.Drawing.Point(16, 201)
+        Me.chkHoldDR.Name = "chkHoldDR"
+        Me.chkHoldDR.Size = New System.Drawing.Size(109, 17)
+        Me.chkHoldDR.TabIndex = 77
+        Me.chkHoldDR.Text = "Hold D-Pad Right"
+        Me.chkHoldDR.UseVisualStyleBackColor = True
+        '
+        'chkHoldDU
+        '
+        Me.chkHoldDU.AutoSize = True
+        Me.chkHoldDU.Location = New System.Drawing.Point(16, 132)
+        Me.chkHoldDU.Name = "chkHoldDU"
+        Me.chkHoldDU.Size = New System.Drawing.Size(98, 17)
+        Me.chkHoldDU.TabIndex = 76
+        Me.chkHoldDU.Text = "Hold D-Pad Up"
+        Me.chkHoldDU.UseVisualStyleBackColor = True
+        '
         'frmPS4Twitch
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(642, 589)
+        Me.Controls.Add(Me.chkHoldDL)
+        Me.Controls.Add(Me.chkHoldDD)
+        Me.Controls.Add(Me.chkHoldDR)
+        Me.Controls.Add(Me.chkHoldDU)
         Me.Controls.Add(Me.btnJoinTwitchChat)
         Me.Controls.Add(Me.txtTwitchChat)
         Me.Controls.Add(Me.chkHoldR3)
@@ -226,4 +274,8 @@ End Sub
     Friend WithEvents chkHoldL3 As CheckBox
     Friend WithEvents txtTwitchChat As TextBox
     Friend WithEvents btnJoinTwitchChat As Button
+    Friend WithEvents chkHoldDL As CheckBox
+    Friend WithEvents chkHoldDD As CheckBox
+    Friend WithEvents chkHoldDR As CheckBox
+    Friend WithEvents chkHoldDU As CheckBox
 End Class
