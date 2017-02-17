@@ -753,20 +753,23 @@
 
 
             Case "l1"
-                Controller(&H400, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(-)")
+                If duration = 0 Then duration = 18
+                Controller(&H400, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "l2"
-                Controller(&H100, 0, 0, 0, 0, 1, 0, 15, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 15, user, cmd & "(-)")
+                If duration = 0 Then duration = 28
+                Controller(&H100, 0, 0, 0, 0, 1, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r1"
-                Controller(&H800, 0, 0, 0, 0, 0, 0, 15, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 15, user, cmd & "(-)")
+                If duration = 0 Then duration = 28
+                Controller(&H800, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r2"
-                Controller(&H200, 0, 0, 0, 0, 0, 1, 10, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 20, user, cmd & "(-)")
+                Controller(&H200, 0, 0, 0, 0, 0, 1, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "ol1"
