@@ -579,6 +579,10 @@
 
 
         Select Case shorttmpcmd
+            Case "tpr"
+                If Not modlist.Contains(tmpuser) Then
+                    outputChat("Personal items restricted to pre-approved users.")
+                End If
             Case "options"
                 If Not modlist.Contains(tmpuser) Then
                     outputChat("Options menu restricted to pre-approved users.")
