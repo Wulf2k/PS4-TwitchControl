@@ -547,6 +547,7 @@
             For i = 0 To CMDmulti - 1
                 ProcessCMD({tmpuser, tmpcmd.Split("|")(0)})
             Next
+            Return
         End If
 
 
