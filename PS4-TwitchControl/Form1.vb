@@ -541,6 +541,14 @@
         Dim tmpcmd = entry(1)
         Dim CMDmulti As Integer = 1
 
+        'Loop entire string
+        If tmpcmd.Contains("|") Then
+            CMDmulti = val(tmpcmd.Split("|")(1))
+            For i = 0 To CMDmulti - 1
+                ProcessCMD({tmpuser, tmpcmd.Split("|")(0)})
+            Next
+        End If
+
 
         'Handle multi-command entries
         If tmpcmd.Contains(",") Then
@@ -588,6 +596,11 @@
                     outputChat("Options menu restricted to pre-approved users.")
                     Return
                 End If
+            Case "pshome"
+                If not tmpuser = "wulf2k" Then
+                    outputChat("Uhh....  No.")
+                    Return
+                End If
             Case "tri", "htri"
                 If Not modlist.Contains(tmpuser) Then
                     outputChat("Consumable use restricted to pre-approved users.")
@@ -626,6 +639,12 @@
                 ProcessCMD({tmpuser, "x"})
                 ProcessCMD({tmpuser, "sq"})
                 ProcessCMD({tmpuser, "x"})
+
+            Case "takecontrol"
+                if modlist.Contains(tmpuser) Then TakeControl
+
+            Case "restorecontrol"
+                if modlist.Contains(tmpuser) Then RestoreControl
         End Select
 
 
@@ -768,6 +787,7 @@
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r2"
+                If duration = 0 Then duration = 28
                 Controller(&H200, 0, 0, 0, 0, 0, 1, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
@@ -812,6 +832,9 @@
             Case "tpr"
                 Controller(&H100000, 0, 0, 0, 0, 0, 0, 5, user, cmd)
                 Return
+
+            Case "pshome"
+                Controller(&H10000, 0, 0, 0, 0, 0, 0, 5, user, cmd)
         End Select
 
 
