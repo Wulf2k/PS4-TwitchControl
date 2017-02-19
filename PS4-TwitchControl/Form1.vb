@@ -145,7 +145,7 @@
         refTimerPress.Start()
 
         'Timer to check chat messages
-        updTimer.Interval = 500
+        updTimer.Interval = 100
         updTimer.Enabled = True
         updTimer.Start()
 
@@ -197,6 +197,7 @@
         'xxxx2xxx	O
         'xxxx4xxx	X
         'xxxx8xxx	Square
+        'xxx1xxxx   PSHome
         'xx1xxxxx	Touchscreen push
 
 
@@ -591,6 +592,7 @@
             Case "tpr"
                 If Not modlist.Contains(tmpuser) Then
                     outputChat("Personal items restricted to pre-approved users.")
+                    Return
                 End If
             Case "options"
                 If Not modlist.Contains(tmpuser) Then
@@ -946,7 +948,7 @@
 
         hold = hold * 33 'Fake 30fps
 
-        If hold > 60000 Then hold = 60000
+        If hold > 66000 Then hold = 66000
 
         If QueuedInput.Count > 0 Then
             If QueuedInput(QueuedInput.Count - 1).cmd = cmd Then
