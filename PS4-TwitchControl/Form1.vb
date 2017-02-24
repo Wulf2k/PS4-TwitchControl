@@ -243,7 +243,12 @@
                     chkHoldDD.Checked = False
                     chkHoldDL.Checked = False
                     chkHoldDR.Checked = False
+                    chkHoldOpt.Checked = false
 
+                Case "hopt"
+                    chkHoldOpt.Checked = true
+                Case "nhopt"
+                    chkHoldOpt.Checked = false
 
                 Case "hl1"
                     chkHoldL1.Checked = True
@@ -333,6 +338,7 @@
             'Combine held inputs with specified presses
             If chkHoldL3.Checked Then buttons = (buttons Or &H2)
             If chkHoldR3.Checked Then buttons = (buttons Or &H4)
+            If chkHoldOpt.Checked Then buttons = (buttons Or &H8)
 
             If chkHoldDU.Checked Then buttons = (buttons Or &H10)
             If chkHoldDD.Checked Then buttons = (buttons Or &H40)
@@ -686,6 +692,7 @@
             'Hold toggles
             Case "nha",
                  "holdo", "ho", "noholdo", "nho",
+                 "hopt", "nhopt",
                  "hl1", "nhl1",
                  "hl2", "nhl2",
                  "hl3", "nhl3",

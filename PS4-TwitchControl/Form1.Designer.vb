@@ -41,6 +41,7 @@ Partial Class frmPS4Twitch
         Me.chkHoldDD = New System.Windows.Forms.CheckBox()
         Me.chkHoldDR = New System.Windows.Forms.CheckBox()
         Me.chkHoldDU = New System.Windows.Forms.CheckBox()
+        Me.chkHoldOpt = New System.Windows.Forms.CheckBox()
         Me.SuspendLayout
         '
         'chkHoldSq
@@ -228,11 +229,22 @@ Partial Class frmPS4Twitch
         Me.chkHoldDU.Text = "Hold D-Pad Up"
         Me.chkHoldDU.UseVisualStyleBackColor = true
         '
+        'chkHoldOpt
+        '
+        Me.chkHoldOpt.AutoSize = true
+        Me.chkHoldOpt.Location = New System.Drawing.Point(16, 224)
+        Me.chkHoldOpt.Name = "chkHoldOpt"
+        Me.chkHoldOpt.Size = New System.Drawing.Size(87, 17)
+        Me.chkHoldOpt.TabIndex = 80
+        Me.chkHoldOpt.Text = "Hold Options"
+        Me.chkHoldOpt.UseVisualStyleBackColor = true
+        '
         'frmPS4Twitch
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6!, 13!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(445, 589)
+        Me.Controls.Add(Me.chkHoldOpt)
         Me.Controls.Add(Me.chkHoldDL)
         Me.Controls.Add(Me.chkHoldDD)
         Me.Controls.Add(Me.chkHoldDR)
@@ -278,4 +290,5 @@ End Sub
     Friend WithEvents chkHoldDD As CheckBox
     Friend WithEvents chkHoldDR As CheckBox
     Friend WithEvents chkHoldDU As CheckBox
+    Friend WithEvents chkHoldOpt As CheckBox
 End Class
