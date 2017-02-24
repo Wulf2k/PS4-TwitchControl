@@ -52,6 +52,31 @@
     Dim hookloc As IntPtr
 
 
+    'Button values
+    Public Const BTN_SHARE As UInt32 = &H1
+    Public Const BTN_L3 As UInt32 = &H2
+    Public Const BTN_R3 As UInt32 = &H4
+    Public Const BTN_OPTIONS As UInt32 = &H8
+
+    Public Const BTN_DPAD_UP As UInt32 = &H10
+    Public Const BTN_DPAD_RIGHT As UInt32 = &H20
+    Public Const BTN_DPAD_DOWN As UInt32 = &H40
+    Public Const BTN_DPAD_LEFT As UInt32 = &H80
+
+    Public Const BTN_L2 As UInt32 = &H100
+    Public Const BTN_R2 As UInt32 = &H200
+    Public Const BTN_L1 As UInt32 = &H400
+    Public Const BTN_R1 As UInt32 = &H800
+
+    Public Const BTN_TRIANGLE As UInt32 = &H1000
+    Public Const BTN_O As UInt32 = &H2000
+    Public Const BTN_X As UInt32 = &H4000
+    Public Const BTN_SQUARE As UInt32 = &H8000
+
+    Public Const BTN_PSHOME As UInt32 = &H10000
+    Public Const BTN_TOUCHPAD As UInt32 = &H100000
+
+
     Private ctrlPtr As IntPtr
 
     Public Function ScanForProcess(ByVal windowCaption As String, Optional automatic As Boolean = False) As Boolean
@@ -180,26 +205,6 @@
         press()
     End Sub
     Private Sub press()
-
-        'xxxxxxx1	Share
-        'xxxxxxx2	L3
-        'xxxxxxx4	R3
-        'xxxxxxx8	Options
-        'xxxxxx1x	Up
-        'xxxxxx2x	Right
-        'xxxxxx4x	Down
-        'xxxxxx8x	Left
-        'xxxxx1xx	L2
-        'xxxxx2xx	R2
-        'xxxxx4xx	L1
-        'xxxxx8xx	R1
-        'xxxx1xxx	Triangle
-        'xxxx2xxx	O
-        'xxxx4xxx	X
-        'xxxx8xxx	Square
-        'xxx1xxxx   PSHome
-        'xx1xxxxx	Touchscreen push
-
 
         Dim buttons = 0
         Dim LStickLR As Single = 0
@@ -336,30 +341,30 @@
 
 
             'Combine held inputs with specified presses
-            If chkHoldL3.Checked Then buttons = (buttons Or &H2)
-            If chkHoldR3.Checked Then buttons = (buttons Or &H4)
-            If chkHoldOpt.Checked Then buttons = (buttons Or &H8)
+            If chkHoldL3.Checked Then buttons = (buttons Or BTN_L3)
+            If chkHoldR3.Checked Then buttons = (buttons Or BTN_R3)
+            If chkHoldOpt.Checked Then buttons = (buttons Or BTN_OPTIONS)
 
-            If chkHoldDU.Checked Then buttons = (buttons Or &H10)
-            If chkHoldDD.Checked Then buttons = (buttons Or &H40)
-            If chkHoldDL.Checked Then buttons = (buttons Or &H80)
-            If chkHoldDR.Checked Then buttons = (buttons Or &H20)
+            If chkHoldDU.Checked Then buttons = (buttons Or BTN_DPAD_UP)
+            If chkHoldDD.Checked Then buttons = (buttons Or BTN_DPAD_DOWN)
+            If chkHoldDL.Checked Then buttons = (buttons Or BTN_DPAD_LEFT)
+            If chkHoldDR.Checked Then buttons = (buttons Or BTN_DPAD_RIGHT)
 
             If chkHoldL2.Checked Then
-                buttons = (buttons Or &H100)
+                buttons = (buttons Or BTN_L2)
                 QueuedInput(0).LTrigger = 1
             End If
             If chkHoldR2.Checked Then
-                buttons = (buttons Or &H200)
+                buttons = (buttons Or BTN_R2)
                 QueuedInput(0).RTrigger = 1
             End If
-            If chkHoldL1.Checked Then buttons = (buttons Or &H400)
-            If chkHoldR1.Checked Then buttons = (buttons Or &H800)
+            If chkHoldL1.Checked Then buttons = (buttons Or BTN_L1)
+            If chkHoldR1.Checked Then buttons = (buttons Or BTN_R1)
 
-            If chkHoldTri.Checked Then buttons = (buttons Or &H1000)
-            If chkHoldO.Checked Then buttons = (buttons Or &H2000)
-            If chkHoldX.Checked Then buttons = (buttons Or &H4000)
-            If chkHoldSq.Checked Then buttons = (buttons Or &H8000)
+            If chkHoldTri.Checked Then buttons = (buttons Or BTN_TRIANGLE)
+            If chkHoldO.Checked Then buttons = (buttons Or BTN_O)
+            If chkHoldX.Checked Then buttons = (buttons Or BTN_X)
+            If chkHoldSq.Checked Then buttons = (buttons Or BTN_SQUARE)
 
 
 
@@ -380,8 +385,8 @@
 
 
             'check for rolls during holdo
-            If cmd.length >= 2 And chkHoldO.Checked Then
-                If (cmd(0) = "r" And cmd(1) = "o") Or (cmd(0) = "o") Then
+            If chkHoldO.Checked Then
+                If Strings.Left(cmd, 2) = "ro" Or (cmd = "o") Then
                     outputChat("Evade failed due to HoldO being active.")
                 End If
             End If
@@ -515,12 +520,12 @@
         Try
             Elems = wb.Document.GetElementsByTagName("textarea")
             elem = Elems(0)
-            elem.InnerText = txt
+            elem.InnerText = elem.InnerText & " " & txt
         Catch ex As Exception
             txtChat.Text += ex.Message & Environment.NewLine
         End Try
 
-        refTimerPost.Interval = 100
+        refTimerPost.Interval = 500
         refTimerPost.Enabled = True
         refTimerPost.Start()
     End Sub
@@ -550,7 +555,10 @@
 
         'Loop entire string
         If tmpcmd.Contains("|") Then
-            CMDmulti = val(tmpcmd.Split("|")(1))
+            CMDmulti = Val(tmpcmd.Split("|")(1))
+
+            'Allow a maximum of 1000 loops
+            If CMDmulti > 1000 Then CMDmulti = 1000
             For i = 0 To CMDmulti - 1
                 ProcessCMD({tmpuser, tmpcmd.Split("|")(0)})
             Next
@@ -600,7 +608,7 @@
                     outputChat("Personal items restricted to pre-approved users.")
                     Return
                 End If
-            Case "options"
+            Case "options", "opt"
                 If Not modlist.Contains(tmpuser) Then
                     outputChat("Options menu restricted to pre-approved users.")
                     Return
@@ -735,78 +743,88 @@
 
 
             Case "du"
-                Controller(&H10, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dd"
-                Controller(&H40, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_DPAD_DOWN, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dl"
-                Controller(&H80, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_DPAD_LEFT, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dr"
-                Controller(&H20, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_DPAD_RIGHT, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "share"
-                'Controller(&H1, 0, 0, 0, 0, 0, 0, 1)
+                'Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 1, user, cmd)
                 Return
 
-            Case "options"
-                Controller(&H8, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+            Case "options", "opt"
+                If duration = 0 Then duration = 2
+                Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "o"
-                Controller(&H2000, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                If duration = 0 Then duration = 18
+                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "x"
-                Controller(&H4000, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                If duration = 0 Then duration = 18
+                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "sq"
-                Controller(&H8000, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                If duration = 0 Then duration = 18
+                Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "tri"
-                Controller(&H1000, 0, 0, 0, 0, 0, 0, 26, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd)
+                If duration = 0 Then duration = 28
+                Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
             Case "l1"
                 If duration = 0 Then duration = 18
-                Controller(&H400, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "l2"
                 If duration = 0 Then duration = 28
-                Controller(&H100, 0, 0, 0, 0, 1, 0, 2, user, cmd & "(!)")
+                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r1"
                 If duration = 0 Then duration = 28
-                Controller(&H800, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r2"
                 If duration = 0 Then duration = 28
-                Controller(&H200, 0, 0, 0, 0, 0, 1, 2, user, cmd & "(!)")
+                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "ol1"
-                Controller(&H2000, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 16, user, cmd & "(-)")
-                Controller(&H400, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 24, user, cmd & "(-)")
+                If duration = 0 Then duration = 26
+                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 18, user, cmd & "(-)")
+                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
@@ -816,35 +834,42 @@
                 Return
 
             Case "fr1"
-                Controller(&H800, 0, 0, 0, 1, 0, 0, 20, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(-)")
+                If duration = 0 Then duration = 28
+                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
+                Controller(BTN_R1, 0, 0, 0, 1, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "fr2"
+                If duration = 0 Then duration = 56
                 Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
-                Controller(&H200, 0, 0, 0, 1, 0, 1, 20, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 38, user, cmd & "(-)")
+                Controller(BTN_R2, 0, 0, 0, 1, 0, 1, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "l3"
-                Controller(&H2, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(-)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_L3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "r3"
-                Controller(&H4, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "tpl"
-                Controller(&H100000, 0, 0, 0, 0, 0, 0, 5, user, cmd)
+                Controller(BTN_TOUCHPAD, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Return
             Case "tpr"
-                Controller(&H100000, 0, 0, 0, 0, 0, 0, 5, user, cmd)
+                Controller(BTN_TOUCHPAD, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Return
 
             Case "pshome"
-                Controller(&H10000, 0, 0, 0, 0, 0, 0, 5, user, cmd)
+                Controller(BTN_PSHOME, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
+                Return
         End Select
 
 
@@ -868,7 +893,7 @@
 
         'parse 'walks', 'looks', 'analog's, and 'rolls'
         If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
-            (cmd(0) = "r" And cmd(1) = "o") Then
+            (Strings.Left(cmd, 2) = "ro") Then
 
             Dim axispad = 0
             Dim cmdpad = 0
@@ -880,16 +905,16 @@
                 If duration = 0 Then duration = 38
             End If
 
-            if cmd(0) = "a" then
+            If cmd(0) = "a" Then
                 If duration = 0 Then duration = 38
-                cmdparams = Mid(cmd, 2,4)
+                cmdparams = Mid(cmd, 2, 4)
             End If
 
-            
+
             'If 'roll', then roll params will be offset 1 character
-            If cmd(0) = "r" And cmd(1) = "o" Then
+            If Strings.Left(cmd, 2) = "ro" Then
                 cmdpad = 1
-                duration = 20
+                If duration = 0 Then duration = 20
                 roll = True
             End If
 
@@ -944,8 +969,8 @@
             'Remove cmd padding
             cmd = cmd.Replace(".", "")
 
-            If roll Then Controller(&H2000, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
-            Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
+            If roll Then Controller(BTN_O, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
+            Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(-)")
 
         End If
 
