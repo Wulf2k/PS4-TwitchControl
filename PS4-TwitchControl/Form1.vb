@@ -717,6 +717,8 @@
 
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
 
+
+                'If duration specified on hold command, assume there's an implied release at the end
                 If duration > 0 Then
                     Controller(0, 0, 0, 0, 0, 0, 0, 0, user, "n" & cmd)
                 End If
@@ -829,7 +831,7 @@
 
 
             Case "cr2"
-                Controller(&H200, 0, 0, 0, 0, 0, 1, 90, user, cmd & "(!)")
+                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 90, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(-)")
                 Return
 
