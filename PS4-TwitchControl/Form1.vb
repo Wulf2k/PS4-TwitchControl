@@ -862,10 +862,10 @@
                 Return
 
             Case "tpl"
-                Controller(BTN_TOUCHPAD, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_TOUCHPAD, 0, 0, 0, 0, 0, 0, 2, user, cmd)
                 Return
             Case "tpr"
-                Controller(BTN_TOUCHPAD, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_TOUCHPAD, 0, 0, 0, 0, 0, 0, 2, user, cmd)
                 Return
 
             Case "pshome"
