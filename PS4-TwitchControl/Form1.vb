@@ -520,7 +520,7 @@
         Try
             Elems = wb.Document.GetElementsByTagName("textarea")
             elem = Elems(0)
-            elem.InnerText = elem.InnerText & " " & txt
+            elem.InnerText = txt
         Catch ex As Exception
             txtChat.Text += ex.Message & Environment.NewLine
         End Try
@@ -635,8 +635,8 @@
                     If QueuedInput(i).user = tmpuser Then
                         QueuedInput.RemoveAt(i)
                     End If
-                    outputChat("All commands for " & tmpuser & " removed from queue.")
                 Next
+                outputChat("All commands for " & tmpuser & " removed from queue.")
                 Return
             Case "csx"
                 ProcessCMD({tmpuser, "clearcmds"})
