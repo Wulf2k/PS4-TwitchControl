@@ -85,7 +85,8 @@ Public Class frmPS4Twitch
     Dim presstimer As Integer = 33
     Private pressthread As thread
 
-    Dim presslock As New Object
+    Dim queuelock As New Object
+    Dim presslock As New object
 
     Dim wblock As New object
 
@@ -217,11 +218,22 @@ Public Class frmPS4Twitch
         End Try
     End Sub
     Private Sub TimerPress()
+        Dim timer = 33
         Do
-            dbgtime = Now
+
+            'dbgtime = Now
             press()
-            System.Threading.Thread.sleep(presstimer)
-            Console.WriteLine((Now - dbgtime).Milliseconds)
+            Do
+                SyncLock presslock
+                    presstimer -= 33
+                    timer = presstimer
+                End SyncLock
+                System.Threading.Thread.sleep(33)
+            Loop While timer > 33
+
+
+
+            'Console.WriteLine((Now - dbgtime).Milliseconds)
         Loop
     End Sub
     Private Sub press()
@@ -236,7 +248,7 @@ Public Class frmPS4Twitch
         Dim user As String = ""
         Dim cmd As String = ""
 
-        SyncLock presslock
+        SyncLock queuelock
             'If nothing in queue, push a 'nothing'-press onto it for 1 frame
             If QueuedInput.Count = 0 Then
                 Controller(0, 0, 0, 0, 0, 0, 0, 1, "", "")
@@ -244,7 +256,7 @@ Public Class frmPS4Twitch
         End synclock
 
             Try
-                SyncLock presslock
+                SyncLock queuelock
 
                 buttons = QueuedInput(0).buttons
 
@@ -396,7 +408,10 @@ Public Class frmPS4Twitch
                 user = QueuedInput(0).user
                 cmd = QueuedInput(0).cmd
                 'refTimerPress.Interval = QueuedInput(0).time
-                presstimer = QueuedInput(0).time
+                SyncLock presslock
+                    presstimer = QueuedInput(0).time
+                End SyncLock
+
                 PopQ()
 
 
@@ -416,7 +431,10 @@ Public Class frmPS4Twitch
                        System.Text.Encoding.ASCII.GetBytes(user + Chr(0)))
 
                 Dim tmpcmd
-                tmpcmd = cmd & "-" & presstimer / 33
+                SyncLock presslock
+                    tmpcmd = cmd & "-" & presstimer / 33
+                End SyncLock
+                
 
             
                 If tmpcmd = "-1" Then tmpcmd = ""
@@ -487,18 +505,15 @@ Public Class frmPS4Twitch
     Private Sub PushQ(ByRef buttons As Integer, RStickLR As Single, RStickUD As Single, LStickLR As Single, _
                       LStickUD As Single, LTrigger As Single, RTrigger As Single, time As Integer, user As String, _
                       cmd As String)
-        SyncLock presslock
-
-        
-        QueuedInput.Add(New QdInput() With {.buttons = buttons, .RstickLR = RStickLR, .RstickUD = RStickUD, _
-                                            .LStickLR = LStickLR, .LStickUD = LStickUD, .LTrigger = LTrigger, _
-                                            .RTrigger = RTrigger, .time = time, .user = user, .cmd = cmd})
-            End SyncLock
-
+        SyncLock queuelock
+            QueuedInput.Add(New QdInput() With {.buttons = buttons, .RstickLR = RStickLR, .RstickUD = RStickUD, _
+                                                .LStickLR = LStickLR, .LStickUD = LStickUD, .LTrigger = LTrigger, _
+                                                .RTrigger = RTrigger, .time = time, .user = user, .cmd = cmd})
+        End SyncLock
     End Sub
     Private Sub PopQ()
-        SyncLock presslock
-        QueuedInput.RemoveAt(0)
+        SyncLock queuelock
+            QueuedInput.RemoveAt(0)
         End SyncLock
     End Sub
     Private Function parseEmber(ByVal txt As String) As Integer
@@ -655,13 +670,16 @@ Public Class frmPS4Twitch
                 If Not (modlist.Contains(tmpuser)) Then
                     outputChat("Clearing all commands restricted to pre-approved users.")
                 Else
-                    SyncLock presslock
+                    SyncLock queuelock
                         QueuedInput.Clear()
-                        presstimer = 1
+                    End synclock
+
+                    SyncLock presslock
+                        presstimer = 33
                     End SyncLock
                 End If
             Case "clearcmds", "c"
-                SyncLock presslock
+                SyncLock queuelock
                     For i = QueuedInput.Count - 1 To 0 Step -1
                         If QueuedInput(i).user = tmpuser Then
                             QueuedInput.RemoveAt(i)
@@ -1015,7 +1033,7 @@ Public Class frmPS4Twitch
         hold = hold * 33 'Fake 30fps
 
         If hold > 66000 Then hold = 66000
-        SyncLock presslock
+        SyncLock queuelock
             If QueuedInput.Count > 0 Then
                 If QueuedInput(QueuedInput.Count - 1).cmd = cmd Then
                     QueuedInput(QueuedInput.Count - 1).time = QueuedInput(QueuedInput.Count - 1).time + hold
