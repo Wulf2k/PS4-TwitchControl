@@ -90,6 +90,22 @@ Public Class frmPS4Twitch
 
     Dim wblock As New object
 
+    shared boolHoldL1 = False
+    shared boolHoldL2 = False
+    shared boolHoldL3 = False
+    shared boolHoldR1 = False
+    shared boolHoldR2 = False
+    shared boolHoldR3 = False
+    shared boolHoldO = False
+    shared boolHoldSq = False
+    shared boolHoldTri = False
+    shared boolHoldX = False
+    shared boolHoldDU = False
+    shared boolHoldDD = False
+    shared boolHoldDL = False
+    shared boolHoldDR = False
+    shared boolHoldOpt = false
+
     Private ctrlPtr As IntPtr
 
     Public Function ScanForProcess(ByVal windowCaption As String, Optional automatic As Boolean = False) As Boolean
@@ -221,19 +237,21 @@ Public Class frmPS4Twitch
         Dim timer = 33
         Do
 
-            'dbgtime = Now
             press()
+            'dbgtime = Now
             Do
+                'Console.WriteLine(presstimer)
                 SyncLock presslock
                     presstimer -= 33
                     timer = presstimer
                 End SyncLock
                 System.Threading.Thread.sleep(33)
-            Loop While timer > 33
+            Loop While timer > 0
 
 
 
-            'Console.WriteLine((Now - dbgtime).Milliseconds)
+            'if (Now - dbgtime).Milliseconds > 34 Then 
+            'Console.WriteLine((Now - dbgtime).Milliseconds & " - " & timer)
         Loop
     End Sub
     Private Sub press()
@@ -255,7 +273,7 @@ Public Class frmPS4Twitch
             End If
         End synclock
 
-            Try
+            'Try
                 SyncLock queuelock
 
                 buttons = QueuedInput(0).buttons
@@ -263,95 +281,95 @@ Public Class frmPS4Twitch
                 'Handle hold-toggles
                 Select Case QueuedInput(0).cmd
                     Case "nha"
-                        chkHoldL1.Checked = False
-                        chkHoldL2.Checked = False
-                        chkHoldL3.Checked = False
-                        chkHoldR1.Checked = False
-                        chkHoldR2.Checked = False
-                        chkHoldR3.Checked = False
-                        chkHoldO.Checked = False
-                        chkHoldSq.Checked = False
-                        chkHoldTri.Checked = False
-                        chkHoldX.Checked = False
-                        chkHoldDU.Checked = False
-                        chkHoldDD.Checked = False
-                        chkHoldDL.Checked = False
-                        chkHoldDR.Checked = False
-                        chkHoldOpt.Checked = false
+                        boolHoldL1 = False
+                        boolHoldL2 = False
+                        boolHoldL3 = False
+                        boolHoldR1 = False
+                        boolHoldR2 = False
+                        boolHoldR3 = False
+                        boolHoldO = False
+                        boolHoldSq = False
+                        boolHoldTri = False
+                        boolHoldX = False
+                        boolHoldDU = False
+                        boolHoldDD = False
+                        boolHoldDL = False
+                        boolHoldDR = False
+                        boolHoldOpt = false
 
                     Case "hopt"
-                        chkHoldOpt.Checked = true
+                        boolHoldOpt = true
                     Case "nhopt"
-                        chkHoldOpt.Checked = false
+                        boolHoldOpt = false
 
                     Case "hl1"
-                        chkHoldL1.Checked = True
+                        boolHoldL1 = True
                     Case "nhl1"
-                        chkHoldL1.Checked = False
+                        boolHoldL1 = False
 
                     Case "hl2"
-                        chkHoldL2.Checked = True
+                        boolHoldL2 = True
                     Case "nhl2"
-                        chkHoldL2.Checked = False
+                        boolHoldL2 = False
 
                     Case "hl3"
-                        chkHoldL3.Checked = True
+                        boolHoldL3 = True
                     Case "nhl3"
-                        chkHoldL3.Checked = False
+                        boolHoldL3 = False
 
 
                     Case "hr1"
-                        chkHoldR1.Checked = True
+                        boolHoldR1 = True
                     Case "nhr1"
-                        chkHoldR1.Checked = False
+                        boolHoldR1 = False
 
                     Case "hr2"
-                        chkHoldR2.Checked = True
+                        boolHoldR2 = True
                     Case "nhr2"
-                        chkHoldR2.Checked = False
+                        boolHoldR2 = False
 
                     Case "hr3"
-                        chkHoldR3.Checked = True
+                        boolHoldR3 = True
                     Case "nhr3"
-                        chkHoldR3.Checked = False
+                        boolHoldR3 = False
 
 
                     Case "ho", "holdo"
-                        chkHoldO.Checked = True
+                        boolHoldO = True
                     Case "nho", "noholdo"
-                        chkHoldO.Checked = False
+                        boolHoldO = False
 
                     Case "hsq"
-                        chkHoldSq.Checked = True
+                        boolHoldSq = True
                     Case "nhsq"
-                        chkHoldSq.Checked = False
+                        boolHoldSq = False
 
                     Case "htri"
-                        chkHoldTri.Checked = True
+                        boolHoldTri = True
                     Case "nhtri"
-                        chkHoldTri.Checked = False
+                        boolHoldTri = False
 
                     Case "hx"
-                        chkHoldX.Checked = True
+                        boolHoldX = True
                     Case "nhx"
-                        chkHoldX.Checked = False
+                        boolHoldX = False
 
                     Case "hdu"
-                        chkHoldDU.Checked = True
+                        boolHoldDU = True
                     Case "nhdu"
-                        chkHoldDU.Checked = False
+                        boolHoldDU = False
                     Case "hdd"
-                        chkHoldDD.Checked = True
+                        boolHoldDD = True
                     Case "nhdd"
-                        chkHoldDD.Checked = False
+                        boolHoldDD = False
                     Case "hdl"
-                        chkHoldDL.Checked = True
+                        boolHoldDL = True
                     Case "nhdl"
-                        chkHoldDL.Checked = False
+                        boolHoldDL = False
                     Case "hdr"
-                        chkHoldDR.Checked = True
+                        boolHoldDR = True
                     Case "nhdr"
-                        chkHoldDR.Checked = False
+                        boolHoldDR = False
 
 
 
@@ -370,30 +388,30 @@ Public Class frmPS4Twitch
 
 
                 'Combine held inputs with specified presses
-                If chkHoldL3.Checked Then buttons = (buttons Or BTN_L3)
-                If chkHoldR3.Checked Then buttons = (buttons Or BTN_R3)
-                If chkHoldOpt.Checked Then buttons = (buttons Or BTN_OPTIONS)
+                If boolHoldL3 Then buttons = (buttons Or BTN_L3)
+                If boolHoldR3 Then buttons = (buttons Or BTN_R3)
+                If boolHoldOpt Then buttons = (buttons Or BTN_OPTIONS)
 
-                If chkHoldDU.Checked Then buttons = (buttons Or BTN_DPAD_UP)
-                If chkHoldDD.Checked Then buttons = (buttons Or BTN_DPAD_DOWN)
-                If chkHoldDL.Checked Then buttons = (buttons Or BTN_DPAD_LEFT)
-                If chkHoldDR.Checked Then buttons = (buttons Or BTN_DPAD_RIGHT)
+                If boolHoldDU Then buttons = (buttons Or BTN_DPAD_UP)
+                If boolHoldDD Then buttons = (buttons Or BTN_DPAD_DOWN)
+                If boolHoldDL Then buttons = (buttons Or BTN_DPAD_LEFT)
+                If boolHoldDR Then buttons = (buttons Or BTN_DPAD_RIGHT)
 
-                If chkHoldL2.Checked Then
+                If boolHoldL2 Then
                     buttons = (buttons Or BTN_L2)
                     QueuedInput(0).LTrigger = 1
                 End If
-                If chkHoldR2.Checked Then
+                If boolHoldR2 Then
                     buttons = (buttons Or BTN_R2)
                     QueuedInput(0).RTrigger = 1
                 End If
-                If chkHoldL1.Checked Then buttons = (buttons Or BTN_L1)
-                If chkHoldR1.Checked Then buttons = (buttons Or BTN_R1)
+                If boolHoldL1 Then buttons = (buttons Or BTN_L1)
+                If boolHoldR1 Then buttons = (buttons Or BTN_R1)
 
-                If chkHoldTri.Checked Then buttons = (buttons Or BTN_TRIANGLE)
-                If chkHoldO.Checked Then buttons = (buttons Or BTN_O)
-                If chkHoldX.Checked Then buttons = (buttons Or BTN_X)
-                If chkHoldSq.Checked Then buttons = (buttons Or BTN_SQUARE)
+                If boolHoldTri Then buttons = (buttons Or BTN_TRIANGLE)
+                If boolHoldO Then buttons = (buttons Or BTN_O)
+                If boolHoldX Then buttons = (buttons Or BTN_X)
+                If boolHoldSq Then buttons = (buttons Or BTN_SQUARE)
 
 
 
@@ -418,7 +436,7 @@ Public Class frmPS4Twitch
 
 
                 'check for rolls during holdo
-                If chkHoldO.Checked Then
+                If boolHoldO Then
                     If Strings.Left(cmd, 2) = "ro" Or (cmd = "o") Then
                         outputChat("Evade failed due to HoldO being active.")
                     End If
@@ -497,7 +515,7 @@ Public Class frmPS4Twitch
                    &HFFUI * LTrigger)
             WUInt8(hookmem + &H415,
                    &HFFUI * RTrigger)
-
+            try
         Catch ex As Exception
             Console.WriteLine("press exception")
         End Try
@@ -1094,8 +1112,8 @@ Public Class frmPS4Twitch
         pressthread.Abort
     End Sub
     Private Sub chkAttached_CheckedChanged(sender As Object, e As EventArgs) Handles chkAttached.CheckedChanged
-        If chkAttached.Checked Then
-            chkattached.Checked = ScanForProcess("PS4 Remote Play", True)
+        If chkAttached.checked Then
+            chkattached.checked = ScanForProcess("PS4 Remote Play", True)
             findDllAddresses()
 
             ctrlPtr = RIntPtr(rpCtrlWrap + &H2AC304)
