@@ -1,4 +1,6 @@
-﻿Public Class frmPS4Twitch
+﻿Imports System.Threading
+
+Public Class frmPS4Twitch
 
     Dim a As New asm
 
@@ -6,12 +8,14 @@
     Dim lastEmber As Integer = 0
     Dim repeatCount As Integer
 
-    Dim QueuedInput As New List(Of QdInput)
+    Shared QueuedInput As New List(Of QdInput)
 
 
-    Private WithEvents refTimerPress As New System.Windows.Forms.Timer()
+   
+    'Private WithEvents refTimerPress As New System.Timers.Timer()
     Private WithEvents updTimer As New System.Windows.Forms.Timer()
     Private WithEvents refTimerPost As New System.Windows.Forms.Timer()
+
 
     Private Declare Function OpenProcess Lib "kernel32.dll" (ByVal dwDesiredAcess As UInt32, ByVal bInheritHandle As Boolean, ByVal dwProcessId As Int32) As IntPtr
     Private Declare Function ReadProcessMemory Lib "kernel32" (ByVal hProcess As IntPtr, ByVal lpBaseAddress As IntPtr, ByVal lpBuffer() As Byte, ByVal iSize As Integer, ByRef lpNumberOfBytesRead As Integer) As Boolean
@@ -76,6 +80,14 @@
     Public Const BTN_PSHOME As UInt32 = &H10000
     Public Const BTN_TOUCHPAD As UInt32 = &H100000
 
+
+    Dim dbgtime As new datetime
+    Dim presstimer As Integer = 33
+    Private pressthread As thread
+
+    Dim presslock As New Object
+
+    Dim wblock As New object
 
     Private ctrlPtr As IntPtr
 
@@ -142,10 +154,7 @@
 
         'TODO:  Handle this with a text file for god's sake....
         modlist.Add("byrdshot")
-        modlist.Add("daydahd")
-        modlist.Add("eternalvalley")
         modlist.Add("illusorywall")
-        modlist.Add("jesterbo")
         modlist.Add("jesterpatches")
         modlist.Add("seannybee")
         modlist.Add("shippo62")
@@ -161,13 +170,18 @@
     End Sub
 
     Private Sub btnJoinTwitchChat_Click(sender As Object, e As EventArgs) Handles btnJoinTwitchChat.Click
-        wb.Navigate(txtTwitchChat.Text)
+        SyncLock wblock
+            wb.Navigate(txtTwitchChat.Text)
+        End SyncLock
+
+
 
         'Timer to press buttons at
         'Initial value fairly irrelevant
-        refTimerPress.Interval = 50
-        refTimerPress.Enabled = True
-        refTimerPress.Start()
+        'refTimerPress.Interval = 33
+        'refTimerPress.Enabled = True
+        'refTimerPress.Start()
+
 
         'Timer to check chat messages
         updTimer.Interval = 100
@@ -198,11 +212,17 @@
             Next
 
         Catch ex As Exception
-            txtChat.Text += ex.Message & Environment.NewLine
+            Console.WriteLine("updtimer exception")
+            'txtChat.Text += ex.Message & Environment.NewLine
         End Try
     End Sub
-    Private Sub refTimerPress_Tick() Handles refTimerPress.Tick
-        press()
+    Private Sub TimerPress()
+        Do
+            dbgtime = Now
+            press()
+            System.Threading.Thread.sleep(presstimer)
+            Console.WriteLine((Now - dbgtime).Milliseconds)
+        Loop
     End Sub
     Private Sub press()
 
@@ -216,212 +236,212 @@
         Dim user As String = ""
         Dim cmd As String = ""
 
-
-
-
-        'If nothing in queue, push a 'nothing'-press onto it for 1 frame
-        If QueuedInput.Count = 0 Then
-            Controller(0, 0, 0, 0, 0, 0, 0, 1, "", "")
-        End If
-
-
-
-
-
-        Try
-            buttons = QueuedInput(0).buttons
-
-            'Handle hold-toggles
-            Select Case QueuedInput(0).cmd
-                Case "nha"
-                    chkHoldL1.Checked = False
-                    chkHoldL2.Checked = False
-                    chkHoldL3.Checked = False
-                    chkHoldR1.Checked = False
-                    chkHoldR2.Checked = False
-                    chkHoldR3.Checked = False
-                    chkHoldO.Checked = False
-                    chkHoldSq.Checked = False
-                    chkHoldTri.Checked = False
-                    chkHoldX.Checked = False
-                    chkHoldDU.Checked = False
-                    chkHoldDD.Checked = False
-                    chkHoldDL.Checked = False
-                    chkHoldDR.Checked = False
-                    chkHoldOpt.Checked = false
-
-                Case "hopt"
-                    chkHoldOpt.Checked = true
-                Case "nhopt"
-                    chkHoldOpt.Checked = false
-
-                Case "hl1"
-                    chkHoldL1.Checked = True
-                Case "nhl1"
-                    chkHoldL1.Checked = False
-
-                Case "hl2"
-                    chkHoldL2.Checked = True
-                Case "nhl2"
-                    chkHoldL2.Checked = False
-
-                Case "hl3"
-                    chkHoldL3.Checked = True
-                Case "nhl3"
-                    chkHoldL3.Checked = False
-
-
-                Case "hr1"
-                    chkHoldR1.Checked = True
-                Case "nhr1"
-                    chkHoldR1.Checked = False
-
-                Case "hr2"
-                    chkHoldR2.Checked = True
-                Case "nhr2"
-                    chkHoldR2.Checked = False
-
-                Case "hr3"
-                    chkHoldR3.Checked = True
-                Case "nhr3"
-                    chkHoldR3.Checked = False
-
-
-                Case "ho", "holdo"
-                    chkHoldO.Checked = True
-                Case "nho", "noholdo"
-                    chkHoldO.Checked = False
-
-                Case "hsq"
-                    chkHoldSq.Checked = True
-                Case "nhsq"
-                    chkHoldSq.Checked = False
-
-                Case "htri"
-                    chkHoldTri.Checked = True
-                Case "nhtri"
-                    chkHoldTri.Checked = False
-
-                Case "hx"
-                    chkHoldX.Checked = True
-                Case "nhx"
-                    chkHoldX.Checked = False
-
-                Case "hdu"
-                    chkHoldDU.Checked = True
-                Case "nhdu"
-                    chkHoldDU.Checked = False
-                Case "hdd"
-                    chkHoldDD.Checked = True
-                Case "nhdd"
-                    chkHoldDD.Checked = False
-                Case "hdl"
-                    chkHoldDL.Checked = True
-                Case "nhdl"
-                    chkHoldDL.Checked = False
-                Case "hdr"
-                    chkHoldDR.Checked = True
-                Case "nhdr"
-                    chkHoldDR.Checked = False
-
-
-
-            End Select
-
-
-
-            'If command has no duration, skip to next command.
-            If QueuedInput(0).time = 0 Then
-                PopQ()
-                press()
-                Return
+        SyncLock presslock
+            'If nothing in queue, push a 'nothing'-press onto it for 1 frame
+            If QueuedInput.Count = 0 Then
+                Controller(0, 0, 0, 0, 0, 0, 0, 1, "", "")
             End If
+        End synclock
+
+            Try
+                SyncLock presslock
+
+                buttons = QueuedInput(0).buttons
+
+                'Handle hold-toggles
+                Select Case QueuedInput(0).cmd
+                    Case "nha"
+                        chkHoldL1.Checked = False
+                        chkHoldL2.Checked = False
+                        chkHoldL3.Checked = False
+                        chkHoldR1.Checked = False
+                        chkHoldR2.Checked = False
+                        chkHoldR3.Checked = False
+                        chkHoldO.Checked = False
+                        chkHoldSq.Checked = False
+                        chkHoldTri.Checked = False
+                        chkHoldX.Checked = False
+                        chkHoldDU.Checked = False
+                        chkHoldDD.Checked = False
+                        chkHoldDL.Checked = False
+                        chkHoldDR.Checked = False
+                        chkHoldOpt.Checked = false
+
+                    Case "hopt"
+                        chkHoldOpt.Checked = true
+                    Case "nhopt"
+                        chkHoldOpt.Checked = false
+
+                    Case "hl1"
+                        chkHoldL1.Checked = True
+                    Case "nhl1"
+                        chkHoldL1.Checked = False
+
+                    Case "hl2"
+                        chkHoldL2.Checked = True
+                    Case "nhl2"
+                        chkHoldL2.Checked = False
+
+                    Case "hl3"
+                        chkHoldL3.Checked = True
+                    Case "nhl3"
+                        chkHoldL3.Checked = False
+
+
+                    Case "hr1"
+                        chkHoldR1.Checked = True
+                    Case "nhr1"
+                        chkHoldR1.Checked = False
+
+                    Case "hr2"
+                        chkHoldR2.Checked = True
+                    Case "nhr2"
+                        chkHoldR2.Checked = False
+
+                    Case "hr3"
+                        chkHoldR3.Checked = True
+                    Case "nhr3"
+                        chkHoldR3.Checked = False
+
+
+                    Case "ho", "holdo"
+                        chkHoldO.Checked = True
+                    Case "nho", "noholdo"
+                        chkHoldO.Checked = False
+
+                    Case "hsq"
+                        chkHoldSq.Checked = True
+                    Case "nhsq"
+                        chkHoldSq.Checked = False
+
+                    Case "htri"
+                        chkHoldTri.Checked = True
+                    Case "nhtri"
+                        chkHoldTri.Checked = False
+
+                    Case "hx"
+                        chkHoldX.Checked = True
+                    Case "nhx"
+                        chkHoldX.Checked = False
+
+                    Case "hdu"
+                        chkHoldDU.Checked = True
+                    Case "nhdu"
+                        chkHoldDU.Checked = False
+                    Case "hdd"
+                        chkHoldDD.Checked = True
+                    Case "nhdd"
+                        chkHoldDD.Checked = False
+                    Case "hdl"
+                        chkHoldDL.Checked = True
+                    Case "nhdl"
+                        chkHoldDL.Checked = False
+                    Case "hdr"
+                        chkHoldDR.Checked = True
+                    Case "nhdr"
+                        chkHoldDR.Checked = False
 
 
 
-
-            'Combine held inputs with specified presses
-            If chkHoldL3.Checked Then buttons = (buttons Or BTN_L3)
-            If chkHoldR3.Checked Then buttons = (buttons Or BTN_R3)
-            If chkHoldOpt.Checked Then buttons = (buttons Or BTN_OPTIONS)
-
-            If chkHoldDU.Checked Then buttons = (buttons Or BTN_DPAD_UP)
-            If chkHoldDD.Checked Then buttons = (buttons Or BTN_DPAD_DOWN)
-            If chkHoldDL.Checked Then buttons = (buttons Or BTN_DPAD_LEFT)
-            If chkHoldDR.Checked Then buttons = (buttons Or BTN_DPAD_RIGHT)
-
-            If chkHoldL2.Checked Then
-                buttons = (buttons Or BTN_L2)
-                QueuedInput(0).LTrigger = 1
-            End If
-            If chkHoldR2.Checked Then
-                buttons = (buttons Or BTN_R2)
-                QueuedInput(0).RTrigger = 1
-            End If
-            If chkHoldL1.Checked Then buttons = (buttons Or BTN_L1)
-            If chkHoldR1.Checked Then buttons = (buttons Or BTN_R1)
-
-            If chkHoldTri.Checked Then buttons = (buttons Or BTN_TRIANGLE)
-            If chkHoldO.Checked Then buttons = (buttons Or BTN_O)
-            If chkHoldX.Checked Then buttons = (buttons Or BTN_X)
-            If chkHoldSq.Checked Then buttons = (buttons Or BTN_SQUARE)
+                End Select
 
 
 
-
-            'Process specified axises
-            LStickLR = QueuedInput(0).LStickLR
-            LStickUD = QueuedInput(0).LStickUD
-            RStickLR = QueuedInput(0).RstickLR
-            RStickUD = QueuedInput(0).RstickUD
-            LTrigger = QueuedInput(0).LTrigger
-            RTrigger = QueuedInput(0).RTrigger
-            user = QueuedInput(0).user
-            cmd = QueuedInput(0).cmd
-            refTimerPress.Interval = QueuedInput(0).time
-            PopQ()
-
-
-
-
-            'check for rolls during holdo
-            If chkHoldO.Checked Then
-                If Strings.Left(cmd, 2) = "ro" Or (cmd = "o") Then
-                    outputChat("Evade failed due to HoldO being active.")
+                'If command has no duration, skip to next command.
+                If QueuedInput(0).time = 0 Then
+                    PopQ()
+                    press()
+                    Return
                 End If
-            End If
 
 
 
-            'Output queue info and pass to overlay program
-            WBytes(hookmem + &H300,
-                   System.Text.Encoding.ASCII.GetBytes(user + Chr(0)))
 
-            Dim tmpcmd
-            tmpcmd = cmd & "-" & refTimerPress.Interval / 33
+                'Combine held inputs with specified presses
+                If chkHoldL3.Checked Then buttons = (buttons Or BTN_L3)
+                If chkHoldR3.Checked Then buttons = (buttons Or BTN_R3)
+                If chkHoldOpt.Checked Then buttons = (buttons Or BTN_OPTIONS)
+
+                If chkHoldDU.Checked Then buttons = (buttons Or BTN_DPAD_UP)
+                If chkHoldDD.Checked Then buttons = (buttons Or BTN_DPAD_DOWN)
+                If chkHoldDL.Checked Then buttons = (buttons Or BTN_DPAD_LEFT)
+                If chkHoldDR.Checked Then buttons = (buttons Or BTN_DPAD_RIGHT)
+
+                If chkHoldL2.Checked Then
+                    buttons = (buttons Or BTN_L2)
+                    QueuedInput(0).LTrigger = 1
+                End If
+                If chkHoldR2.Checked Then
+                    buttons = (buttons Or BTN_R2)
+                    QueuedInput(0).RTrigger = 1
+                End If
+                If chkHoldL1.Checked Then buttons = (buttons Or BTN_L1)
+                If chkHoldR1.Checked Then buttons = (buttons Or BTN_R1)
+
+                If chkHoldTri.Checked Then buttons = (buttons Or BTN_TRIANGLE)
+                If chkHoldO.Checked Then buttons = (buttons Or BTN_O)
+                If chkHoldX.Checked Then buttons = (buttons Or BTN_X)
+                If chkHoldSq.Checked Then buttons = (buttons Or BTN_SQUARE)
+
+
+
+
+                'Process specified axises
+                LStickLR = QueuedInput(0).LStickLR
+                LStickUD = QueuedInput(0).LStickUD
+                RStickLR = QueuedInput(0).RstickLR
+                RStickUD = QueuedInput(0).RstickUD
+                LTrigger = QueuedInput(0).LTrigger
+                RTrigger = QueuedInput(0).RTrigger
+                user = QueuedInput(0).user
+                cmd = QueuedInput(0).cmd
+                'refTimerPress.Interval = QueuedInput(0).time
+                presstimer = QueuedInput(0).time
+                PopQ()
+
+
+
+
+                'check for rolls during holdo
+                If chkHoldO.Checked Then
+                    If Strings.Left(cmd, 2) = "ro" Or (cmd = "o") Then
+                        outputChat("Evade failed due to HoldO being active.")
+                    End If
+                End If
+
+
+
+                'Output queue info and pass to overlay program
+                WBytes(hookmem + &H300,
+                       System.Text.Encoding.ASCII.GetBytes(user + Chr(0)))
+
+                Dim tmpcmd
+                tmpcmd = cmd & "-" & presstimer / 33
 
             
-            If tmpcmd = "-1" Then tmpcmd = ""
+                If tmpcmd = "-1" Then tmpcmd = ""
 
-            WBytes(hookmem + &H310,
-                   System.Text.Encoding.ASCII.GetBytes(tmpcmd & Chr(0)))
+                WBytes(hookmem + &H310,
+                       System.Text.Encoding.ASCII.GetBytes(tmpcmd & Chr(0)))
 
-            For i = 0 To 9
-                If (QueuedInput.Count) > i Then
-                    Dim str As String
-                    str = QueuedInput(i).cmd & "-" & Math.floor(QueuedInput(i).time / 33)
+                For i = 0 To 9
+                    If (QueuedInput.Count) > i Then
+                        Dim str As String
+                        str = QueuedInput(i).cmd & "-" & Math.floor(QueuedInput(i).time / 33)
 
-                    'if command too long, shorten it
-                    If str.Length > 15 Then str = Strings.Left(str, 15)
-                    str = str & Chr(0)
+                        'if command too long, shorten it
+                        If str.Length > 15 Then str = Strings.Left(str, 15)
+                        str = str & Chr(0)
 
-                    WBytes(hookmem + &H320 + i * &H10, System.Text.Encoding.ASCII.GetBytes(str))
-                Else
-                    WBytes(hookmem + &H320 + i * &H10, {0})
-                End If
-            Next
+                        WBytes(hookmem + &H320 + i * &H10, System.Text.Encoding.ASCII.GetBytes(str))
+                    Else
+                        WBytes(hookmem + &H320 + i * &H10, {0})
+                    End If
+                Next
 
-            WInt32(hookmem + &H3C0, QueuedInput.Count)
+                WInt32(hookmem + &H3C0, QueuedInput.Count)
+
+            End SyncLock
 
             'TODO:  Pass tpad values as part of controller queued input
             Select Case cmd
@@ -461,19 +481,25 @@
                    &HFFUI * RTrigger)
 
         Catch ex As Exception
-
+            Console.WriteLine("press exception")
         End Try
     End Sub
     Private Sub PushQ(ByRef buttons As Integer, RStickLR As Single, RStickUD As Single, LStickLR As Single, _
                       LStickUD As Single, LTrigger As Single, RTrigger As Single, time As Integer, user As String, _
                       cmd As String)
+        SyncLock presslock
+
         
         QueuedInput.Add(New QdInput() With {.buttons = buttons, .RstickLR = RStickLR, .RstickUD = RStickUD, _
                                             .LStickLR = LStickLR, .LStickUD = LStickUD, .LTrigger = LTrigger, _
                                             .RTrigger = RTrigger, .time = time, .user = user, .cmd = cmd})
+            End SyncLock
+
     End Sub
     Private Sub PopQ()
+        SyncLock presslock
         QueuedInput.RemoveAt(0)
+        End SyncLock
     End Sub
     Private Function parseEmber(ByVal txt As String) As Integer
         Dim ember = 0
@@ -522,7 +548,8 @@
             elem = Elems(0)
             elem.InnerText = txt
         Catch ex As Exception
-            txtChat.Text += ex.Message & Environment.NewLine
+            Console.WriteLine("outputChat exception")
+            'txtChat.Text += ex.Message & Environment.NewLine
         End Try
 
         refTimerPost.Interval = 500
@@ -538,7 +565,8 @@
             'Button to post "should" always be the last one
             Elems(Elems.Count-1).InvokeMember("click")
         Catch ex As Exception
-            txtChat.Text += ex.Message & Environment.NewLine
+            Console.WriteLine("refTimerPost exception")
+            'txtChat.Text += ex.Message & Environment.NewLine
         End Try
 
         refTimerPost.Stop()
@@ -627,15 +655,19 @@
                 If Not (modlist.Contains(tmpuser)) Then
                     outputChat("Clearing all commands restricted to pre-approved users.")
                 Else
-                    QueuedInput.Clear()
-                    refTimerPress.Interval = 1
+                    SyncLock presslock
+                        QueuedInput.Clear()
+                        presstimer = 1
+                    End SyncLock
                 End If
             Case "clearcmds", "c"
-                For i = QueuedInput.Count - 1 To 0 Step -1
-                    If QueuedInput(i).user = tmpuser Then
-                        QueuedInput.RemoveAt(i)
-                    End If
-                Next
+                SyncLock presslock
+                    For i = QueuedInput.Count - 1 To 0 Step -1
+                        If QueuedInput(i).user = tmpuser Then
+                            QueuedInput.RemoveAt(i)
+                        End If
+                    Next
+                End SyncLock
                 outputChat("All commands for " & tmpuser & " removed from queue.")
                 Return
             Case "csx"
@@ -983,13 +1015,15 @@
         hold = hold * 33 'Fake 30fps
 
         If hold > 66000 Then hold = 66000
-
-        If QueuedInput.Count > 0 Then
-            If QueuedInput(QueuedInput.Count - 1).cmd = cmd Then
-                QueuedInput(QueuedInput.Count - 1).time = QueuedInput(QueuedInput.Count - 1).time + hold
-                Return
+        SyncLock presslock
+            If QueuedInput.Count > 0 Then
+                If QueuedInput(QueuedInput.Count - 1).cmd = cmd Then
+                    QueuedInput(QueuedInput.Count - 1).time = QueuedInput(QueuedInput.Count - 1).time + hold
+                    Return
+                End If
             End If
-        End If
+        End SyncLock
+
         PushQ(buttons, RLR, RUD, LLR, LUD, LT, RT, hold, user, cmd)
     End Sub
 
@@ -1023,10 +1057,23 @@
             a.asm("jmp newmem")
 
             WriteProcessMemory(_targetProcessHandle, rpCtrlWrap + &H1D0980, a.bytes, a.bytes.length, 0)
+
+
+
+            pressthread = New Thread(AddressOf TimerPress)
+            pressthread.IsBackground = True
+            pressthread.Start
+
+
+
+
         End If
     End Sub
     Private Sub RestoreControl
         WBytes(rpCtrlWrap + &H1D0980, {&H8B, &H55, &HC, &H83, &HC4, &HC})
+
+
+        pressthread.Abort
     End Sub
     Private Sub chkAttached_CheckedChanged(sender As Object, e As EventArgs) Handles chkAttached.CheckedChanged
         If chkAttached.Checked Then
