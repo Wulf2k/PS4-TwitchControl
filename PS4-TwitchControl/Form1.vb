@@ -250,7 +250,7 @@ Public Class frmPS4Twitch
 
 
 
-            'if (Now - dbgtime).Milliseconds > 34 Then 
+            'if (Now - dbgtime).Milliseconds > 33 Then 
             'Console.WriteLine((Now - dbgtime).Milliseconds & " - " & timer)
         Loop
     End Sub
