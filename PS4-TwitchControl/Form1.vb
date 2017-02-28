@@ -977,7 +977,7 @@ Public Class frmPS4Twitch
 
             If cmd(0) = "a" Then
                 'TODO:  Damnit this is ugly.  Redo, with proper parsing.
-                cmd = cmd.Replace(".", "5")
+                cmd = Strings.Left(cmd.Replace(".", "5"), 5)
                 If duration = 0 Then duration = 38
                 cmdparams = Mid(cmd, 2, 4)
             End If
