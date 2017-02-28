@@ -976,6 +976,8 @@ Public Class frmPS4Twitch
             End If
 
             If cmd(0) = "a" Then
+                'TODO:  Damnit this is ugly.  Redo, with proper parsing.
+                cmd = cmd.Replace(".", "5")
                 If duration = 0 Then duration = 38
                 cmdparams = Mid(cmd, 2, 4)
             End If
@@ -1039,8 +1041,13 @@ Public Class frmPS4Twitch
             'Remove cmd padding
             cmd = cmd.Replace(".", "")
 
-            If roll Then Controller(BTN_O, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
-            Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(-)")
+            If roll Then
+                Controller(BTN_O, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
+                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(-)")
+            Else
+                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
+            End If
+            
 
         End If
 
