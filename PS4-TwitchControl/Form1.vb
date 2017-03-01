@@ -999,7 +999,7 @@ Public Class frmPS4Twitch
 
 
             'Return if garbage data
-            For i = 1 To 5
+            For i = 1 To 4
                 If Not {"f", "u", "b", "d", "l", "r", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."
                         }.Contains(cmd(cmdpad + i)) Then
                     Return
