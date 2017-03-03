@@ -81,7 +81,7 @@ Public Class frmPS4Twitch
     Public Const BTN_TOUCHPAD As UInt32 = &H100000
 
 
-    Dim dbgtime As new datetime
+    Dim dbgtime As datetime = now
     Dim presstimer As Integer = 33
     Private pressthread As thread
 
@@ -177,6 +177,7 @@ Public Class frmPS4Twitch
         modlist.Add("shippo62")
         modlist.Add("superwaifubot")
         modlist.Add("tompiet1")
+        modlist.Add("trubillis")
         modlist.Add("wea000")
         modlist.Add("wulf2k")
         modlist.Add("wulf2kbot")
@@ -236,7 +237,7 @@ Public Class frmPS4Twitch
     Private Sub TimerPress()
         Dim timer = 33
         Do
-
+            'Console.WriteLine((Now - dbgtime).Milliseconds & " - " & timer)
             press()
             'dbgtime = Now
             Do
@@ -614,6 +615,18 @@ Public Class frmPS4Twitch
         Dim tmpcmd = entry(1)
         Dim CMDmulti As Integer = 1
 
+
+
+
+        'Allow multiple strings per line, with a multiplier on each
+        If tmpcmd.Contains("\") Then
+            For each cmd In tmpcmd.Split("\")
+                ProcessCMD({tmpuser, cmd})
+            Next
+        End If
+
+
+
         'Loop entire string
         If tmpcmd.Contains("|") Then
             CMDmulti = Val(tmpcmd.Split("|")(1))
@@ -625,7 +638,6 @@ Public Class frmPS4Twitch
             Next
             Return
         End If
-
 
         'Handle multi-command entries
         If tmpcmd.Contains(",") Then
