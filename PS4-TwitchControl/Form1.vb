@@ -41,6 +41,7 @@ Public Class frmPS4Twitch
     Private _targetProcessHandle As IntPtr = IntPtr.Zero 'Used for ReadProcessMemory
 
     Dim modlist As New List(Of String)
+    Dim trilist As New List(Of String)
     Dim ignorelist As New List(Of String)
 
 
@@ -173,6 +174,7 @@ Public Class frmPS4Twitch
         modlist.Add("byrdshot")
         modlist.Add("illusorywall")
         modlist.Add("jesterpatches")
+        modlist.Add("nightbot")
         modlist.Add("seannybee")
         modlist.Add("shippo62")
         modlist.Add("superwaifubot")
@@ -183,6 +185,8 @@ Public Class frmPS4Twitch
         modlist.Add("wulf2kbot")
         modlist.Add("yuidesu")
         modlist.Add("zephyp")
+
+        trilist.Add("boborruu")
 
 
     End Sub
@@ -620,9 +624,11 @@ Public Class frmPS4Twitch
 
         'Allow multiple strings per line, with a multiplier on each
         If tmpcmd.Contains("\") Then
+            tmpcmd = tmpcmd.Replace(" ","")
             For each cmd In tmpcmd.Split("\")
                 ProcessCMD({tmpuser, cmd})
             Next
+            Return
         End If
 
 
@@ -692,7 +698,7 @@ Public Class frmPS4Twitch
                     Return
                 End If
             Case "tri", "htri"
-                If Not modlist.Contains(tmpuser) Then
+                If Not modlist.Contains(tmpuser) and not trilist.Contains(tmpuser) Then
                     outputChat("Consumable use restricted to pre-approved users.")
                     Return
                 End If
