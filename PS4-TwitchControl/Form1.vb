@@ -699,16 +699,19 @@ Public Class frmPS4Twitch
                 End If
             Case "tri", "htri"
                 If Not modlist.Contains(tmpuser) and not trilist.Contains(tmpuser) Then
-                    outputChat("Consumable use restricted to pre-approved users.")
-                    Return
+                    'outputChat("Consumable use restricted to pre-approved users.")
+                    'Return
                 End If
             Case "clearallcmds", "ca"
                 If Not (modlist.Contains(tmpuser)) Then
                     outputChat("Clearing all commands restricted to pre-approved users.")
+                    ProcessCMD({tmpuser, "clearcmds"})
                 Else
                     SyncLock queuelock
                         QueuedInput.Clear()
                     End synclock
+
+                    ProcessCMD({tmpuser, "nha"})
 
                     SyncLock presslock
                         presstimer = 33
@@ -722,6 +725,7 @@ Public Class frmPS4Twitch
                         End If
                     Next
                 End SyncLock
+                ProcessCMD({tmpuser, "nha"})
                 outputChat("All commands for " & tmpuser & " removed from queue.")
                 Return
             Case "csx"
