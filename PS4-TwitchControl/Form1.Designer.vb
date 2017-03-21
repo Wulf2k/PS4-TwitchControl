@@ -41,24 +41,29 @@ Partial Class frmPS4Twitch
         '
         'wb
         '
-        Me.wb.Location = New System.Drawing.Point(235, 132)
+        Me.wb.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom)  _
+            Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
+        Me.wb.Location = New System.Drawing.Point(12, 132)
         Me.wb.MinimumSize = New System.Drawing.Size(20, 20)
         Me.wb.Name = "wb"
         Me.wb.ScriptErrorsSuppressed = true
-        Me.wb.Size = New System.Drawing.Size(195, 448)
+        Me.wb.Size = New System.Drawing.Size(418, 448)
         Me.wb.TabIndex = 62
         '
         'txtChat
         '
-        Me.txtChat.Location = New System.Drawing.Point(16, 451)
+        Me.txtChat.Location = New System.Drawing.Point(12, 31)
         Me.txtChat.Multiline = true
         Me.txtChat.Name = "txtChat"
         Me.txtChat.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txtChat.Size = New System.Drawing.Size(198, 129)
+        Me.txtChat.Size = New System.Drawing.Size(217, 86)
         Me.txtChat.TabIndex = 61
         '
         'txtTwitchChat
         '
+        Me.txtTwitchChat.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
         Me.txtTwitchChat.Location = New System.Drawing.Point(235, 31)
         Me.txtTwitchChat.Name = "txtTwitchChat"
         Me.txtTwitchChat.Size = New System.Drawing.Size(195, 20)

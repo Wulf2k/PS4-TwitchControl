@@ -174,6 +174,7 @@ Public Class frmPS4Twitch
         modlist.Add("byrdshot")
         modlist.Add("illusorywall")
         modlist.Add("jesterpatches")
+        modlist.Add("megoleto")
         modlist.Add("nightbot")
         modlist.Add("seannybee")
         modlist.Add("shippo62")
@@ -590,7 +591,7 @@ Public Class frmPS4Twitch
             'txtChat.Text += ex.Message & Environment.NewLine
         End Try
 
-        refTimerPost.Interval = 500
+        refTimerPost.Interval = 250
         refTimerPost.Enabled = True
         refTimerPost.Start()
     End Sub
@@ -601,10 +602,11 @@ Public Class frmPS4Twitch
             Elems = wb.Document.GetElementsByTagName("button")
 
             'Button to post "should" always be the last one
+            txtChat.Text = Elems(Elems.count-1).InnerHtml
             Elems(Elems.Count-1).InvokeMember("click")
         Catch ex As Exception
             Console.WriteLine("refTimerPost exception")
-            'txtChat.Text += ex.Message & Environment.NewLine
+            txtChat.Text = ex.Message & Environment.NewLine
         End Try
 
         refTimerPost.Stop()
@@ -1100,10 +1102,10 @@ Public Class frmPS4Twitch
 
             Dim a As New asm
 
-            a.AddVar("hook", rpCtrlWrap + &H1D0980)
+            a.AddVar("hook", rpCtrlWrap + &H208a20)
             a.AddVar("newmem", hookmem)
             a.AddVar("newctrl", hookmem + &H400)
-            a.AddVar("hookreturn", rpCtrlWrap + &H1D0986)
+            a.AddVar("hookreturn", rpCtrlWrap + &H208a26)
 
             a.pos = hookmem
             a.Asm("mov edx, newctrl")
@@ -1118,10 +1120,10 @@ Public Class frmPS4Twitch
 
             a.Clear
             a.AddVar("newmem", hookmem)
-            a.pos = rpCtrlWrap + &H1D0980
+            a.pos = rpCtrlWrap + &H208a20
             a.asm("jmp newmem")
 
-            WriteProcessMemory(_targetProcessHandle, rpCtrlWrap + &H1D0980, a.bytes, a.bytes.length, 0)
+            WriteProcessMemory(_targetProcessHandle, rpCtrlWrap + &H208a20, a.bytes, a.bytes.length, 0)
 
 
 
@@ -1135,21 +1137,22 @@ Public Class frmPS4Twitch
         End If
     End Sub
     Private Sub RestoreControl
-        WBytes(rpCtrlWrap + &H1D0980, {&H8B, &H55, &HC, &H83, &HC4, &HC})
+        'WBytes(rpCtrlWrap + &H1D0980, {&H8B, &H55, &HC, &H83, &HC4, &HC})  'Old ver
+        WBytes(rpCtrlWrap + &H208a20, {&H8B, &H55, &HC, &H83, &HC4, &HC})
 
-
-        pressthread.Abort
+        'pressthread.Abort
     End Sub
     Private Sub chkAttached_CheckedChanged(sender As Object, e As EventArgs) Handles chkAttached.CheckedChanged
         If chkAttached.checked Then
             chkattached.checked = ScanForProcess("PS4 Remote Play", True)
             findDllAddresses()
 
-            ctrlPtr = RIntPtr(rpCtrlWrap + &H2AC304)
-            If ctrlPtr Then ctrlPtr = RIntPtr(ctrlPtr + &H5C)
-            If ctrlPtr Then ctrlPtr = RIntPtr(ctrlPtr + &H58)
-            If ctrlPtr Then ctrlPtr = RIntPtr(ctrlPtr)
-            Console.WriteLine("ctrlPtr: " & Hex(CINT(ctrlPtr)))
+            'ctrlPtr = RIntPtr(rpCtrlWrap + &H2AC304)
+            'If ctrlPtr Then ctrlPtr = RIntPtr(ctrlPtr + &H5C)
+            'If ctrlPtr Then ctrlPtr = RIntPtr(ctrlPtr + &H58)
+            'If ctrlPtr Then ctrlPtr = RIntPtr(ctrlPtr)
+            'Console.WriteLine("ctrlPtr: " & Hex(CINT(ctrlPtr)))
+            ctrlptr = 1
 
             TakeControl()
         Else
