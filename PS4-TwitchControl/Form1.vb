@@ -557,7 +557,7 @@ Public Class frmPS4Twitch
         End If
 
         txt = txt.ToLower
-
+        txt = txt.Replace(" ", "")
 
 
 
@@ -731,25 +731,25 @@ Public Class frmPS4Twitch
                 outputChat("All commands for " & tmpuser & " removed from queue.")
                 Return
             Case "csx"
-                ProcessCMD({tmpuser, "clearcmds"})
-                ProcessCMD({tmpuser, "nha"})
-                ProcessCMD({tmpuser, "sq"})
-                ProcessCMD({tmpuser, "x"})
-                ProcessCMD({tmpuser, "dl"})
-                ProcessCMD({tmpuser, "x"})
-                ProcessCMD({tmpuser, "x"})
+                'ProcessCMD({tmpuser, "clearcmds"})
+                'ProcessCMD({tmpuser, "nha"})
+                'ProcessCMD({tmpuser, "sq"})
+                'ProcessCMD({tmpuser, "x"})
+                'ProcessCMD({tmpuser, "dl"})
+                'ProcessCMD({tmpuser, "x"})
+                'ProcessCMD({tmpuser, "x"})
             Case "casx"
-                ProcessCMD({tmpuser, "clearallcmds"})
-                ProcessCMD({tmpuser, "nha"})
-                ProcessCMD({tmpuser, "sq"})
-                ProcessCMD({tmpuser, "x"})
-                ProcessCMD({tmpuser, "dl"})
-                ProcessCMD({tmpuser, "x"})
-                ProcessCMD({tmpuser, "x"})
+                'ProcessCMD({tmpuser, "clearallcmds"})
+                'ProcessCMD({tmpuser, "nha"})
+                'ProcessCMD({tmpuser, "sq"})
+                'ProcessCMD({tmpuser, "x"})
+                'ProcessCMD({tmpuser, "dl"})
+                'ProcessCMD({tmpuser, "x"})
+                'ProcessCMD({tmpuser, "x"})
 
 
             Case "takecontrol"
-                if modlist.Contains(tmpuser) Then TakeControl
+                If modlist.Contains(tmpuser) Then TakeControl
 
             Case "restorecontrol"
                 if modlist.Contains(tmpuser) Then RestoreControl
@@ -829,7 +829,7 @@ Public Class frmPS4Twitch
 
             'Our old, archaic friend 'flong', "forward long"
             Case "flong"
-                If duration = 0 Then duration = 114
+                If duration = 0 Then duration = 90
                 Controller(0, 0, 0, 0, 1, 0, 0, duration, user, cmd)
                 Return
 
@@ -995,13 +995,13 @@ Public Class frmPS4Twitch
 
             'Set default walk duration if none specified
             If cmd(0) = "w" Then
-                If duration = 0 Then duration = 38
+                If duration = 0 Then duration = 30
             End If
 
             If cmd(0) = "a" Then
                 'TODO:  Damnit this is ugly.  Redo, with proper parsing.
                 cmd = Strings.Left(cmd.Replace(".", "5"), 5)
-                If duration = 0 Then duration = 38
+                If duration = 0 Then duration = 30
                 cmdparams = Mid(cmd, 2, 4)
             End If
 
