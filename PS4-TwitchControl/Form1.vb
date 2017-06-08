@@ -1088,14 +1088,15 @@ Public Class frmPS4Twitch
         hold = hold * 33 'Fake 30fps
 
         If hold > 66000 Then hold = 66000
-        SyncLock queuelock
-            If QueuedInput.Count > 0 Then
-                If QueuedInput(QueuedInput.Count - 1).cmd = cmd Then
-                    QueuedInput(QueuedInput.Count - 1).time = QueuedInput(QueuedInput.Count - 1).time + hold
-                    Return
-                End If
-            End If
-        End SyncLock
+        'SyncLock queuelock
+        'If QueuedInput.Count > 0 Then
+        'If QueuedInput(QueuedInput.Count - 1).cmd = cmd Then
+        'Stop combining identical inputs
+        'QueuedInput(QueuedInput.Count - 1).time = QueuedInput(QueuedInput.Count - 1).time + hold
+        'Return
+        'End If
+        'End If
+        'End SyncLock
 
         PushQ(buttons, RLR, RUD, LLR, LUD, LT, RT, hold, user, cmd)
     End Sub
