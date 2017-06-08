@@ -705,20 +705,27 @@ Public Class frmPS4Twitch
                     'Return
                 End If
             Case "clearallcmds", "ca"
-                If Not (modlist.Contains(tmpuser)) Then
-                    outputChat("Clearing all commands restricted to pre-approved users.")
-                    ProcessCMD({tmpuser, "clearcmds"})
-                Else
-                    SyncLock queuelock
-                        QueuedInput.Clear()
-                    End synclock
+                'Testing removal of mod restriction on clear all commands
 
-                    ProcessCMD({tmpuser, "nha"})
 
-                    SyncLock presslock
-                        presstimer = 33
-                    End SyncLock
-                End If
+                'If Not (modlist.Contains(tmpuser)) Then
+                'outputChat("Clearing all commands restricted to pre-approved users.")
+                'ProcessCMD({tmpuser, "clearcmds"})
+                'Else
+                outputChat(tmpuser & " has cleared the command queue.")
+
+                SyncLock queuelock
+                    QueuedInput.Clear()
+                End SyncLock
+
+                ProcessCMD({tmpuser, "nha"})
+
+                SyncLock presslock
+                    presstimer = 33
+                End SyncLock
+
+
+                'End If
             Case "clearcmds", "c"
                 SyncLock queuelock
                     For i = QueuedInput.Count - 1 To 0 Step -1
