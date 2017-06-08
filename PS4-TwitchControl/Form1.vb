@@ -735,19 +735,18 @@ Public Class frmPS4Twitch
                 ProcessCMD({tmpuser, "nha"})
                 ProcessCMD({tmpuser, "sq"})
                 ProcessCMD({tmpuser, "x"})
-                ProcessCMD({tmpuser, "sq"})
+                ProcessCMD({tmpuser, "dl"})
                 ProcessCMD({tmpuser, "x"})
-                ProcessCMD({tmpuser, "sq"})
                 ProcessCMD({tmpuser, "x"})
             Case "casx"
                 ProcessCMD({tmpuser, "clearallcmds"})
                 ProcessCMD({tmpuser, "nha"})
                 ProcessCMD({tmpuser, "sq"})
                 ProcessCMD({tmpuser, "x"})
-                ProcessCMD({tmpuser, "sq"})
+                ProcessCMD({tmpuser, "dl"})
                 ProcessCMD({tmpuser, "x"})
-                ProcessCMD({tmpuser, "sq"})
                 ProcessCMD({tmpuser, "x"})
+
 
             Case "takecontrol"
                 if modlist.Contains(tmpuser) Then TakeControl
