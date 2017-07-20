@@ -633,6 +633,7 @@ Public Class frmPS4Twitch
             For i = 1 To CMDmulti
                 ProcessCMD({tmpuser, tmpcmd.Split("*")(0)})
             Next
+            Return
         End If
 
 
