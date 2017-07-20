@@ -174,8 +174,10 @@ Public Class frmPS4Twitch
         modlist.Add("byrdshot")
         modlist.Add("illusorywall")
         modlist.Add("jesterpatches")
+        modlist.Add("knoll24")
         modlist.Add("megoleto")
         modlist.Add("nightbot")
+        modlist.Add("schattentod")
         modlist.Add("seannybee")
         modlist.Add("shippo62")
         modlist.Add("superwaifubot")
@@ -503,28 +505,31 @@ Public Class frmPS4Twitch
                     WUInt16(hookmem + &H42C, 0)
             End Select
 
+            Try
+                WUInt32(hookmem + &H40C,
+                        buttons)
+
+                WUInt8(hookmem + &H410,
+                       &H7FUI + LStickLR * &H7FUI)
+                WUInt8(hookmem + &H411,
+                       &H7FUI - LStickUD * &H7FUI)
+                WUInt8(hookmem + &H412,
+                       &H7FUI + RStickLR * &H7FUI)
+                WUInt8(hookmem + &H413,
+                       &H7FUI - RStickUD * &H7FUI)
+
+                WUInt8(hookmem + &H414,
+                       &HFFUI * LTrigger)
+                WUInt8(hookmem + &H415,
+                       &HFFUI * RTrigger)
+            Catch ex As Exception
+                Console.WriteLine("WUInt8 stick value overflow? " & ex.Message)
+            End Try
 
 
-            WUInt32(hookmem + &H40C,
-                    buttons)
-
-            WUInt8(hookmem + &H410,
-                   &H7FUI + LStickLR * &H7FUI)
-            WUInt8(hookmem + &H411,
-                   &H7FUI - LStickUD * &H7FUI)
-            WUInt8(hookmem + &H412,
-                   &H7FUI + RStickLR * &H7FUI)
-            WUInt8(hookmem + &H413,
-                   &H7FUI - RStickUD * &H7FUI)
-
-            WUInt8(hookmem + &H414,
-                   &HFFUI * LTrigger)
-            WUInt8(hookmem + &H415,
-                   &HFFUI * RTrigger)
-            try
-        Catch ex As Exception
-            Console.WriteLine("press exception")
-        End Try
+        'Catch ex As Exception
+            'Console.WriteLine("press exception")
+       ' End Try
     End Sub
     Private Sub PushQ(ByRef buttons As Integer, RStickLR As Single, RStickUD As Single, LStickLR As Single, _
                       LStickUD As Single, LTrigger As Single, RTrigger As Single, time As Integer, user As String, _
@@ -621,7 +626,14 @@ Public Class frmPS4Twitch
         Dim tmpcmd = entry(1)
         Dim CMDmulti As Integer = 1
 
+        'allow loop of entire string, with inner loops
 
+        if tmpcmd.contains("*") Then
+            CMDmulti = val(tmpcmd.Split("*")(1))
+            For i = 1 To CMDmulti
+                ProcessCMD({tmpuser, tmpcmd.Split("*")(0)})
+            Next
+        End If
 
 
         'Allow multiple strings per line, with a multiplier on each
@@ -689,7 +701,7 @@ Public Class frmPS4Twitch
                     outputChat("Personal items restricted to pre-approved users.")
                     Return
                 End If
-            Case "options", "opt"
+            Case "options", "opt", "hopt"
                 If Not modlist.Contains(tmpuser) Then
                     outputChat("Options menu restricted to pre-approved users.")
                     Return
