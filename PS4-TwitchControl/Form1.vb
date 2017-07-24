@@ -630,6 +630,7 @@ Public Class frmPS4Twitch
 
         if tmpcmd.contains("*") Then
             CMDmulti = val(tmpcmd.Split("*")(1))
+            If CMDmulti > 20 Then CMDmulti = 20
             For i = 1 To CMDmulti
                 ProcessCMD({tmpuser, tmpcmd.Split("*")(0)})
             Next
