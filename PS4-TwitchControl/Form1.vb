@@ -1123,10 +1123,10 @@ Public Class frmPS4Twitch
 
             Dim a As New asm
 
-            a.AddVar("hook", rpCtrlWrap + &H208a20)
+            a.AddVar("hook", rpCtrlWrap + &H1BF670)
             a.AddVar("newmem", hookmem)
             a.AddVar("newctrl", hookmem + &H400)
-            a.AddVar("hookreturn", rpCtrlWrap + &H208a26)
+            a.AddVar("hookreturn", rpCtrlWrap + &H1BF676)
 
             a.pos = hookmem
             a.Asm("mov edx, newctrl")
@@ -1141,10 +1141,10 @@ Public Class frmPS4Twitch
 
             a.Clear
             a.AddVar("newmem", hookmem)
-            a.pos = rpCtrlWrap + &H208a20
+            a.pos = rpCtrlWrap + &H1BF670
             a.asm("jmp newmem")
 
-            WriteProcessMemory(_targetProcessHandle, rpCtrlWrap + &H208a20, a.bytes, a.bytes.length, 0)
+            WriteProcessMemory(_targetProcessHandle, rpCtrlWrap + &H1BF670, a.bytes, a.bytes.Length, 0)
 
 
 
@@ -1159,7 +1159,7 @@ Public Class frmPS4Twitch
     End Sub
     Private Sub RestoreControl
         'WBytes(rpCtrlWrap + &H1D0980, {&H8B, &H55, &HC, &H83, &HC4, &HC})  'Old ver
-        WBytes(rpCtrlWrap + &H208a20, {&H8B, &H55, &HC, &H83, &HC4, &HC})
+        WBytes(rpCtrlWrap + &H1BF670, {&H8B, &H55, &HC, &H83, &HC4, &HC})
 
         'pressthread.Abort
     End Sub
