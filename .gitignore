@@ -63,3 +63,4 @@ Temporary Items
 *.ide-shm
 *.ide
 *.lock
+.vs/PS4-TwitchControl/DesignTimeBuild/.dtbcache

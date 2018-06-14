@@ -199,7 +199,8 @@ Public Class frmPS4Twitch
             wb.Navigate(txtTwitchChat.Text)
         End SyncLock
 
-
+        'Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION
+        'PS4-TwitchControl.exe = 11000
 
         'Timer to press buttons at
         'Initial value fairly irrelevant
