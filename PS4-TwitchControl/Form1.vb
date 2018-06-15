@@ -8,6 +8,11 @@ Public Class frmPS4Twitch
     Dim lastEmber As Integer = 0
     Dim repeatCount As Integer
 
+    Dim firstMessage As String = ""
+    Dim lastMessage As String = ""
+
+
+
     Shared QueuedInput As New List(Of QdInput)
 
 
@@ -210,7 +215,8 @@ Public Class frmPS4Twitch
 
 
         'Timer to check chat messages
-        updTimer.Interval = 100
+        Threading.Thread.Sleep(5000)
+        updTimer.Interval = 25
         updTimer.Enabled = True
         updTimer.Start()
 
@@ -218,29 +224,104 @@ Public Class frmPS4Twitch
 
     Private Sub updTimer_Tick() Handles updTimer.Tick
         Dim Elems As HtmlElementCollection
-        Dim ember As Integer
+        'Dim ember As Integer
 
         Dim entry(2) As String
+        Dim chatMessages As New List(Of HtmlElement)
 
-        Try
-            Elems = wb.Document.GetElementsByTagName("li")
-            For Each elem As HtmlElement In Elems
-                If elem.GetAttribute("id").Contains("ember") Then
-                    ember = parseEmber(elem.GetAttribute("id"))
-                    If ember > lastEmber Then
-                        lastEmber = ember
+        'Try
+        'Elems = wb.Document.GetElementsByTagName("li")
+        Elems = wb.Document.GetElementsByTagName("div")
 
-                        entry = parseChat(elem.InnerText)
 
-                        ProcessCMD(entry)
-                    End If
-                End If
-            Next
+        For Each elem In Elems
+            If elem.GetAttribute("className") = "chat-line__message" Then
+                chatMessages.Add(elem)
+            End If
+        Next
 
-        Catch ex As Exception
-            Console.WriteLine("updtimer exception")
-            'txtChat.Text += ex.Message & Environment.NewLine
-        End Try
+        'TODO:  Clean this right the fuck up...  Remove old traces of ember numbering system.
+        'ugly hack because fuck you fucking fuck blah shit blah.
+
+        If chatMessages.Count > 0 Then
+            'Console.WriteLine(chatMessages(ember).InnerHtml)
+
+            If Not (chatMessages(0).InnerHtml = firstMessage And chatMessages(chatMessages.Count - 1).InnerHtml = lastMessage) Then
+
+                Dim elapsedMessages = 0
+
+
+                firstMessage = chatMessages(0).InnerHtml
+                lastMessage = chatMessages(chatMessages.Count - 1).InnerHtml
+
+                Dim str, name, cmd As String
+                Dim nameIdx, nameLen, cmdIdx As Integer
+
+                str = chatMessages(chatMessages.Count - 1).InnerHtml
+
+                nameIdx = str.IndexOf("data-a-user=") + 14
+                nameLen = (str.IndexOf("</span></span></button>") - nameIdx - 1) / 2
+                name = Strings.Mid(str, nameIdx, nameLen).ToLower
+
+
+                cmdIdx = str.IndexOf("chat-message-text") + 20
+                cmd = Strings.Mid(str, cmdIdx, str.Length - cmdIdx - 6).ToLower
+
+                'Console.WriteLine(nameIdx)
+                'Console.WriteLine(name)
+                'Console.WriteLine(nameLen)
+                'Console.WriteLine(cmd)
+
+                ProcessCMD({name, cmd})
+
+            End If
+
+
+        End If
+
+
+
+        'lastEmber = ember
+        'Console.WriteLine(wb.Document.All(ember).InnerText)
+
+        'ember = Elems.Count - 21
+        'Console.WriteLine("Ember: " & ember)
+        'Console.WriteLine(Elems(ember).InnerHtml)
+
+
+
+        'For Each elem In Elems
+        'If elem.innerhtml.contains("Hhh") Then Console.WriteLine("test")
+        'If elem.innerHtml.length > 0 Then
+        '    Console.WriteLine(elem.innerhtml)
+        'End If
+        'Next
+        'MsgBox(ember)
+
+
+
+        'MsgBox(ember)
+        'MsgBox(Elems.Count)
+        'For Each elem As HtmlElement In Elems
+        'If elem.GetAttribute("id").Contains("ember") Then
+        'MsgBox(elem.GetAttribute("name"))
+        'If elem.InnerHtml.Contains("chat-line") Then
+        'MsgBox("elem hit" & elem.InnerHtml.Length)
+        'ember = parseEmber(elem.GetAttribute("id"))
+        'If ember > lastEmber Then
+        'lastEmber = ember
+
+        'entry = parseChat(elem.InnerText)
+
+        'ProcessCMD(entry)
+        'End If
+        'End If
+        'Next
+
+        'Catch ex As Exception
+        'Console.WriteLine("updtimer exception")
+        'txtChat.Text += ex.Message & Environment.NewLine
+        'End Try
     End Sub
     Private Sub TimerPress()
         Dim timer = 33
@@ -280,10 +361,10 @@ Public Class frmPS4Twitch
             If QueuedInput.Count = 0 Then
                 Controller(0, 0, 0, 0, 0, 0, 0, 1, "", "")
             End If
-        End synclock
+        End SyncLock
 
-            'Try
-                SyncLock queuelock
+        'Try
+        SyncLock queuelock
 
                 buttons = QueuedInput(0).buttons
 
@@ -565,7 +646,7 @@ Public Class frmPS4Twitch
         txt = txt.ToLower
         txt = txt.Replace(" ", "")
 
-
+        'MsgBox(txt)
 
         If Asc(txt(0)) = 10 Then txt = Microsoft.VisualBasic.Right(txt, txt.Length - 1)
 
@@ -577,7 +658,7 @@ Public Class frmPS4Twitch
         Dim username As String
         Dim cmd As string
         username = txt.Split(":")(0).Trim(" ")
-        cmd = txt.Split(":")(txt.Split(":").Count-1).Trim(" ")
+        cmd = txt.Split(":")(txt.Split(":").Count - 1).Trim(" ")
 
         'yes, wulf and hard turn out to be valid commands.
         'ignore them.
@@ -586,20 +667,20 @@ Public Class frmPS4Twitch
         Return {username, cmd}
     End Function
     Private Sub outputChat(ByVal txt As String)
-        Dim Elems As HtmlElementCollection
-        Dim elem As HtmlElement
-        Try
-            Elems = wb.Document.GetElementsByTagName("textarea")
-            elem = Elems(0)
-            elem.InnerText = txt
-        Catch ex As Exception
-            Console.WriteLine("outputChat exception")
-            'txtChat.Text += ex.Message & Environment.NewLine
-        End Try
+        'Dim Elems As HtmlElementCollection
+        'Dim elem As HtmlElement
+        'Try
+        'Elems = wb.Document.GetElementsByTagName("textarea")
+        'elem = Elems(0)
+        'elem.InnerText = txt
+        'Catch ex As Exception
+        'Console.WriteLine("outputChat exception")
+        'txtChat.Text += ex.Message & Environment.NewLine
+        'End Try
 
-        refTimerPost.Interval = 250
-        refTimerPost.Enabled = True
-        refTimerPost.Start()
+        'r efTimerPost.Interval = 250
+        'refTimerPost.Enabled = True
+        'refTimerPost.Start()
     End Sub
     Private Sub refTimerPost_Tick() Handles refTimerPost.Tick
         Dim Elems As HtmlElementCollection
@@ -801,7 +882,7 @@ Public Class frmPS4Twitch
 
 
         If cmd.Contains("-") Then
-            duration = cmd.Split("-")(1)
+            If IsNumeric(cmd.Split("-")(1)) Then duration = cmd.Split("-")(1)
             cmd = cmd.Split("-")(0)
         Else
             duration = 0
