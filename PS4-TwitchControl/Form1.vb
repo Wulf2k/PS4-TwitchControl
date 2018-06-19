@@ -21,6 +21,10 @@ Public Class frmPS4Twitch
     Private WithEvents updTimer As New System.Windows.Forms.Timer()
     Private WithEvents refTimerPost As New System.Windows.Forms.Timer()
 
+    Private Declare Sub mouse_event Lib "user32.dll" (ByVal dwFlags As Integer, ByVal dx As Integer, ByVal dy As Integer, ByVal cButtons As Integer, ByVal dwExtraInfo As IntPtr)
+
+    Const MOUSEEVENTF_LEFTDOWN As Integer = 2
+    Const MOUSEEVENTF_LEFTUP As Integer = 4
 
     Private Declare Function OpenProcess Lib "kernel32.dll" (ByVal dwDesiredAcess As UInt32, ByVal bInheritHandle As Boolean, ByVal dwProcessId As Int32) As IntPtr
     Private Declare Function ReadProcessMemory Lib "kernel32" (ByVal hProcess As IntPtr, ByVal lpBaseAddress As IntPtr, ByVal lpBuffer() As Byte, ByVal iSize As Integer, ByRef lpNumberOfBytesRead As Integer) As Boolean
@@ -366,12 +370,49 @@ Public Class frmPS4Twitch
         'Try
         SyncLock queuelock
 
-                buttons = QueuedInput(0).buttons
+            buttons = QueuedInput(0).buttons
 
-                'Handle hold-toggles
-                Select Case QueuedInput(0).cmd
-                    Case "nha"
-                        boolHoldL1 = False
+            'Handle hold-toggles
+            Select Case QueuedInput(0).cmd
+
+                Case "reconnect1"
+                    Dim x = 1000
+                    Dim y = 500
+
+
+                    Cursor.Position = New Point(x, y)
+                    mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
+                    mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
+
+                Case "reconnect2"
+                    Dim x = 1100
+                    Dim y = 600
+
+
+                    Cursor.Position = New Point(x, y)
+                    mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
+                    mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
+
+                Case "reconnect3"
+                    '1550, 820
+                    Dim x = 1550
+                    Dim y = 820
+
+
+                    Cursor.Position = New Point(x, y)
+                    mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
+                    mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
+
+                Case "hidecursor"
+                    Dim x = 1600
+                    Dim y = 0
+
+                    Cursor.Position = New Point(x, y)
+                    mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
+                    mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
+
+                Case "nha"
+                    boolHoldL1 = False
                         boolHoldL2 = False
                         boolHoldL3 = False
                         boolHoldR1 = False
@@ -908,7 +949,9 @@ Public Class frmPS4Twitch
                  "hdu", "nhdu",
                  "hdd", "nhdd",
                  "hdl", "nhdl",
-                 "hdr", "nhdr"
+                 "hdr", "nhdr",
+                 "reconnect1", "reconnect2", "reconnect3",
+                 "hidecursor"
 
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
 
