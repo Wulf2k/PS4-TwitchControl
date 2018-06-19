@@ -2,22 +2,25 @@
 
 Public Class frmPS4Twitch
 
+    'TODO:  Add held-analog commands
+
+    'TODO:  Change cmd portion of each entry to blank, then process every message's command
+    'TODO:  This is to handle multiple new messages in a single check
+
+
     Dim a As New asm
 
-    'ember used to differentiate Twitch messages
-    Dim lastEmber As Integer = 0
     Dim repeatCount As Integer
 
     Dim firstMessage As String = ""
     Dim lastMessage As String = ""
 
 
-
     Shared QueuedInput As New List(Of QdInput)
 
 
-   
-    'Private WithEvents refTimerPress As New System.Timers.Timer()
+
+
     Private WithEvents updTimer As New System.Windows.Forms.Timer()
     Private WithEvents refTimerPost As New System.Windows.Forms.Timer()
 
@@ -91,37 +94,37 @@ Public Class frmPS4Twitch
     Public Const BTN_TOUCHPAD As UInt32 = &H100000
 
 
-    Dim dbgtime As datetime = now
+    Dim dbgtime As DateTime = Now
     Dim presstimer As Integer = 33
-    Private pressthread As thread
+    Private pressthread As Thread
 
     Dim queuelock As New Object
-    Dim presslock As New object
+    Dim presslock As New Object
 
-    Dim wblock As New object
+    Dim wblock As New Object
 
-    shared boolHoldL1 = False
-    shared boolHoldL2 = False
-    shared boolHoldL3 = False
-    shared boolHoldR1 = False
-    shared boolHoldR2 = False
-    shared boolHoldR3 = False
-    shared boolHoldO = False
-    shared boolHoldSq = False
-    shared boolHoldTri = False
-    shared boolHoldX = False
-    shared boolHoldDU = False
-    shared boolHoldDD = False
-    shared boolHoldDL = False
-    shared boolHoldDR = False
-    shared boolHoldOpt = false
+    Shared boolHoldL1 = False
+    Shared boolHoldL2 = False
+    Shared boolHoldL3 = False
+    Shared boolHoldR1 = False
+    Shared boolHoldR2 = False
+    Shared boolHoldR3 = False
+    Shared boolHoldO = False
+    Shared boolHoldSq = False
+    Shared boolHoldTri = False
+    Shared boolHoldX = False
+    Shared boolHoldDU = False
+    Shared boolHoldDD = False
+    Shared boolHoldDL = False
+    Shared boolHoldDR = False
+    Shared boolHoldOpt = False
 
     Private ctrlPtr As IntPtr
 
     Public Function ScanForProcess(ByVal windowCaption As String, Optional automatic As Boolean = False) As Boolean
         Dim _allProcesses() As Process = Process.GetProcesses
         For Each pp As Process In _allProcesses
-            If pp.MainWindowTitle.ToLower.equals(windowCaption.ToLower) Then
+            If pp.MainWindowTitle.ToLower.Equals(windowCaption.ToLower) Then
                 'found it! proceed.
                 Return TryAttachToProcess(pp, automatic)
             End If
@@ -179,27 +182,9 @@ Public Class frmPS4Twitch
 
     Private Sub frmPS4Twitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        'TODO:  Handle this with a text file for god's sake....
-        modlist.Add("byrdshot")
-        modlist.Add("illusorywall")
-        modlist.Add("jesterpatches")
-        modlist.Add("knoll24")
-        modlist.Add("megoleto")
-        modlist.Add("nightbot")
-        modlist.Add("schattentod")
-        modlist.Add("seannybee")
-        modlist.Add("shippo62")
-        modlist.Add("superwaifubot")
-        modlist.Add("tompiet1")
-        modlist.Add("trubillis")
-        modlist.Add("wea000")
-        modlist.Add("wulf2k")
-        modlist.Add("wulf2kbot")
-        modlist.Add("yuidesu")
-        modlist.Add("zephyp")
-
-        trilist.Add("boborruu")
-
+        'Control which chat badges can execute mod commands
+        modlist.Add("moderator")
+        modlist.Add("broadcaster")
 
     End Sub
 
@@ -208,6 +193,7 @@ Public Class frmPS4Twitch
             wb.Navigate(txtTwitchChat.Text)
         End SyncLock
 
+        'Below reg setting must be set for webbrowser control to properly load chat
         'Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION
         'PS4-TwitchControl.exe = 11000
 
@@ -228,104 +214,46 @@ Public Class frmPS4Twitch
 
     Private Sub updTimer_Tick() Handles updTimer.Tick
         Dim Elems As HtmlElementCollection
-        'Dim ember As Integer
-
-        Dim entry(2) As String
         Dim chatMessages As New List(Of HtmlElement)
 
-        'Try
-        'Elems = wb.Document.GetElementsByTagName("li")
         Elems = wb.Document.GetElementsByTagName("div")
-
-
         For Each elem In Elems
             If elem.GetAttribute("className") = "chat-line__message" Then
                 chatMessages.Add(elem)
             End If
         Next
 
-        'TODO:  Clean this right the fuck up...  Remove old traces of ember numbering system.
-        'ugly hack because fuck you fucking fuck blah shit blah.
 
         If chatMessages.Count > 0 Then
-            'Console.WriteLine(chatMessages(ember).InnerHtml)
-
             If Not (chatMessages(0).InnerHtml = firstMessage And chatMessages(chatMessages.Count - 1).InnerHtml = lastMessage) Then
-
                 Dim elapsedMessages = 0
 
 
                 firstMessage = chatMessages(0).InnerHtml
                 lastMessage = chatMessages(chatMessages.Count - 1).InnerHtml
 
-                Dim str, name, cmd As String
+                Dim str, user, cmd As String
                 Dim nameIdx, nameLen, cmdIdx As Integer
 
                 str = chatMessages(chatMessages.Count - 1).InnerHtml
 
                 nameIdx = str.IndexOf("data-a-user=") + 14
                 nameLen = (str.IndexOf("</span></span></button>") - nameIdx - 1) / 2
-                name = Strings.Mid(str, nameIdx, nameLen).ToLower
-
+                user = Strings.Mid(str, nameIdx, nameLen).ToLower
 
                 cmdIdx = str.IndexOf("chat-message-text") + 20
                 cmd = Strings.Mid(str, cmdIdx, str.Length - cmdIdx - 6).ToLower
 
-                'Console.WriteLine(nameIdx)
-                'Console.WriteLine(name)
-                'Console.WriteLine(nameLen)
-                'Console.WriteLine(cmd)
-
-                ProcessCMD({name, cmd})
-
+                Dim role As String = "nothing"
+                If str.IndexOf("<span><img class=""chat-badge"" aria-label=""Moderator badge""") = 0 Then
+                    role = "moderator"
+                End If
+                If str.IndexOf("<span><img class=""chat-badge"" aria-label=""Broadcaster badge""") = 0 Then
+                    role = "broadcaster"
+                End If
+                ProcessCMD(user, role, cmd)
             End If
-
-
         End If
-
-
-
-        'lastEmber = ember
-        'Console.WriteLine(wb.Document.All(ember).InnerText)
-
-        'ember = Elems.Count - 21
-        'Console.WriteLine("Ember: " & ember)
-        'Console.WriteLine(Elems(ember).InnerHtml)
-
-
-
-        'For Each elem In Elems
-        'If elem.innerhtml.contains("Hhh") Then Console.WriteLine("test")
-        'If elem.innerHtml.length > 0 Then
-        '    Console.WriteLine(elem.innerhtml)
-        'End If
-        'Next
-        'MsgBox(ember)
-
-
-
-        'MsgBox(ember)
-        'MsgBox(Elems.Count)
-        'For Each elem As HtmlElement In Elems
-        'If elem.GetAttribute("id").Contains("ember") Then
-        'MsgBox(elem.GetAttribute("name"))
-        'If elem.InnerHtml.Contains("chat-line") Then
-        'MsgBox("elem hit" & elem.InnerHtml.Length)
-        'ember = parseEmber(elem.GetAttribute("id"))
-        'If ember > lastEmber Then
-        'lastEmber = ember
-
-        'entry = parseChat(elem.InnerText)
-
-        'ProcessCMD(entry)
-        'End If
-        'End If
-        'Next
-
-        'Catch ex As Exception
-        'Console.WriteLine("updtimer exception")
-        'txtChat.Text += ex.Message & Environment.NewLine
-        'End Try
     End Sub
     Private Sub TimerPress()
         Dim timer = 33
@@ -339,7 +267,7 @@ Public Class frmPS4Twitch
                     presstimer -= 33
                     timer = presstimer
                 End SyncLock
-                System.Threading.Thread.sleep(33)
+                System.Threading.Thread.Sleep(33)
             Loop While timer > 0
 
 
@@ -370,6 +298,10 @@ Public Class frmPS4Twitch
         'Try
         SyncLock queuelock
 
+            'TODO:  Fix up below, randomly seems to be hitting this spot with an empty queue
+            If QueuedInput.Count = 0 Then Return
+
+
             buttons = QueuedInput(0).buttons
 
             'Handle hold-toggles
@@ -394,7 +326,6 @@ Public Class frmPS4Twitch
                     mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
 
                 Case "reconnect3"
-                    '1550, 820
                     Dim x = 1550
                     Dim y = 820
 
@@ -405,7 +336,7 @@ Public Class frmPS4Twitch
 
                 Case "hidecursor"
                     Dim x = 1600
-                    Dim y = 0
+                    Dim y = 100
 
                     Cursor.Position = New Point(x, y)
                     mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
@@ -413,253 +344,250 @@ Public Class frmPS4Twitch
 
                 Case "nha"
                     boolHoldL1 = False
-                        boolHoldL2 = False
-                        boolHoldL3 = False
-                        boolHoldR1 = False
-                        boolHoldR2 = False
-                        boolHoldR3 = False
-                        boolHoldO = False
-                        boolHoldSq = False
-                        boolHoldTri = False
-                        boolHoldX = False
-                        boolHoldDU = False
-                        boolHoldDD = False
-                        boolHoldDL = False
-                        boolHoldDR = False
-                        boolHoldOpt = false
+                    boolHoldL2 = False
+                    boolHoldL3 = False
+                    boolHoldR1 = False
+                    boolHoldR2 = False
+                    boolHoldR3 = False
+                    boolHoldO = False
+                    boolHoldSq = False
+                    boolHoldTri = False
+                    boolHoldX = False
+                    boolHoldDU = False
+                    boolHoldDD = False
+                    boolHoldDL = False
+                    boolHoldDR = False
+                    boolHoldOpt = False
 
-                    Case "hopt"
-                        boolHoldOpt = true
-                    Case "nhopt"
-                        boolHoldOpt = false
+                Case "hopt"
+                    boolHoldOpt = True
+                Case "nhopt"
+                    boolHoldOpt = False
 
-                    Case "hl1"
-                        boolHoldL1 = True
-                    Case "nhl1"
-                        boolHoldL1 = False
+                Case "hl1"
+                    boolHoldL1 = True
+                Case "nhl1"
+                    boolHoldL1 = False
 
-                    Case "hl2"
-                        boolHoldL2 = True
-                    Case "nhl2"
-                        boolHoldL2 = False
+                Case "hl2"
+                    boolHoldL2 = True
+                Case "nhl2"
+                    boolHoldL2 = False
 
-                    Case "hl3"
-                        boolHoldL3 = True
-                    Case "nhl3"
-                        boolHoldL3 = False
-
-
-                    Case "hr1"
-                        boolHoldR1 = True
-                    Case "nhr1"
-                        boolHoldR1 = False
-
-                    Case "hr2"
-                        boolHoldR2 = True
-                    Case "nhr2"
-                        boolHoldR2 = False
-
-                    Case "hr3"
-                        boolHoldR3 = True
-                    Case "nhr3"
-                        boolHoldR3 = False
+                Case "hl3"
+                    boolHoldL3 = True
+                Case "nhl3"
+                    boolHoldL3 = False
 
 
-                    Case "ho", "holdo"
-                        boolHoldO = True
-                    Case "nho", "noholdo"
-                        boolHoldO = False
+                Case "hr1"
+                    boolHoldR1 = True
+                Case "nhr1"
+                    boolHoldR1 = False
 
-                    Case "hsq"
-                        boolHoldSq = True
-                    Case "nhsq"
-                        boolHoldSq = False
+                Case "hr2"
+                    boolHoldR2 = True
+                Case "nhr2"
+                    boolHoldR2 = False
 
-                    Case "htri"
-                        boolHoldTri = True
-                    Case "nhtri"
-                        boolHoldTri = False
-
-                    Case "hx"
-                        boolHoldX = True
-                    Case "nhx"
-                        boolHoldX = False
-
-                    Case "hdu"
-                        boolHoldDU = True
-                    Case "nhdu"
-                        boolHoldDU = False
-                    Case "hdd"
-                        boolHoldDD = True
-                    Case "nhdd"
-                        boolHoldDD = False
-                    Case "hdl"
-                        boolHoldDL = True
-                    Case "nhdl"
-                        boolHoldDL = False
-                    Case "hdr"
-                        boolHoldDR = True
-                    Case "nhdr"
-                        boolHoldDR = False
+                Case "hr3"
+                    boolHoldR3 = True
+                Case "nhr3"
+                    boolHoldR3 = False
 
 
+                Case "ho", "holdo"
+                    boolHoldO = True
+                Case "nho", "noholdo"
+                    boolHoldO = False
 
-                End Select
+                Case "hsq"
+                    boolHoldSq = True
+                Case "nhsq"
+                    boolHoldSq = False
 
+                Case "htri"
+                    boolHoldTri = True
+                Case "nhtri"
+                    boolHoldTri = False
 
+                Case "hx"
+                    boolHoldX = True
+                Case "nhx"
+                    boolHoldX = False
 
-                'If command has no duration, skip to next command.
-                If QueuedInput(0).time = 0 Then
-                    PopQ()
-                    press()
-                    Return
-                End If
-
-
-
-
-                'Combine held inputs with specified presses
-                If boolHoldL3 Then buttons = (buttons Or BTN_L3)
-                If boolHoldR3 Then buttons = (buttons Or BTN_R3)
-                If boolHoldOpt Then buttons = (buttons Or BTN_OPTIONS)
-
-                If boolHoldDU Then buttons = (buttons Or BTN_DPAD_UP)
-                If boolHoldDD Then buttons = (buttons Or BTN_DPAD_DOWN)
-                If boolHoldDL Then buttons = (buttons Or BTN_DPAD_LEFT)
-                If boolHoldDR Then buttons = (buttons Or BTN_DPAD_RIGHT)
-
-                If boolHoldL2 Then
-                    buttons = (buttons Or BTN_L2)
-                    QueuedInput(0).LTrigger = 1
-                End If
-                If boolHoldR2 Then
-                    buttons = (buttons Or BTN_R2)
-                    QueuedInput(0).RTrigger = 1
-                End If
-                If boolHoldL1 Then buttons = (buttons Or BTN_L1)
-                If boolHoldR1 Then buttons = (buttons Or BTN_R1)
-
-                If boolHoldTri Then buttons = (buttons Or BTN_TRIANGLE)
-                If boolHoldO Then buttons = (buttons Or BTN_O)
-                If boolHoldX Then buttons = (buttons Or BTN_X)
-                If boolHoldSq Then buttons = (buttons Or BTN_SQUARE)
-
-
-
-
-                'Process specified axises
-                LStickLR = QueuedInput(0).LStickLR
-                LStickUD = QueuedInput(0).LStickUD
-                RStickLR = QueuedInput(0).RstickLR
-                RStickUD = QueuedInput(0).RstickUD
-                LTrigger = QueuedInput(0).LTrigger
-                RTrigger = QueuedInput(0).RTrigger
-                user = QueuedInput(0).user
-                cmd = QueuedInput(0).cmd
-                'refTimerPress.Interval = QueuedInput(0).time
-                SyncLock presslock
-                    presstimer = QueuedInput(0).time
-                End SyncLock
-
-                PopQ()
-
-
-
-
-                'check for rolls during holdo
-                If boolHoldO Then
-                    If Strings.Left(cmd, 2) = "ro" Or (cmd = "o") Then
-                        outputChat("Evade failed due to HoldO being active.")
-                    End If
-                End If
-
-
-
-                'Output queue info and pass to overlay program
-                WBytes(hookmem + &H300,
-                       System.Text.Encoding.ASCII.GetBytes(user + Chr(0)))
-
-                Dim tmpcmd
-                SyncLock presslock
-                    tmpcmd = cmd & "-" & presstimer / 33
-                End SyncLock
-                
-
-            
-                If tmpcmd = "-1" Then tmpcmd = ""
-
-                WBytes(hookmem + &H310,
-                       System.Text.Encoding.ASCII.GetBytes(tmpcmd & Chr(0)))
-
-                For i = 0 To 9
-                    If (QueuedInput.Count) > i Then
-                        Dim str As String
-                        str = QueuedInput(i).cmd & "-" & Math.floor(QueuedInput(i).time / 33)
-
-                        'if command too long, shorten it
-                        If str.Length > 15 Then str = Strings.Left(str, 15)
-                        str = str & Chr(0)
-
-                        WBytes(hookmem + &H320 + i * &H10, System.Text.Encoding.ASCII.GetBytes(str))
-                    Else
-                        WBytes(hookmem + &H320 + i * &H10, {0})
-                    End If
-                Next
-
-                WInt32(hookmem + &H3C0, QueuedInput.Count)
-
-            End SyncLock
-
-            'TODO:  Pass tpad values as part of controller queued input
-            Select Case cmd
-                Case "tpl"
-                    WUInt8(hookmem + &H427, &H70)
-                    WUInt16(hookmem + &H42A, &H100)
-                    WUInt16(hookmem + &H42C, &H100)
-
-                Case "tpr"
-                    WUInt8(hookmem + &H427, &H70)
-                    WUInt16(hookmem + &H42A, &H400)
-                    WUInt16(hookmem + &H42C, &H100)
-
-                Case Else
-                    WUInt8(hookmem + &H427, &H80)
-                    WUInt16(hookmem + &H42A, 0)
-                    WUInt16(hookmem + &H42C, 0)
+                Case "hdu"
+                    boolHoldDU = True
+                Case "nhdu"
+                    boolHoldDU = False
+                Case "hdd"
+                    boolHoldDD = True
+                Case "nhdd"
+                    boolHoldDD = False
+                Case "hdl"
+                    boolHoldDL = True
+                Case "nhdl"
+                    boolHoldDL = False
+                Case "hdr"
+                    boolHoldDR = True
+                Case "nhdr"
+                    boolHoldDR = False
             End Select
 
-            Try
-                WUInt32(hookmem + &H40C,
-                        buttons)
 
-                WUInt8(hookmem + &H410,
-                       &H7FUI + LStickLR * &H7FUI)
-                WUInt8(hookmem + &H411,
-                       &H7FUI - LStickUD * &H7FUI)
-                WUInt8(hookmem + &H412,
-                       &H7FUI + RStickLR * &H7FUI)
-                WUInt8(hookmem + &H413,
-                       &H7FUI - RStickUD * &H7FUI)
 
-                WUInt8(hookmem + &H414,
-                       &HFFUI * LTrigger)
-                WUInt8(hookmem + &H415,
-                       &HFFUI * RTrigger)
-            Catch ex As Exception
-                Console.WriteLine("WUInt8 stick value overflow? " & ex.Message)
-            End Try
+            'If command has no duration, skip to next command.
+            If QueuedInput(0).time = 0 Then
+                PopQ()
+                press()
+                Return
+            End If
+
+
+
+
+            'Combine held inputs with specified presses
+            If boolHoldL3 Then buttons = (buttons Or BTN_L3)
+            If boolHoldR3 Then buttons = (buttons Or BTN_R3)
+            If boolHoldOpt Then buttons = (buttons Or BTN_OPTIONS)
+
+            If boolHoldDU Then buttons = (buttons Or BTN_DPAD_UP)
+            If boolHoldDD Then buttons = (buttons Or BTN_DPAD_DOWN)
+            If boolHoldDL Then buttons = (buttons Or BTN_DPAD_LEFT)
+            If boolHoldDR Then buttons = (buttons Or BTN_DPAD_RIGHT)
+
+            If boolHoldL2 Then
+                buttons = (buttons Or BTN_L2)
+                QueuedInput(0).LTrigger = 1
+            End If
+            If boolHoldR2 Then
+                buttons = (buttons Or BTN_R2)
+                QueuedInput(0).RTrigger = 1
+            End If
+            If boolHoldL1 Then buttons = (buttons Or BTN_L1)
+            If boolHoldR1 Then buttons = (buttons Or BTN_R1)
+
+            If boolHoldTri Then buttons = (buttons Or BTN_TRIANGLE)
+            If boolHoldO Then buttons = (buttons Or BTN_O)
+            If boolHoldX Then buttons = (buttons Or BTN_X)
+            If boolHoldSq Then buttons = (buttons Or BTN_SQUARE)
+
+
+
+
+            'Process specified axises
+            LStickLR = QueuedInput(0).LStickLR
+            LStickUD = QueuedInput(0).LStickUD
+            RStickLR = QueuedInput(0).RstickLR
+            RStickUD = QueuedInput(0).RstickUD
+            LTrigger = QueuedInput(0).LTrigger
+            RTrigger = QueuedInput(0).RTrigger
+            user = QueuedInput(0).user
+            cmd = QueuedInput(0).cmd
+            'refTimerPress.Interval = QueuedInput(0).time
+            SyncLock presslock
+                presstimer = QueuedInput(0).time
+            End SyncLock
+
+            PopQ()
+
+
+
+
+            'check for rolls during holdo
+            If boolHoldO Then
+                If Strings.Left(cmd, 2) = "ro" Or (cmd = "o") Then
+                    outputChat("Evade failed due to HoldO being active.")
+                End If
+            End If
+
+
+
+            'Output queue info and pass to overlay program
+            WBytes(hookmem + &H300,
+                   System.Text.Encoding.ASCII.GetBytes(user + Chr(0)))
+
+            Dim tmpcmd
+            SyncLock presslock
+                tmpcmd = cmd & "-" & presstimer / 33
+            End SyncLock
+
+
+
+            If tmpcmd = "-1" Then tmpcmd = ""
+
+            WBytes(hookmem + &H310,
+                   System.Text.Encoding.ASCII.GetBytes(tmpcmd & Chr(0)))
+
+            For i = 0 To 9
+                If (QueuedInput.Count) > i Then
+                    Dim str As String
+                    str = QueuedInput(i).cmd & "-" & Math.Floor(QueuedInput(i).time / 33)
+
+                    'if command too long, shorten it
+                    If str.Length > 15 Then str = Strings.Left(str, 15)
+                    str = str & Chr(0)
+
+                    WBytes(hookmem + &H320 + i * &H10, System.Text.Encoding.ASCII.GetBytes(str))
+                Else
+                    WBytes(hookmem + &H320 + i * &H10, {0})
+                End If
+            Next
+
+            WInt32(hookmem + &H3C0, QueuedInput.Count)
+
+        End SyncLock
+
+        'TODO:  Pass tpad values as part of controller queued input
+        Select Case cmd
+            Case "tpl"
+                WUInt8(hookmem + &H427, &H70)
+                WUInt16(hookmem + &H42A, &H100)
+                WUInt16(hookmem + &H42C, &H100)
+
+            Case "tpr"
+                WUInt8(hookmem + &H427, &H70)
+                WUInt16(hookmem + &H42A, &H400)
+                WUInt16(hookmem + &H42C, &H100)
+
+            Case Else
+                WUInt8(hookmem + &H427, &H80)
+                WUInt16(hookmem + &H42A, 0)
+                WUInt16(hookmem + &H42C, 0)
+        End Select
+
+        Try
+            WUInt32(hookmem + &H40C,
+                    buttons)
+
+            WUInt8(hookmem + &H410,
+                   &H7FUI + LStickLR * &H7FUI)
+            WUInt8(hookmem + &H411,
+                   &H7FUI - LStickUD * &H7FUI)
+            WUInt8(hookmem + &H412,
+                   &H7FUI + RStickLR * &H7FUI)
+            WUInt8(hookmem + &H413,
+                   &H7FUI - RStickUD * &H7FUI)
+
+            WUInt8(hookmem + &H414,
+                   &HFFUI * LTrigger)
+            WUInt8(hookmem + &H415,
+                   &HFFUI * RTrigger)
+        Catch ex As Exception
+            Console.WriteLine("WUInt8 stick value overflow? " & ex.Message)
+        End Try
 
 
         'Catch ex As Exception
-            'Console.WriteLine("press exception")
-       ' End Try
+        'Console.WriteLine("press exception")
+        ' End Try
     End Sub
-    Private Sub PushQ(ByRef buttons As Integer, RStickLR As Single, RStickUD As Single, LStickLR As Single, _
-                      LStickUD As Single, LTrigger As Single, RTrigger As Single, time As Integer, user As String, _
+    Private Sub PushQ(ByRef buttons As Integer, RStickLR As Single, RStickUD As Single, LStickLR As Single,
+                      LStickUD As Single, LTrigger As Single, RTrigger As Single, time As Integer, user As String,
                       cmd As String)
         SyncLock queuelock
-            QueuedInput.Add(New QdInput() With {.buttons = buttons, .RstickLR = RStickLR, .RstickUD = RStickUD, _
-                                                .LStickLR = LStickLR, .LStickUD = LStickUD, .LTrigger = LTrigger, _
+            QueuedInput.Add(New QdInput() With {.buttons = buttons, .RstickLR = RStickLR, .RstickUD = RStickUD,
+                                                .LStickLR = LStickLR, .LStickUD = LStickUD, .LTrigger = LTrigger,
                                                 .RTrigger = RTrigger, .time = time, .user = user, .cmd = cmd})
         End SyncLock
     End Sub
@@ -697,7 +625,7 @@ Public Class frmPS4Twitch
         End If
 
         Dim username As String
-        Dim cmd As string
+        Dim cmd As String
         username = txt.Split(":")(0).Trim(" ")
         cmd = txt.Split(":")(txt.Split(":").Count - 1).Trim(" ")
 
@@ -730,8 +658,8 @@ Public Class frmPS4Twitch
             Elems = wb.Document.GetElementsByTagName("button")
 
             'Button to post "should" always be the last one
-            txtChat.Text = Elems(Elems.count-1).InnerHtml
-            Elems(Elems.Count-1).InvokeMember("click")
+            txtChat.Text = Elems(Elems.Count - 1).InnerHtml
+            Elems(Elems.Count - 1).InvokeMember("click")
         Catch ex As Exception
             Console.WriteLine("refTimerPost exception")
             txtChat.Text = ex.Message & Environment.NewLine
@@ -740,22 +668,24 @@ Public Class frmPS4Twitch
         refTimerPost.Stop()
     End Sub
 
-    Private Sub ProcessCMD(entry() As String)
+    Private Sub ProcessCMD(user As String, role As String, cmd As String)
 
 
 
 
-        Dim tmpuser = entry(0)
-        Dim tmpcmd = entry(1)
+        Dim tmpuser = user
+        Dim tmpcmd = cmd
         Dim CMDmulti As Integer = 1
 
         'allow loop of entire string, with inner loops
 
-        if tmpcmd.contains("*") Then
-            CMDmulti = val(tmpcmd.Split("*")(1))
+
+
+        If tmpcmd.Contains("*") Then
+            CMDmulti = Val(tmpcmd.Split("*")(1))
             If CMDmulti > 20 Then CMDmulti = 20
             For i = 1 To CMDmulti
-                ProcessCMD({tmpuser, tmpcmd.Split("*")(0)})
+                ProcessCMD(tmpuser, role, tmpcmd.Split("*")(0))
             Next
             Return
         End If
@@ -763,9 +693,9 @@ Public Class frmPS4Twitch
 
         'Allow multiple strings per line, with a multiplier on each
         If tmpcmd.Contains("\") Then
-            tmpcmd = tmpcmd.Replace(" ","")
-            For each cmd In tmpcmd.Split("\")
-                ProcessCMD({tmpuser, cmd})
+            tmpcmd = tmpcmd.Replace(" ", "")
+            For Each part In tmpcmd.Split("\")
+                ProcessCMD(tmpuser, role, part)
             Next
             Return
         End If
@@ -779,20 +709,20 @@ Public Class frmPS4Twitch
             'Allow a maximum of 1000 loops
             If CMDmulti > 1000 Then CMDmulti = 1000
             For i = 0 To CMDmulti - 1
-                ProcessCMD({tmpuser, tmpcmd.Split("|")(0)})
+                ProcessCMD(tmpuser, role, tmpcmd.Split("|")(0))
             Next
             Return
         End If
 
         'Handle multi-command entries
         If tmpcmd.Contains(",") Then
-            For Each cmd In tmpcmd.Split(",")
+            For Each part In tmpcmd.Split(",")
                 'Prevent buffer overflow in RemotePlay memory
                 tmpuser = Strings.Left(tmpuser, 15)
-                cmd = cmd.Replace(" ", "")
-                cmd = Strings.Left(cmd, 15)
+                part = part.Replace(" ", "")
+                part = Strings.Left(part, 15)
 
-                ProcessCMD({tmpuser, cmd})
+                ProcessCMD(tmpuser, role, part)
             Next
             Return
         End If
@@ -822,23 +752,23 @@ Public Class frmPS4Twitch
 
         Select Case shorttmpcmd
             Case "tpr", "tpl"
-                If Not modlist.Contains(tmpuser) Then
+                If Not modlist.Contains(role) Then
                     outputChat("Personal items restricted to pre-approved users.")
                     Return
                 End If
             Case "options", "opt", "hopt"
-                If Not modlist.Contains(tmpuser) Then
+                If Not modlist.Contains(role) Then
                     'DS2 doesn't matter for options
                     'outputChat("Options menu restricted to pre-approved users.")
                     'Return
                 End If
             Case "pshome"
-                If not tmpuser = "wulf2k" Then
+                If Not tmpuser = "wulf2k" Then
                     outputChat("Uhh....  No.")
                     Return
                 End If
             Case "tri", "htri"
-                If Not modlist.Contains(tmpuser) and not trilist.Contains(tmpuser) Then
+                If Not modlist.Contains(role) Then
                     'outputChat("Consumable use restricted to pre-approved users.")
                     'Return
                 End If
@@ -856,7 +786,7 @@ Public Class frmPS4Twitch
                     QueuedInput.Clear()
                 End SyncLock
 
-                ProcessCMD({tmpuser, "nha"})
+                ProcessCMD(tmpuser, role, "nha")
 
                 SyncLock presslock
                     presstimer = 33
@@ -872,32 +802,16 @@ Public Class frmPS4Twitch
                         End If
                     Next
                 End SyncLock
-                ProcessCMD({tmpuser, "nha"})
+                ProcessCMD(tmpuser, role, "nha")
                 outputChat("All commands for " & tmpuser & " removed from queue.")
                 Return
-            Case "csx"
-                'ProcessCMD({tmpuser, "clearcmds"})
-                'ProcessCMD({tmpuser, "nha"})
-                'ProcessCMD({tmpuser, "sq"})
-                'ProcessCMD({tmpuser, "x"})
-                'ProcessCMD({tmpuser, "dl"})
-                'ProcessCMD({tmpuser, "x"})
-                'ProcessCMD({tmpuser, "x"})
-            Case "casx"
-                'ProcessCMD({tmpuser, "clearallcmds"})
-                'ProcessCMD({tmpuser, "nha"})
-                'ProcessCMD({tmpuser, "sq"})
-                'ProcessCMD({tmpuser, "x"})
-                'ProcessCMD({tmpuser, "dl"})
-                'ProcessCMD({tmpuser, "x"})
-                'ProcessCMD({tmpuser, "x"})
 
 
             Case "takecontrol"
-                If modlist.Contains(tmpuser) Then TakeControl
+                If modlist.Contains(role) Then TakeControl()
 
             Case "restorecontrol"
-                if modlist.Contains(tmpuser) Then RestoreControl
+                If modlist.Contains(role) Then RestoreControl()
         End Select
 
 
@@ -905,12 +819,15 @@ Public Class frmPS4Twitch
 
         'For direct analog stick inputs
         For i = 0 To CMDmulti - 1
-            execCMD(tmpuser, tmpcmd)
+            execCMD(tmpuser, role, tmpcmd)
         Next
     End Sub
 
 
-    Private Sub execCMD(user As String, cmd As String)
+    Private Sub execCMD(user As String, role As String, cmd As String)
+
+        'Console.WriteLine($"{user} = {role}: {cmd}")
+
 
         Dim buttons = 0
         Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}
@@ -1101,11 +1018,11 @@ Public Class frmPS4Twitch
 
             Case "tpl"
                 Controller(BTN_TOUCHPAD, 0, 0, 0, 0, 0, 0, 2, user, cmd)
-				Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd)
                 Return
             Case "tpr"
                 Controller(BTN_TOUCHPAD, 0, 0, 0, 0, 0, 0, 2, user, cmd)
-				Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd)
+                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd)
                 Return
 
             Case "pshome"
@@ -1219,7 +1136,7 @@ Public Class frmPS4Twitch
             Else
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
             End If
-            
+
 
         End If
 
@@ -1243,7 +1160,7 @@ Public Class frmPS4Twitch
         PushQ(buttons, RLR, RUD, LLR, LUD, LT, RT, hold, user, cmd)
     End Sub
 
-    Private Sub TakeControl
+    Private Sub TakeControl()
         If ctrlPtr Then
             hookmem = VirtualAllocEx(_targetProcessHandle, 0, &H8000, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
             Dim oldProtectionOut As UInteger
@@ -1263,14 +1180,14 @@ Public Class frmPS4Twitch
 
             a.Asm("jmp hookreturn")
 
-            WriteProcessMemory(_targetProcessHandle, hookmem, a.bytes, a.bytes.length, 0)
+            WriteProcessMemory(_targetProcessHandle, hookmem, a.bytes, a.bytes.Length, 0)
 
             Console.WriteLine("Hook: " & Hex(CInt(hookmem)))
 
-            a.Clear
+            a.Clear()
             a.AddVar("newmem", hookmem)
             a.pos = rpCtrlWrap + &H1BF670
-            a.asm("jmp newmem")
+            a.Asm("jmp newmem")
 
             WriteProcessMemory(_targetProcessHandle, rpCtrlWrap + &H1BF670, a.bytes, a.bytes.Length, 0)
 
@@ -1278,22 +1195,22 @@ Public Class frmPS4Twitch
 
             pressthread = New Thread(AddressOf TimerPress)
             pressthread.IsBackground = True
-            pressthread.Start
+            pressthread.Start()
 
 
 
 
         End If
     End Sub
-    Private Sub RestoreControl
+    Private Sub RestoreControl()
         'WBytes(rpCtrlWrap + &H1D0980, {&H8B, &H55, &HC, &H83, &HC4, &HC})  'Old ver
         WBytes(rpCtrlWrap + &H1BF670, {&H8B, &H55, &HC, &H83, &HC4, &HC})
 
         'pressthread.Abort
     End Sub
     Private Sub chkAttached_CheckedChanged(sender As Object, e As EventArgs) Handles chkAttached.CheckedChanged
-        If chkAttached.checked Then
-            chkattached.checked = ScanForProcess("PS4 Remote Play", True)
+        If chkAttached.Checked Then
+            chkAttached.Checked = ScanForProcess("PS4 Remote Play", True)
             findDllAddresses()
 
             'ctrlPtr = RIntPtr(rpCtrlWrap + &H2AC304)
@@ -1301,7 +1218,7 @@ Public Class frmPS4Twitch
             'If ctrlPtr Then ctrlPtr = RIntPtr(ctrlPtr + &H58)
             'If ctrlPtr Then ctrlPtr = RIntPtr(ctrlPtr)
             'Console.WriteLine("ctrlPtr: " & Hex(CINT(ctrlPtr)))
-            ctrlptr = 1
+            ctrlPtr = 1
 
             TakeControl()
         Else
@@ -1416,9 +1333,9 @@ Public Class frmPS4Twitch
         Return Str
     End Function
 
-    Public sub WInt8(Byval addr As IntPtr, val As SByte)
+    Public Sub WInt8(ByVal addr As IntPtr, val As SByte)
         WriteProcessMemory(_targetProcessHandle, addr, {val}, 1, Nothing)
-    End sub
+    End Sub
     Public Sub WInt16(ByVal addr As IntPtr, val As Int16)
         WriteProcessMemory(_targetProcessHandle, addr, BitConverter.GetBytes(val), 2, Nothing)
     End Sub
