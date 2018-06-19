@@ -780,15 +780,16 @@ Public Class frmPS4Twitch
 
 
         Select Case shorttmpcmd
-            Case "tpr"
+            Case "tpr", "tpl"
                 If Not modlist.Contains(tmpuser) Then
                     outputChat("Personal items restricted to pre-approved users.")
                     Return
                 End If
             Case "options", "opt", "hopt"
                 If Not modlist.Contains(tmpuser) Then
-                    outputChat("Options menu restricted to pre-approved users.")
-                    Return
+                    'DS2 doesn't matter for options
+                    'outputChat("Options menu restricted to pre-approved users.")
+                    'Return
                 End If
             Case "pshome"
                 If not tmpuser = "wulf2k" Then
