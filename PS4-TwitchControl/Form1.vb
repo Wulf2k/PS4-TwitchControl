@@ -342,6 +342,17 @@ Public Class frmPS4Twitch
                     mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
                     mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
 
+                Case "killoverlay"
+                    Shell("taskkill /f /im ps4-twitchhelper.exe")
+
+                Case "startoverlay"
+                    Shell("")
+                    Dim ProcessProperties As New ProcessStartInfo
+                    ProcessProperties.FileName = "C:\Users\Lane\Documents\GitHub\PS4-TwitchHelper\PS4-TwitchHelper\bin\Debug\PS4-TwitchHelper.exe"
+                    Dim myProcess As Process = Process.Start(ProcessProperties)
+
+
+
                 Case "nha"
                     boolHoldL1 = False
                     boolHoldL2 = False
@@ -868,7 +879,8 @@ Public Class frmPS4Twitch
                  "hdl", "nhdl",
                  "hdr", "nhdr",
                  "reconnect1", "reconnect2", "reconnect3",
-                 "hidecursor"
+                 "hidecursor",
+                 "killoverlay", "startoverlay"
 
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
 
