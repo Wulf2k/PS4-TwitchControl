@@ -47,7 +47,7 @@ Partial Class frmPS4Twitch
         Me.wb.Location = New System.Drawing.Point(12, 132)
         Me.wb.MinimumSize = New System.Drawing.Size(20, 20)
         Me.wb.Name = "wb"
-        Me.wb.ScriptErrorsSuppressed = True
+        Me.wb.ScriptErrorsSuppressed = true
         Me.wb.Size = New System.Drawing.Size(418, 448)
         Me.wb.TabIndex = 62
         '
@@ -68,7 +68,7 @@ Partial Class frmPS4Twitch
         Me.txtTwitchChat.Name = "txtTwitchChat"
         Me.txtTwitchChat.Size = New System.Drawing.Size(195, 20)
         Me.txtTwitchChat.TabIndex = 74
-        Me.txtTwitchChat.Text = "http://www.twitch.tv/wulf2k/chat"
+        Me.txtTwitchChat.Text = "#wulf2k"
         '
         'btnJoinTwitchChat
         '

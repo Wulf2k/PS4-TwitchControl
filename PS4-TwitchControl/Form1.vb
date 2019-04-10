@@ -121,6 +121,9 @@ Public Class frmPS4Twitch
 
     Private ctrlPtr As IntPtr
 
+    Dim conInfo As New IrcCon
+
+
     Public Function ScanForProcess(ByVal windowCaption As String, Optional automatic As Boolean = False) As Boolean
         Dim _allProcesses() As Process = Process.GetProcesses
         For Each pp As Process In _allProcesses
@@ -189,9 +192,20 @@ Public Class frmPS4Twitch
     End Sub
 
     Private Sub btnJoinTwitchChat_Click(sender As Object, e As EventArgs) Handles btnJoinTwitchChat.Click
-        SyncLock wblock
-            wb.Navigate(txtTwitchChat.Text)
-        End SyncLock
+        conInfo.server = "irc.chat.twitch.tv"
+        conInfo.port = 6667
+        conInfo.nick = "Wulf2kbot"
+        conInfo.user = "Wulf2kbot"
+        conInfo.pwd = My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Wulf", "TwitchOAuth", Nothing)
+        conInfo.realname = ""
+        conInfo.hostname = "wulf2k.ca"
+        
+
+
+        
+        'SyncLock wblock
+            'wb.Navigate(txtTwitchChat.Text)
+        'End SyncLock
 
         'Below reg setting must be set for webbrowser control to properly load chat
         'Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION
@@ -1390,7 +1404,15 @@ Public Class QdInput
     Public user As String
     Public cmd As string
 End Class
-
+Public Class IrcCon
+    Public server As String
+    Public port As Integer
+    Public nick As String
+    Public user As String
+    Public pwd As String
+    Public realname As String
+    Public hostname As String
+End Class
 
 
 
