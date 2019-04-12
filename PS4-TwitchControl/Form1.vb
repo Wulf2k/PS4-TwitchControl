@@ -22,7 +22,6 @@ Public Class frmPS4Twitch
 
 
     Private WithEvents updTimer As New System.Windows.Forms.Timer()
-    Private WithEvents refTimerPost As New System.Windows.Forms.Timer()
 
     Private Declare Sub mouse_event Lib "user32.dll" (ByVal dwFlags As Integer, ByVal dx As Integer, ByVal dy As Integer, ByVal cButtons As Integer, ByVal dwExtraInfo As IntPtr)
 
@@ -121,7 +120,7 @@ Public Class frmPS4Twitch
 
     Private ctrlPtr As IntPtr
 
-    Dim conInfo As New IrcCon
+    Dim IRC As New IrcCon
 
 
     Public Function ScanForProcess(ByVal windowCaption As String, Optional automatic As Boolean = False) As Boolean
@@ -192,13 +191,17 @@ Public Class frmPS4Twitch
     End Sub
 
     Private Sub btnJoinTwitchChat_Click(sender As Object, e As EventArgs) Handles btnJoinTwitchChat.Click
-        conInfo.server = "irc.chat.twitch.tv"
-        conInfo.port = 6667
-        conInfo.nick = "Wulf2kbot"
-        conInfo.user = "Wulf2kbot"
-        conInfo.pwd = My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Wulf", "TwitchOAuth", Nothing)
-        conInfo.realname = ""
-        conInfo.hostname = "wulf2k.ca"
+        IRC.server = "irc.chat.twitch.tv"
+        IRC.port = 6667
+        IRC.nick = "Wulf2kbot"
+        IRC.user = "Wulf2kbot"
+        IRC.pwd = My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Wulf", "TwitchOAuth", Nothing)
+        IRC.realname = ""
+        IRC.hostname = "wulf2k.ca"
+
+        IRC.Connect
+        IRC.Join(txtTwitchChat.Text)
+
         
 
 
@@ -227,47 +230,45 @@ Public Class frmPS4Twitch
     End Sub
 
     Private Sub updTimer_Tick() Handles updTimer.Tick
-        Dim Elems As HtmlElementCollection
-        Dim chatMessages As New List(Of HtmlElement)
 
-        Elems = wb.Document.GetElementsByTagName("div")
-        For Each elem In Elems
-            If elem.GetAttribute("className") = "chat-line__message" Then
-                chatMessages.Add(elem)
+        If txtChat.Lines.count > 20 Then
+            txtChat.Lines = txtChat.Lines.Skip(1).Take(txtChat.Lines.Length - 1).ToArray()
+        End If
+
+
+        Dim msg() As String
+        msg = IRC.Read
+
+        Dim user
+        Dim role = ""
+        Dim cmd
+
+
+
+        For each line In msg
+            line = line.TrimEnd
+            If line.Length < 1000 Then
+                txtChat.AppendText($"-> {line}")
+                txtChat.AppendText(Environment.NewLine)
             End If
-        Next
+            
+            If line.IndexOf("PING") = 0 Then
+                IRC.Send("PONG")
+                txtChat.AppendText($"<- PONG")
+                txtChat.AppendText(Environment.NewLine)
+            End If
 
+            If line.IndexOf("PRIVMSG") > -1 Then
+                user = line.Split("!")(0)
+                user = user.split(":")(1)
+                
+                cmd = line.Split(":")(2)
 
-        If chatMessages.Count > 0 Then
-            If Not (chatMessages(0).InnerHtml = firstMessage And chatMessages(chatMessages.Count - 1).InnerHtml = lastMessage) Then
-                Dim elapsedMessages = 0
-
-
-                firstMessage = chatMessages(0).InnerHtml
-                lastMessage = chatMessages(chatMessages.Count - 1).InnerHtml
-
-                Dim str, user, cmd As String
-                Dim nameIdx, nameLen, cmdIdx As Integer
-
-                str = chatMessages(chatMessages.Count - 1).InnerHtml
-
-                nameIdx = str.IndexOf("data-a-user=") + 14
-                nameLen = (str.IndexOf("</span></span></button>") - nameIdx - 1) / 2
-                user = Strings.Mid(str, nameIdx, nameLen).ToLower
-
-                cmdIdx = str.IndexOf("chat-message-text") + 20
-                cmd = Strings.Mid(str, cmdIdx, str.Length - cmdIdx - 6).ToLower
-
-                Dim role As String = "nothing"
-                If str.IndexOf("<span><img class=""chat-badge"" aria-label=""Moderator badge""") = 0 Then
-                    role = "moderator"
-                End If
-                If str.IndexOf("<span><img class=""chat-badge"" aria-label=""Broadcaster badge""") = 0 Then
-                    role = "broadcaster"
-                End If
                 ProcessCMD(user, role, cmd)
             End If
-        End If
+
+        Next
+
     End Sub
     Private Sub TimerPress()
         Dim timer = 33
@@ -661,37 +662,10 @@ Public Class frmPS4Twitch
         Return {username, cmd}
     End Function
     Private Sub outputChat(ByVal txt As String)
-        'Dim Elems As HtmlElementCollection
-        'Dim elem As HtmlElement
-        'Try
-        'Elems = wb.Document.GetElementsByTagName("textarea")
-        'elem = Elems(0)
-        'elem.InnerText = txt
-        'Catch ex As Exception
-        'Console.WriteLine("outputChat exception")
-        'txtChat.Text += ex.Message & Environment.NewLine
-        'End Try
 
-        'r efTimerPost.Interval = 250
-        'refTimerPost.Enabled = True
-        'refTimerPost.Start()
+
     End Sub
-    Private Sub refTimerPost_Tick() Handles refTimerPost.Tick
-        Dim Elems As HtmlElementCollection
 
-        Try
-            Elems = wb.Document.GetElementsByTagName("button")
-
-            'Button to post "should" always be the last one
-            txtChat.Text = Elems(Elems.Count - 1).InnerHtml
-            Elems(Elems.Count - 1).InvokeMember("click")
-        Catch ex As Exception
-            Console.WriteLine("refTimerPost exception")
-            txtChat.Text = ex.Message & Environment.NewLine
-        End Try
-
-        refTimerPost.Stop()
-    End Sub
 
     Private Sub ProcessCMD(user As String, role As String, cmd As String)
 
@@ -853,7 +827,6 @@ Public Class frmPS4Twitch
 
         'Console.WriteLine($"{user} = {role}: {cmd}")
 
-
         Dim buttons = 0
         Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}
         Dim halfhold As Boolean = False
@@ -872,7 +845,7 @@ Public Class frmPS4Twitch
             duration = 0
         End If
 
-
+        
 
         Select Case cmd
             'Hold toggles
@@ -1404,6 +1377,8 @@ Public Class QdInput
     Public user As String
     Public cmd As string
 End Class
+
+
 Public Class IrcCon
     Public server As String
     Public port As Integer
@@ -1412,6 +1387,47 @@ Public Class IrcCon
     Public pwd As String
     Public realname As String
     Public hostname As String
+
+    Private client = New Net.Sockets.TcpClient
+    Private netstream As Net.Sockets.NetworkStream
+    Private writer As IO.StreamWriter
+    Private active As Boolean
+
+    Public Sub Connect()
+        client.connect(server, port)
+        netstream = client.GetStream()
+        writer = New IO.StreamWriter(netstream, Text.Encoding.ASCII)
+        active = True
+
+        Send($"PASS {pwd}")
+        Send($"NICK {nick}")
+        Send($"USER {user}")
+    End Sub
+
+    Public Sub Join(chan As String)
+        
+        Send($"JOIN {chan}")
+
+    End Sub
+
+    Public Sub Send(str As String)
+        writer.WriteLine(str)
+        writer.Flush
+    End Sub
+    Public Function Read() As String()
+
+        If (netstream.DataAvailable) Then
+            Dim b(client.ReceiveBufferSize) As Byte
+            netstream.Read(b, 0, client.ReceiveBufferSize)
+            Return System.Text.Encoding.ASCII.GetString(b).Split(Chr(&HA))
+        End If
+
+        Return {}
+    End Function
+
+    'Private function processLine
+
+
 End Class
 
 

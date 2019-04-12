@@ -23,7 +23,6 @@ Partial Class frmPS4Twitch
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.chkAttached = New System.Windows.Forms.CheckBox()
-        Me.wb = New System.Windows.Forms.WebBrowser()
         Me.txtChat = New System.Windows.Forms.TextBox()
         Me.txtTwitchChat = New System.Windows.Forms.TextBox()
         Me.btnJoinTwitchChat = New System.Windows.Forms.Button()
@@ -32,47 +31,36 @@ Partial Class frmPS4Twitch
         'chkAttached
         '
         Me.chkAttached.AutoSize = true
-        Me.chkAttached.Location = New System.Drawing.Point(235, 100)
+        Me.chkAttached.Location = New System.Drawing.Point(12, 67)
         Me.chkAttached.Name = "chkAttached"
         Me.chkAttached.Size = New System.Drawing.Size(122, 17)
         Me.chkAttached.TabIndex = 66
         Me.chkAttached.Text = "Attached to Process"
         Me.chkAttached.UseVisualStyleBackColor = true
         '
-        'wb
-        '
-        Me.wb.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom)  _
-            Or System.Windows.Forms.AnchorStyles.Left)  _
-            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
-        Me.wb.Location = New System.Drawing.Point(12, 132)
-        Me.wb.MinimumSize = New System.Drawing.Size(20, 20)
-        Me.wb.Name = "wb"
-        Me.wb.ScriptErrorsSuppressed = true
-        Me.wb.Size = New System.Drawing.Size(418, 448)
-        Me.wb.TabIndex = 62
-        '
         'txtChat
         '
-        Me.txtChat.Location = New System.Drawing.Point(12, 31)
+        Me.txtChat.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom)  _
+            Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
+        Me.txtChat.Location = New System.Drawing.Point(12, 90)
         Me.txtChat.Multiline = true
         Me.txtChat.Name = "txtChat"
         Me.txtChat.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txtChat.Size = New System.Drawing.Size(217, 86)
+        Me.txtChat.Size = New System.Drawing.Size(422, 316)
         Me.txtChat.TabIndex = 61
         '
         'txtTwitchChat
         '
-        Me.txtTwitchChat.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
-            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
-        Me.txtTwitchChat.Location = New System.Drawing.Point(235, 31)
+        Me.txtTwitchChat.Location = New System.Drawing.Point(12, 11)
         Me.txtTwitchChat.Name = "txtTwitchChat"
-        Me.txtTwitchChat.Size = New System.Drawing.Size(195, 20)
+        Me.txtTwitchChat.Size = New System.Drawing.Size(122, 20)
         Me.txtTwitchChat.TabIndex = 74
         Me.txtTwitchChat.Text = "#wulf2k"
         '
         'btnJoinTwitchChat
         '
-        Me.btnJoinTwitchChat.Location = New System.Drawing.Point(235, 58)
+        Me.btnJoinTwitchChat.Location = New System.Drawing.Point(12, 38)
         Me.btnJoinTwitchChat.Name = "btnJoinTwitchChat"
         Me.btnJoinTwitchChat.Size = New System.Drawing.Size(122, 23)
         Me.btnJoinTwitchChat.TabIndex = 75
@@ -83,11 +71,10 @@ Partial Class frmPS4Twitch
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6!, 13!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(445, 589)
+        Me.ClientSize = New System.Drawing.Size(446, 418)
         Me.Controls.Add(Me.btnJoinTwitchChat)
         Me.Controls.Add(Me.txtTwitchChat)
         Me.Controls.Add(Me.chkAttached)
-        Me.Controls.Add(Me.wb)
         Me.Controls.Add(Me.txtChat)
         Me.Name = "frmPS4Twitch"
         Me.Text = "PS4 Remote Play Twitch Control"
@@ -96,7 +83,6 @@ Partial Class frmPS4Twitch
 
 End Sub
     Friend WithEvents chkAttached As CheckBox
-    Friend WithEvents wb As WebBrowser
     Friend WithEvents txtChat As TextBox
     Friend WithEvents txtTwitchChat As TextBox
     Friend WithEvents btnJoinTwitchChat As Button
