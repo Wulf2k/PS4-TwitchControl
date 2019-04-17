@@ -28,14 +28,28 @@ Public Class frmPS4Twitch
     Const MOUSEEVENTF_LEFTDOWN As Integer = 2
     Const MOUSEEVENTF_LEFTUP As Integer = 4
 
+    Public Structure RECT
+        Public Left, Top, Right, Bottom As Integer
+        Public Function ToRectangle() As Rectangle
+            Return New Rectangle(Left, Top, Right - Left, Bottom - Top)
+        End Function
+    End Structure
+    
+    Private Declare Function CloseHandle Lib "kernel32.dll" (ByVal hObject As IntPtr) As Boolean
+    Private Declare Function CreateRemoteThread Lib "kernel32" (ByVal hProcess As Integer, ByVal lpThreadAttributes As Integer, ByVal dwStackSize As Integer, ByVal lpStartAddress As Integer, ByVal lpParameter As Integer, ByVal dwCreationFlags As Integer, ByRef lpThreadId As Integer) As Integer
+    Private Declare Function FindWindowA Lib "user32.dll" (ByVal lpClassName As String, ByVal lpWindowName As String) As IntPtr
+    Private Declare Function FindWindowExA Lib "user32.dll" (ByVal hWnd1 As Integer, ByVal hWnd2 As Integer, ByVal lpsz1 As String, ByVal lpsz2 As String) As Integer
+    Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As IntPtr, ByRef lpRect As RECT) As Long
     Private Declare Function OpenProcess Lib "kernel32.dll" (ByVal dwDesiredAcess As UInt32, ByVal bInheritHandle As Boolean, ByVal dwProcessId As Int32) As IntPtr
     Private Declare Function ReadProcessMemory Lib "kernel32" (ByVal hProcess As IntPtr, ByVal lpBaseAddress As IntPtr, ByVal lpBuffer() As Byte, ByVal iSize As Integer, ByRef lpNumberOfBytesRead As Integer) As Boolean
-    Private Declare Function WriteProcessMemory Lib "kernel32" (ByVal hProcess As IntPtr, ByVal lpBaseAddress As IntPtr, ByVal lpBuffer() As Byte, ByVal iSize As Integer, ByVal lpNumberOfBytesWritten As Integer) As Boolean
-    Private Declare Function CloseHandle Lib "kernel32.dll" (ByVal hObject As IntPtr) As Boolean
+    Private Declare Function SetForegroundWindow Lib "user32.dll" (ByVal hwnd As Integer) As Integer
     Private Declare Function VirtualAllocEx Lib "kernel32.dll" (ByVal hProcess As IntPtr, ByVal lpAddress As IntPtr, ByVal dwSize As IntPtr, ByVal flAllocationType As Integer, ByVal flProtect As Integer) As IntPtr
     Private Declare Function VirtualProtectEx Lib "kernel32.dll" (hProcess As IntPtr, lpAddress As IntPtr, ByVal lpSize As IntPtr, ByVal dwNewProtect As UInt32, ByRef dwOldProtect As UInt32) As Boolean
     Private Declare Function VirtualFreeEx Lib "kernel32.dll" (hProcess As IntPtr, lpAddress As IntPtr, ByVal dwSize As Integer, ByVal dwFreeType As Integer) As Boolean
-    Private Declare Function CreateRemoteThread Lib "kernel32" (ByVal hProcess As Integer, ByVal lpThreadAttributes As Integer, ByVal dwStackSize As Integer, ByVal lpStartAddress As Integer, ByVal lpParameter As Integer, ByVal dwCreationFlags As Integer, ByRef lpThreadId As Integer) As Integer
+    Private Declare Function WriteProcessMemory Lib "kernel32" (ByVal hProcess As IntPtr, ByVal lpBaseAddress As IntPtr, ByVal lpBuffer() As Byte, ByVal iSize As Integer, ByVal lpNumberOfBytesWritten As Integer) As Boolean
+  
+
+
 
     Public Const PROCESS_VM_READ = &H10
     Public Const TH32CS_SNAPPROCESS = &H2
@@ -123,7 +137,9 @@ Public Class frmPS4Twitch
     Dim IRC As New IrcCon
 
 
+
     Public Function ScanForProcess(ByVal windowCaption As String, Optional automatic As Boolean = False) As Boolean
+        
         Dim _allProcesses() As Process = Process.GetProcesses
         For Each pp As Process In _allProcesses
             If pp.MainWindowTitle.ToLower.Equals(windowCaption.ToLower) Then
@@ -148,6 +164,7 @@ Public Class frmPS4Twitch
             Return False
         Else
             'if we get here, all connected and ready to use ReadProcessMemory()
+
             Return True
             'MessageBox.Show("OpenProcess() OK")
         End If
@@ -247,6 +264,10 @@ Public Class frmPS4Twitch
 
         For each line In msg
             line = line.TrimEnd
+            'line = line.ToLower
+            'fuck it, user lowercase
+
+
             If line.Length < 1000 Then
                 txtChat.AppendText($"-> {line}")
                 txtChat.AppendText(Environment.NewLine)
@@ -254,7 +275,7 @@ Public Class frmPS4Twitch
             
             If line.IndexOf("PING") = 0 Then
                 IRC.Send("PONG")
-                txtChat.AppendText($"<- PONG")
+                txtChat.AppendText($"<- PONG :tmi.twitch.tv")
                 txtChat.AppendText(Environment.NewLine)
             End If
 
@@ -323,48 +344,79 @@ Public Class frmPS4Twitch
             Select Case QueuedInput(0).cmd
 
                 Case "reconnect1"
-                    Dim x = 1000
-                    Dim y = 500
 
+                    Dim hndRpWindow As IntPtr
+                    Dim hndButtOk As IntPtr
+                    hndRpWindow = FindWindowA(vbNullString, "PS4 Remote Play")
+                    hndButtOk = FindWindowExA(hndRpWindow, 0, "WindowsForms10.BUTTON.app.0.141b42a_r9_ad1", "OK")
+                    SetForegroundWindow(hndButtOk)
+
+
+                    Dim pos As RECT
+                    GetWindowRect(hndButtOk, pos)
+
+                    Dim x = pos.Left + 10
+                    Dim y = pos.Top + 10
 
                     Cursor.Position = New Point(x, y)
                     mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
                     mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
+
 
                 Case "reconnect2"
-                    Dim x = 1100
-                    Dim y = 600
+                    Dim hndRpWindow As IntPtr
+                    Dim hndButtOk As IntPtr
 
+                    hndRpWindow = FindWindowA(vbNullString, "PS4 Remote Play")
+                    hndButtOk = FindWindowExA(hndRpWindow, 0, "WindowsForms10.STATIC.app.0.141b42a_r9_ad1", vbNullString)
+                    Console.WriteLine(hndButtOk)
+
+                    SetForegroundWindow(hndButtOk)
+
+                    Dim pos As RECT
+                    GetWindowRect(hndButtOk, pos)
+
+                    Dim x = pos.Left + 620
+                    Dim y = pos.Top + 320
 
                     Cursor.Position = New Point(x, y)
                     mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
                     mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
+
 
                 Case "reconnect3"
-                    Dim x = 1550
-                    Dim y = 820
+                    Dim hndRpWindow As IntPtr
+                    hndRpWindow = FindWindowA(vbNullString, "PS4 Remote Play")
+                    SetForegroundWindow(hndRpWindow)
 
+                    Dim pos As RECT
+                    GetWindowRect(hndRpWindow, pos)
+
+                    Dim x = pos.Right - 50
+                    Dim y = pos.Bottom - 50
 
                     Cursor.Position = New Point(x, y)
+                    Thread.Sleep(500)
                     mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
                     mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
+                    Cursor.Position = New Point(-50, -50)
 
                 Case "hidecursor"
                     Dim x = 1600
-                    Dim y = 100
+                    Dim y = 1
 
                     Cursor.Position = New Point(x, y)
-                    mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
-                    mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
+                    'mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
+                    'mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
 
                 Case "killoverlay"
                     Shell("taskkill /f /im ps4-twitchhelper.exe")
 
                 Case "startoverlay"
-                    Shell("")
+                    'Shell("")
                     Dim ProcessProperties As New ProcessStartInfo
                     ProcessProperties.FileName = "C:\Users\Lane\Documents\GitHub\PS4-TwitchHelper\PS4-TwitchHelper\bin\Debug\PS4-TwitchHelper.exe"
-                    Dim myProcess As Process = Process.Start(ProcessProperties)
+                    'Dim myProcess As Process = Process.Start(ProcessProperties)
 
 
 
@@ -1210,7 +1262,11 @@ Public Class frmPS4Twitch
     End Sub
     Private Sub chkAttached_CheckedChanged(sender As Object, e As EventArgs) Handles chkAttached.CheckedChanged
         If chkAttached.Checked Then
-            chkAttached.Checked = ScanForProcess("PS4 Remote Play", True)
+            Dim found As Boolean
+
+            found = ScanForProcess("PS4 Remote Play", True)
+
+            chkAttached.Checked = found
             findDllAddresses()
 
             'ctrlPtr = RIntPtr(rpCtrlWrap + &H2AC304)
