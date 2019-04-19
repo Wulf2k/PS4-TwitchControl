@@ -814,7 +814,7 @@ Public Class frmPS4Twitch
                     'Return
                 End If
             Case "pshome"
-                If Not tmpuser = "wulf2k" Then
+                If Not (tmpuser = "wulf2k" or tmpuser = "seannybee") Then
                     outputChat("Uhh....  No.")
                     Return
                 End If
