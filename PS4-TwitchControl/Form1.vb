@@ -757,6 +757,9 @@ Public Class frmPS4Twitch
         If tmpcmd.Contains("|") Then
             CMDmulti = Val(tmpcmd.Split("|")(1))
 
+            'Fine, roll over ints, see if I care.
+            If CMDmulti < 0 Then CMDmulti = 0
+
             'Allow a maximum of 1000 loops
             If CMDmulti > 1000 Then CMDmulti = 1000
             For i = 0 To CMDmulti - 1
@@ -778,7 +781,8 @@ Public Class frmPS4Twitch
             Return
         End If
 
-
+        tmpcmd = tmpcmd.ToLower
+        tmpcmd = tmpcmd.Replace(" ", "")
 
 
         'Handle command multipliers
@@ -802,19 +806,19 @@ Public Class frmPS4Twitch
 
 
         Select Case shorttmpcmd
-            Case "tpr", "tpl"
-                If Not modlist.Contains(role) Then
-                    outputChat("Personal items restricted to pre-approved users.")
-                    Return
-                End If
+            'Case "tpr", "tpl"      'Free for all on the tpwhatevs
+            '   If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb") Then
+            'outputChat("Personal items restricted to pre-approved users.")
+            '       Return
+            'End If
             Case "options", "opt", "hopt"
                 If Not modlist.Contains(role) Then
                     'DS2 doesn't matter for options
                     'outputChat("Options menu restricted to pre-approved users.")
                     'Return
                 End If
-            Case "pshome"   
-                If Not (tmpuser = "wulf2k" or tmpuser = "seannybee") Then
+            Case "pshome"
+                If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb" Or tmpuser = "tompiet1") Then
                     outputChat("Uhh....  No.")
                     Return
                 End If
