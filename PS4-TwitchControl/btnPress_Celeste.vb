@@ -1,7 +1,7 @@
 ﻿Imports System.Threading
 
 Partial Public Class frmPS4Twitch
-    Private Sub btnPress_KingsField()
+    Private Sub btnPress_Celeste()
 
         Dim buttons = 0
         Dim LStickLR As Single = 0
@@ -261,15 +261,6 @@ Partial Public Class frmPS4Twitch
 
 
 
-            'check for rolls during holdo
-            If boolHoldO Then
-                If Strings.Left(cmd, 2) = "ro" Or (cmd = "o") Then
-                    outputChat("Evade failed due to HoldO being active.")
-                End If
-            End If
-
-
-
             'Output queue info and pass to overlay program
             WBytes(hookmem + &H300,
                    System.Text.Encoding.ASCII.GetBytes(user + Chr(0)))
@@ -349,7 +340,8 @@ Partial Public Class frmPS4Twitch
         'Console.WriteLine("press exception")
         ' End Try
     End Sub
-    Private Sub execCMD_KingsField(user As String, role As String, cmd As String)
+
+    Private Sub execCMD_Celeste(user As String, role As String, cmd As String)
         'Console.WriteLine($"{user} = {role}: {cmd}")
 
         Dim buttons = 0
@@ -576,11 +568,11 @@ Partial Public Class frmPS4Twitch
 
         'parse 'walks', 'looks', 'analog's, and 'rolls'
         If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
-            (Strings.Left(cmd, 2) = "ro") Then
+            (Strings.Left(cmd, 2) = "j") Then
 
             Dim axispad = 0
             Dim cmdpad = 0
-            Dim roll As Boolean = False
+            Dim jump As Boolean = False
 
 
             'Set default walk duration if none specified
@@ -597,10 +589,10 @@ Partial Public Class frmPS4Twitch
 
 
             'If 'roll', then roll params will be offset 1 character
-            If Strings.Left(cmd, 2) = "ro" Then
+            If Strings.Left(cmd, 2) = "j" Then
                 cmdpad = 1
-                If duration = 0 Then duration = 20
-                roll = True
+                If duration = 0 Then duration = 6
+                jump = True
             End If
 
             'If 'look', then modify right stick's axises
@@ -654,9 +646,8 @@ Partial Public Class frmPS4Twitch
             'Remove cmd padding
             cmd = cmd.Replace(".", "")
 
-            If roll Then
-                Controller(BTN_O, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
-                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(-)")
+            If jump Then
+                Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(!)")
             Else
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
             End If

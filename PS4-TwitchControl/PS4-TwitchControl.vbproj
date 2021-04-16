@@ -74,6 +74,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="asm.vb" />
+    <Compile Include="btnPress_Celeste.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="btnPress_KingsField.vb">
       <SubType>Form</SubType>
     </Compile>
