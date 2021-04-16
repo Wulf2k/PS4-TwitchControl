@@ -567,12 +567,13 @@ Partial Public Class frmPS4Twitch
 
 
         'parse 'walks', 'looks', 'analog's, and 'rolls'
-        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
-            (Strings.Left(cmd, 2) = "j") Then
+        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a") Or (cmd(0) = "j")) Or
+            (Strings.Left(cmd, 2) = "da") Then
 
             Dim axispad = 0
             Dim cmdpad = 0
             Dim jump As Boolean = False
+            Dim dash As Boolean = False
 
 
             'Set default walk duration if none specified
@@ -588,9 +589,14 @@ Partial Public Class frmPS4Twitch
             End If
 
 
-            'If 'roll', then roll params will be offset 1 character
-            If Strings.Left(cmd, 2) = "j" Then
+
+            If Strings.Left(cmd, 2) = "da" Then
                 cmdpad = 1
+                If duration = 0 Then duration = 6
+                dash = True
+            End If
+
+            If cmd(0) = "j" Then
                 If duration = 0 Then duration = 6
                 jump = True
             End If
@@ -648,6 +654,8 @@ Partial Public Class frmPS4Twitch
 
             If jump Then
                 Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(!)")
+            ElseIf dash Then
+                Controller(BTN_SQUARE, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(!)")
             Else
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
             End If
