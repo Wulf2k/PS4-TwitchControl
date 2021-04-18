@@ -1,4 +1,7 @@
 ﻿Imports System.Threading
+Imports Nefarius.ViGEm.Client
+Imports Nefarius.ViGEm.Client.Targets
+Imports Nefarius.ViGEm.Client.Targets.DualShock4
 
 Partial Public Class frmPS4Twitch
 
@@ -24,6 +27,12 @@ Partial Public Class frmPS4Twitch
 
     'TODO:  Change cmd portion of each entry to blank, then process every message's command
     'TODO:  This is to handle multiple new messages in a single check
+
+    Dim client As New ViGEmClient()
+
+    Dim DS4ctrl As IDualShock4Controller
+    Dim XBctrl As IXbox360Controller
+
 
 
     Dim a As New asm
@@ -222,6 +231,9 @@ Partial Public Class frmPS4Twitch
         'Control which chat badges can execute mod commands
         modlist.Add("moderator")
         modlist.Add("broadcaster")
+
+
+
 
     End Sub
 
@@ -568,7 +580,20 @@ Partial Public Class frmPS4Twitch
     End Sub
 
     Private Sub TakeControl()
+
+
+        DS4ctrl = client.CreateDualShock4Controller()
+        XBctrl = client.CreateXbox360Controller()
+
+        DS4ctrl.Connect()
+        XBctrl.Connect()
+
+        'ctrl.SetButtonState(DualShock4Button.Circle, True)
+        'ctrl.SetAxisValue(DualShock4Axis.LeftThumbX, 40)
+
+
         If ctrlPtr Then
+            'If False Then
             hookmem = VirtualAllocEx(_targetProcessHandle, 0, &H8000, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
             Dim oldProtectionOut As UInteger
             VirtualProtectEx(_targetProcessHandle, hookmem, &H8000, PAGE_EXECUTE_READWRITE, oldProtectionOut)
@@ -628,11 +653,8 @@ Partial Public Class frmPS4Twitch
             chkAttached.Checked = found
             findDllAddresses()
 
-            'ctrlPtr = RIntPtr(rpCtrlWrap + &H2AC304)
-            'If ctrlPtr Then ctrlPtr = RIntPtr(ctrlPtr + &H5C)
-            'If ctrlPtr Then ctrlPtr = RIntPtr(ctrlPtr + &H58)
-            'If ctrlPtr Then ctrlPtr = RIntPtr(ctrlPtr)
-            'Console.WriteLine("ctrlPtr: " & Hex(CINT(ctrlPtr)))
+
+
             ctrlPtr = 1
 
             TakeControl()

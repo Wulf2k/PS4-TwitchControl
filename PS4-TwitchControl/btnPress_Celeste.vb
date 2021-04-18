@@ -1,4 +1,6 @@
 ﻿Imports System.Threading
+Imports Nefarius.ViGEm.Client.Targets.DualShock4
+Imports Nefarius.ViGEm.Client.Targets.Xbox360
 
 Partial Public Class frmPS4Twitch
     Private Sub btnPress_Celeste()
@@ -299,38 +301,93 @@ Partial Public Class frmPS4Twitch
         'TODO:  Pass tpad values as part of controller queued input
         Select Case cmd
             Case "tpl"
-                WUInt8(hookmem + &H427, &H70)
-                WUInt16(hookmem + &H42A, &H100)
-                WUInt16(hookmem + &H42C, &H100)
+                'WUInt8(hookmem + &H427, &H70)
+                'WUInt16(hookmem + &H42A, &H100)
+                'WUInt16(hookmem + &H42C, &H100)
 
             Case "tpr"
-                WUInt8(hookmem + &H427, &H70)
-                WUInt16(hookmem + &H42A, &H400)
-                WUInt16(hookmem + &H42C, &H100)
+                'WUInt8(hookmem + &H427, &H70)
+                'WUInt16(hookmem + &H42A, &H400)
+                'WUInt16(hookmem + &H42C, &H100)
 
             Case Else
-                WUInt8(hookmem + &H427, &H80)
-                WUInt16(hookmem + &H42A, 0)
-                WUInt16(hookmem + &H42C, 0)
+                'WUInt8(hookmem + &H427, &H80)
+                'WUInt16(hookmem + &H42A, 0)
+                'WUInt16(hookmem + &H42C, 0)
         End Select
 
         Try
-            WUInt32(hookmem + &H40C,
-                    buttons)
+            'WUInt32(hookmem + &H40C, buttons)
 
-            WUInt8(hookmem + &H410,
-                   &H7FUI + LStickLR * &H7FUI)
-            WUInt8(hookmem + &H411,
-                   &H7FUI - LStickUD * &H7FUI)
-            WUInt8(hookmem + &H412,
-                   &H7FUI + RStickLR * &H7FUI)
-            WUInt8(hookmem + &H413,
-                   &H7FUI - RStickUD * &H7FUI)
 
-            WUInt8(hookmem + &H414,
-                   &HFFUI * LTrigger)
-            WUInt8(hookmem + &H415,
-                   &HFFUI * RTrigger)
+
+
+            'DS4ctrl.SetButtonState(DualShock4Button.Circle, buttons And BTN_O)
+            'DS4ctrl.SetButtonState(DualShock4Button.Cross, buttons And BTN_X)
+            'DS4ctrl.SetButtonState(DualShock4Button.Square, buttons And BTN_SQUARE)
+            'DS4ctrl.SetButtonState(DualShock4Button.Triangle, buttons And BTN_TRIANGLE)
+            'DS4ctrl.SetButtonState(DualShock4Button.Share, buttons And BTN_SHARE)
+            'DS4ctrl.SetButtonState(DualShock4Button.Options, buttons And BTN_OPTIONS)
+            'DS4ctrl.SetButtonState(DualShock4Button.ShoulderLeft, buttons And BTN_L1)
+            'DS4ctrl.SetButtonState(DualShock4Button.TriggerLeft, buttons And BTN_L2)
+            'DS4ctrl.SetButtonState(DualShock4Button.ThumbLeft, buttons And BTN_L3)
+            'DS4ctrl.SetButtonState(DualShock4Button.ShoulderRight, buttons And BTN_R1)
+            'DS4ctrl.SetButtonState(DualShock4Button.TriggerRight, buttons And BTN_R2)
+            'DS4ctrl.SetButtonState(DualShock4Button.ThumbRight, buttons And BTN_R3)
+
+            'DS4ctrl.SetAxisValue(DualShock4Axis.LeftThumbX, &H7FUI + LStickLR * &H7FUI)
+            'DS4ctrl.SetAxisValue(DualShock4Axis.LeftThumbY, &H7FUI + LStickUD * &H7FUI)
+            'DS4ctrl.SetAxisValue(DualShock4Axis.RightThumbX, &H7FUI + RStickLR * &H7FUI)
+            'DS4ctrl.SetAxisValue(DualShock4Axis.RightThumbY, &H7FUI + RStickUD * &H7FUI)
+
+            'DS4ctrl.SetSliderValue(DualShock4Slider.LeftTrigger, &HFFUI * LTrigger)
+            'DS4ctrl.SetSliderValue(DualShock4Slider.RightTrigger, &HFFUI * RTrigger)
+
+
+
+            XBctrl.SetButtonState(Xbox360Button.B, buttons And BTN_O)
+            XBctrl.SetButtonState(Xbox360Button.A, buttons And BTN_X)
+            XBctrl.SetButtonState(Xbox360Button.X, buttons And BTN_SQUARE)
+            XBctrl.SetButtonState(Xbox360Button.Y, buttons And BTN_TRIANGLE)
+            XBctrl.SetButtonState(Xbox360Button.Back, buttons And BTN_SHARE)
+            XBctrl.SetButtonState(Xbox360Button.Start, buttons And BTN_OPTIONS)
+            XBctrl.SetButtonState(Xbox360Button.LeftShoulder, buttons And BTN_L1)
+            XBctrl.SetButtonState(Xbox360Button.LeftThumb, buttons And BTN_L3)
+            XBctrl.SetButtonState(Xbox360Button.RightShoulder, buttons And BTN_R1)
+            XBctrl.SetButtonState(Xbox360Button.RightThumb, buttons And BTN_R3)
+
+
+            XBctrl.SetAxisValue(Xbox360Axis.LeftThumbX, LStickLR * &H7FFFUI)
+            XBctrl.SetAxisValue(Xbox360Axis.LeftThumbY, LStickUD * &H7FFFUI)
+            XBctrl.SetAxisValue(Xbox360Axis.RightThumbX, RStickLR * &H7FFFUI)
+            XBctrl.SetAxisValue(Xbox360Axis.RightThumbY, RStickUD * &H7FFFUI)
+
+            XBctrl.SetSliderValue(Xbox360Slider.LeftTrigger, &HFFUI * LTrigger)
+            XBctrl.SetSliderValue(Xbox360Slider.RightTrigger, &HFFUI * RTrigger)
+
+
+
+
+            'Do DPad properly
+            'Someday
+            'Fuck you, Future-Wulf, you deal with this shit
+            If (buttons And BTN_DPAD_UP) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.North)
+            If (buttons And BTN_DPAD_RIGHT) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.East)
+            If (buttons And BTN_DPAD_DOWN) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.South)
+            If (buttons And BTN_DPAD_LEFT) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.West)
+
+            If (buttons And (BTN_DPAD_UP + BTN_DPAD_LEFT)) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.Northwest)
+            If (buttons And (BTN_DPAD_UP + BTN_DPAD_RIGHT)) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.Northeast)
+            If (buttons And (BTN_DPAD_DOWN + BTN_DPAD_LEFT)) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.Southwest)
+            If (buttons And (BTN_DPAD_DOWN + BTN_DPAD_RIGHT)) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.Southeast)
+
+            'WUInt8(hookmem + &H410, &H7FUI + LStickLR * &H7FUI)
+            'WUInt8(hookmem + &H411, &H7FUI - LStickUD * &H7FUI)
+            'WUInt8(hookmem + &H412, &H7FUI + RStickLR * &H7FUI)
+            'WUInt8(hookmem + &H413, &H7FUI - RStickUD * &H7FUI)
+
+            'WUInt8(hookmem + &H414, &HFFUI * LTrigger)
+            'WUInt8(hookmem + &H415, &HFFUI * RTrigger)
         Catch ex As Exception
             Console.WriteLine("WUInt8 stick value overflow? " & ex.Message)
         End Try
