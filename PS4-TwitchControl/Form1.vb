@@ -588,6 +588,8 @@ Partial Public Class frmPS4Twitch
         DS4ctrl.Connect()
         XBctrl.Connect()
 
+        XBctrl.AutoSubmitReport = False
+
         'ctrl.SetButtonState(DualShock4Button.Circle, True)
         'ctrl.SetAxisValue(DualShock4Axis.LeftThumbX, 40)
 
