@@ -7,7 +7,9 @@ Partial Public Class frmPS4Twitch
 
 
 
-
+    Private Sub TimerPress()
+        TimerPress_Celeste()
+    End Sub
     Private Sub press()
         'btnPress_Standard()
         btnPress_Celeste()
@@ -15,8 +17,6 @@ Partial Public Class frmPS4Twitch
 
     Private Sub execCMD(user As String, role As String, cmd As String)
         execCMD_Celeste(user, role, cmd)
-
-
     End Sub
 
 
@@ -135,7 +135,7 @@ Partial Public Class frmPS4Twitch
 
 
     Dim dbgtime As DateTime = Now
-    Dim presstimer As Integer = 33
+    Dim presstimer As Integer = 16
     Private pressthread As Thread
 
     Dim queuelock As New Object
@@ -321,27 +321,7 @@ Partial Public Class frmPS4Twitch
         Next
 
     End Sub
-    Private Sub TimerPress()
-        Dim timer = 33
-        Do
-            'Console.WriteLine((Now - dbgtime).Milliseconds & " - " & timer)
-            press()
-            'dbgtime = Now
-            Do
-                'Console.WriteLine(presstimer)
-                SyncLock presslock
-                    presstimer -= 33
-                    timer = presstimer
-                End SyncLock
-                System.Threading.Thread.Sleep(33)
-            Loop While timer > 0
 
-
-
-            'if (Now - dbgtime).Milliseconds > 33 Then 
-            'Console.WriteLine((Now - dbgtime).Milliseconds & " - " & timer)
-        Loop
-    End Sub
     Private Sub PushQ(ByRef buttons As Integer, RStickLR As Single, RStickUD As Single, LStickLR As Single,
                       LStickUD As Single, LTrigger As Single, RTrigger As Single, time As Integer, user As String,
                       cmd As String)
@@ -526,7 +506,7 @@ Partial Public Class frmPS4Twitch
                 ProcessCMD(tmpuser, role, "nha")
 
                 SyncLock presslock
-                    presstimer = 33
+                    presstimer = 16
                 End SyncLock
 
 
@@ -563,7 +543,7 @@ Partial Public Class frmPS4Twitch
 
     Private Sub Controller(buttons As Integer, RLR As Single, RUD As Single, LLR As Single, LUD As Single, LT As Single, RT As Single, hold As Integer, user As String, cmd As String)
 
-        hold = hold * 33 'Fake 30fps
+        hold = hold * 16
 
         If hold > 66000 Then hold = 66000
         'SyncLock queuelock
@@ -585,7 +565,7 @@ Partial Public Class frmPS4Twitch
         DS4ctrl = client.CreateDualShock4Controller()
         XBctrl = client.CreateXbox360Controller()
 
-        DS4ctrl.Connect()
+        'DS4ctrl.Connect()
         XBctrl.Connect()
 
         XBctrl.AutoSubmitReport = False

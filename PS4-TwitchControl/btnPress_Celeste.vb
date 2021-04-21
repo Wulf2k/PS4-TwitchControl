@@ -3,6 +3,20 @@ Imports Nefarius.ViGEm.Client.Targets.DualShock4
 Imports Nefarius.ViGEm.Client.Targets.Xbox360
 
 Partial Public Class frmPS4Twitch
+    Private Sub TimerPress_Celeste()
+        Dim timer = 16
+        Do
+            press()
+            Do
+                SyncLock presslock
+                    presstimer -= 16
+                    timer = presstimer
+                End SyncLock
+                System.Threading.Thread.Sleep(16)
+            Loop While timer > 0
+        Loop
+    End Sub
+
     Private Sub btnPress_Celeste()
 
         Dim buttons = 0
@@ -206,7 +220,7 @@ Partial Public Class frmPS4Twitch
 
 
             'If command has no duration, skip to next command.
-            If QueuedInput(0).time = 0 Then
+            If QueuedInput(0).time < 1 Then
                 PopQ()
                 press()
                 Return
@@ -269,7 +283,7 @@ Partial Public Class frmPS4Twitch
 
             Dim tmpcmd
             SyncLock presslock
-                tmpcmd = cmd & "-" & presstimer / 33
+                tmpcmd = cmd & "-" & presstimer / 16
             End SyncLock
 
 
@@ -282,7 +296,7 @@ Partial Public Class frmPS4Twitch
             For i = 0 To 9
                 If (QueuedInput.Count) > i Then
                     Dim str As String
-                    str = QueuedInput(i).cmd & "-" & Math.Floor(QueuedInput(i).time / 33)
+                    str = QueuedInput(i).cmd & "-" & Math.Floor(QueuedInput(i).time / 16)
 
                     'if command too long, shorten it
                     If str.Length > 15 Then str = Strings.Left(str, 15)
@@ -365,7 +379,12 @@ Partial Public Class frmPS4Twitch
             XBctrl.SetSliderValue(Xbox360Slider.LeftTrigger, &HFFUI * LTrigger)
             XBctrl.SetSliderValue(Xbox360Slider.RightTrigger, &HFFUI * RTrigger)
 
+            XBctrl.SetButtonState(Xbox360Button.Up, buttons And BTN_DPAD_UP)
+            XBctrl.SetButtonState(Xbox360Button.Right, buttons And BTN_DPAD_RIGHT)
+            XBctrl.SetButtonState(Xbox360Button.Down, buttons And BTN_DPAD_DOWN)
+            XBctrl.SetButtonState(Xbox360Button.Left, buttons And BTN_DPAD_LEFT)
 
+            XBctrl.SubmitReport()
 
 
             'Do DPad properly
@@ -381,12 +400,7 @@ Partial Public Class frmPS4Twitch
             'If (buttons And (BTN_DPAD_DOWN + BTN_DPAD_LEFT)) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.Southwest)
             'If (buttons And (BTN_DPAD_DOWN + BTN_DPAD_RIGHT)) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.Southeast)
 
-            XBctrl.SetButtonState(Xbox360Button.Up, buttons And BTN_DPAD_UP)
-            XBctrl.SetButtonState(Xbox360Button.Right, buttons And BTN_DPAD_RIGHT)
-            XBctrl.SetButtonState(Xbox360Button.Down, buttons And BTN_DPAD_DOWN)
-            XBctrl.SetButtonState(Xbox360Button.Left, buttons And BTN_DPAD_LEFT)
 
-            XBctrl.SubmitReport()
 
 
             'WUInt8(hookmem + &H410, &H7FUI + LStickLR * &H7FUI)
@@ -462,42 +476,42 @@ Partial Public Class frmPS4Twitch
 
             'Half halt
             Case "hh"
-                If duration = 0 Then duration = 15
+                If duration = 0 Then duration = 30
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
                 Return
 
             'Halt
             Case "h"
-                If duration = 0 Then duration = 30
+                If duration = 0 Then duration = 60
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
                 Return
 
             'Our old, archaic friend 'flong', "forward long"
             Case "flong"
-                If duration = 0 Then duration = 90
+                If duration = 0 Then duration = 180
                 Controller(0, 0, 0, 0, 1, 0, 0, duration, user, cmd)
                 Return
 
 
 
             Case "du"
-                If duration = 0 Then duration = 2
-                Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dd"
-                If duration = 0 Then duration = 2
-                Controller(BTN_DPAD_DOWN, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_DPAD_DOWN, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dl"
-                If duration = 0 Then duration = 2
-                Controller(BTN_DPAD_LEFT, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_DPAD_LEFT, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dr"
-                If duration = 0 Then duration = 2
-                Controller(BTN_DPAD_RIGHT, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_DPAD_RIGHT, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
@@ -506,105 +520,73 @@ Partial Public Class frmPS4Twitch
                 Return
 
             Case "options", "opt"
-                If duration = 0 Then duration = 2
-                Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "o"
-                If duration = 0 Then duration = 18
-                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 36
+                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "x"
-                If duration = 0 Then duration = 18
-                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 36
+                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "sq"
-                If duration = 0 Then duration = 18
-                Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 36
+                Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "tri"
-                If duration = 0 Then duration = 28
-                Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 56
+                Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
             Case "l1"
-                If duration = 0 Then duration = 18
-                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 36
+                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "l2"
-                If duration = 0 Then duration = 28
-                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 56
+                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r1"
-                If duration = 0 Then duration = 28
-                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 56
+                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r2"
-                If duration = 0 Then duration = 28
-                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 2, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
-                Return
-
-            Case "ol1"
-                If duration = 0 Then duration = 26
-                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 18, user, cmd & "(-)")
-                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
-                Return
-
-
-            Case "cr2"
-                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 90, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(-)")
-                Return
-
-            Case "fr1"
-                If duration = 0 Then duration = 28
-                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
-                Controller(BTN_R1, 0, 0, 0, 1, 0, 0, 2, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
-                Return
-
-            Case "fr2"
                 If duration = 0 Then duration = 56
-                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
-                Controller(BTN_R2, 0, 0, 0, 1, 0, 1, 2, user, cmd & "(!)")
+                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
+
+
+
 
             Case "l3"
-                If duration = 0 Then duration = 2
-                Controller(BTN_L3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_L3, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "r3"
-                If duration = 0 Then duration = 2
-                Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "tpl"
-                Controller(BTN_TOUCHPAD, 0, 0, 0, 0, 0, 0, 2, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd)
-                Return
-            Case "tpr"
-                Controller(BTN_TOUCHPAD, 0, 0, 0, 0, 0, 0, 2, user, cmd)
-                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd)
-                Return
+
 
             Case "pshome"
                 Controller(BTN_PSHOME, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
@@ -643,13 +625,13 @@ Partial Public Class frmPS4Twitch
 
             'Set default walk duration if none specified
             If cmd(0) = "w" Then
-                If duration = 0 Then duration = 30
+                If duration = 0 Then duration = 60
             End If
 
             If cmd(0) = "a" Then
                 'TODO:  Damnit this is ugly.  Redo, with proper parsing.
                 cmd = Strings.Left(cmd.Replace(".", "5"), 5)
-                If duration = 0 Then duration = 30
+                If duration = 0 Then duration = 60
                 cmdparams = Mid(cmd, 2, 4)
             End If
 
@@ -657,19 +639,19 @@ Partial Public Class frmPS4Twitch
 
             If Strings.Left(cmd, 2) = "da" Then
                 cmdpad = 1
-                If duration = 0 Then duration = 6
+                If duration = 0 Then duration = 12
                 dash = True
             End If
 
             If cmd(0) = "j" Then
-                If duration = 0 Then duration = 6
+                If duration = 0 Then duration = 12
                 jump = True
             End If
 
             'If 'look', then modify right stick's axises
             If cmd(0) = "l" Then
                 axispad = 2
-                If duration = 0 Then duration = 7
+                If duration = 0 Then duration = 14
             End If
 
 
@@ -720,7 +702,8 @@ Partial Public Class frmPS4Twitch
             If jump Then
                 Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(!)")
             ElseIf dash Then
-                Controller(BTN_SQUARE, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(!)")
+                Controller(BTN_SQUARE, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_SQUARE, axis(2), axis(3), axis(0), axis(1), 0, 0, duration - 2, user, cmd & "(-)")
             Else
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
             End If
