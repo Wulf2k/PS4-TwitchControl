@@ -12,7 +12,17 @@ Partial Public Class frmPS4Twitch
                     presstimer -= 16
                     timer = presstimer
                 End SyncLock
-                System.Threading.Thread.Sleep(16)
+                Console.WriteLine(DateTime.Now.ToString("fff"))
+                'Why the fucking fuck is the system sleeping double this?
+                'Why?
+                'I apologize for the fucking crime against code
+                'Double this number when the universe stops being a goddamn 
+                'oh hey
+                'my daughter's reading this
+
+                'System.Threading.Thread.Sleep(16)
+                System.Threading.Thread.Sleep(8)
+                Console.WriteLine(DateTime.Now.ToString("fff"))
             Loop While timer > 0
         Loop
     End Sub
