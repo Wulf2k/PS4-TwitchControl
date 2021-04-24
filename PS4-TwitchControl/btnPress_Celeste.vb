@@ -49,62 +49,62 @@ Partial Public Class frmPS4Twitch
             Select Case QueuedInput(0).cmd
 
                 Case "reconnect1"
+                    Shell("cmd.exe /c start shell:AppsFolder\MattMakesGamesInc.Celeste_79daxvg0dq3v6!App")
+                    'Dim hndRpWindow As IntPtr
+                    'Dim hndButtOk As IntPtr
+                    'hndRpWindow = FindWindowA(vbNullString, "PS4 Remote Play")
+                    'hndButtOk = FindWindowExA(hndRpWindow, 0, "WindowsForms10.BUTTON.app.0.141b42a_r9_ad1", "OK")
+                    'SetForegroundWindow(hndButtOk)
 
-                    Dim hndRpWindow As IntPtr
-                    Dim hndButtOk As IntPtr
-                    hndRpWindow = FindWindowA(vbNullString, "PS4 Remote Play")
-                    hndButtOk = FindWindowExA(hndRpWindow, 0, "WindowsForms10.BUTTON.app.0.141b42a_r9_ad1", "OK")
-                    SetForegroundWindow(hndButtOk)
 
+                    'Dim pos As RECT
+                    'GetWindowRect(hndButtOk, pos)
 
-                    Dim pos As RECT
-                    GetWindowRect(hndButtOk, pos)
+                    'Dim x = pos.Left + 10
+                    'Dim y = pos.Top + 10
 
-                    Dim x = pos.Left + 10
-                    Dim y = pos.Top + 10
-
-                    Cursor.Position = New Point(x, y)
-                    mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
-                    mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
+                    'Cursor.Position = New Point(x, y)
+                    'mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
+                    'mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
 
 
                 Case "reconnect2"
-                    Dim hndRpWindow As IntPtr
-                    Dim hndButtOk As IntPtr
+                    'Dim hndRpWindow As IntPtr
+                    'Dim hndButtOk As IntPtr
 
-                    hndRpWindow = FindWindowA(vbNullString, "PS4 Remote Play")
-                    hndButtOk = FindWindowExA(hndRpWindow, 0, "WindowsForms10.STATIC.app.0.141b42a_r9_ad1", vbNullString)
-                    Console.WriteLine(hndButtOk)
+                    'hndRpWindow = FindWindowA(vbNullString, "PS4 Remote Play")
+                    'hndButtOk = FindWindowExA(hndRpWindow, 0, "WindowsForms10.STATIC.app.0.141b42a_r9_ad1", vbNullString)
+                    'Console.WriteLine(hndButtOk)
 
-                    SetForegroundWindow(hndButtOk)
+                    'SetForegroundWindow(hndButtOk)
 
-                    Dim pos As RECT
-                    GetWindowRect(hndButtOk, pos)
+                    'Dim pos As RECT
+                    'GetWindowRect(hndButtOk, pos)
 
-                    Dim x = pos.Left + 620
-                    Dim y = pos.Top + 320
+                    'Dim x = pos.Left + 620
+                    'Dim y = pos.Top + 320
 
-                    Cursor.Position = New Point(x, y)
-                    mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
-                    mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
+                    'Cursor.Position = New Point(x, y)
+                    'mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
+                    'mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
 
 
                 Case "reconnect3"
-                    Dim hndRpWindow As IntPtr
-                    hndRpWindow = FindWindowA(vbNullString, "PS4 Remote Play")
-                    SetForegroundWindow(hndRpWindow)
+                    'Dim hndRpWindow As IntPtr
+                    'hndRpWindow = FindWindowA(vbNullString, "PS4 Remote Play")
+                    'SetForegroundWindow(hndRpWindow)
 
-                    Dim pos As RECT
-                    GetWindowRect(hndRpWindow, pos)
+                    'Dim pos As RECT
+                    'GetWindowRect(hndRpWindow, pos)
 
-                    Dim x = pos.Right - 50
-                    Dim y = pos.Bottom - 50
+                    'Dim x = pos.Right - 50
+                    'Dim y = pos.Bottom - 50
 
-                    Cursor.Position = New Point(x, y)
-                    Thread.Sleep(500)
-                    mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
-                    mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
-                    Cursor.Position = New Point(-50, -50)
+                    'Cursor.Position = New Point(x, y)
+                    'Thread.Sleep(500)
+                    'mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
+                    'mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
+                    'Cursor.Position = New Point(-50, -50)
 
                 Case "hidecursor"
                     Dim x = 1600
