@@ -1,11 +1,18 @@
-﻿Imports System.Threading
+﻿Imports System
+Imports System.IO.MemoryMappedFiles
+Imports System.Threading
 Imports Nefarius.ViGEm.Client
 Imports Nefarius.ViGEm.Client.Targets
 Imports Nefarius.ViGEm.Client.Targets.DualShock4
 
 Partial Public Class frmPS4Twitch
 
+    Dim gh As IntPtr = IntPtr.Zero
+    Dim rph As IntPtr = IntPtr.Zero
+    Dim fcAddr As IntPtr = IntPtr.Zero
 
+    Dim mmf As MemoryMappedFile
+    Dim mmfa As MemoryMappedViewAccessor
 
     Private Sub TimerPress()
         TimerPress_Celeste()
@@ -165,11 +172,12 @@ Partial Public Class frmPS4Twitch
 
 
 
-    Public Function ScanForProcess(ByVal windowCaption As String, Optional automatic As Boolean = False) As Boolean
+    Public Function ScanForProcess(ByVal procName As String, Optional automatic As Boolean = False) As Boolean
 
         Dim _allProcesses() As Process = Process.GetProcesses
         For Each pp As Process In _allProcesses
-            If pp.MainWindowTitle.ToLower.Equals(windowCaption.ToLower) Then
+            'If pp.MainWindowTitle.ToLower.Equals(procName.ToLower) Then
+            If pp.ProcessName = procName Then
                 'found it! proceed.
                 Return TryAttachToProcess(pp, automatic)
             End If
@@ -473,7 +481,7 @@ Partial Public Class frmPS4Twitch
             'outputChat("Personal items restricted to pre-approved users.")
             '       Return
             'End If
-            Case "options", "opt", "hopt"
+            Case "options", "opt", "hopt", "reconnect1"
                 If Not modlist.Contains(role) Then
                     'DS2 doesn't matter for options
                     'outputChat("Options menu restricted to pre-approved users.")
@@ -506,7 +514,8 @@ Partial Public Class frmPS4Twitch
                 ProcessCMD(tmpuser, role, "nha")
 
                 SyncLock presslock
-                    presstimer = 16
+                    'presstimer = 16
+                    presstimer = 1
                 End SyncLock
 
 
@@ -543,7 +552,7 @@ Partial Public Class frmPS4Twitch
 
     Private Sub Controller(buttons As Integer, RLR As Single, RUD As Single, LLR As Single, LUD As Single, LT As Single, RT As Single, hold As Integer, user As String, cmd As String)
 
-        hold = hold * 16
+        'hold = hold * 16
 
         If hold > 66000 Then hold = 66000
         'SyncLock queuelock
@@ -574,50 +583,49 @@ Partial Public Class frmPS4Twitch
         'ctrl.SetAxisValue(DualShock4Axis.LeftThumbX, 40)
 
 
-        If ctrlPtr Then
-            'If False Then
-            hookmem = VirtualAllocEx(_targetProcessHandle, 0, &H8000, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
-            Dim oldProtectionOut As UInteger
-            VirtualProtectEx(_targetProcessHandle, hookmem, &H8000, PAGE_EXECUTE_READWRITE, oldProtectionOut)
+        'If ctrlPtr Then
+        'If False Then
+        'hookmem = VirtualAllocEx(_targetProcessHandle, 0, &H8000, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
+        'Dim oldProtectionOut As UInteger
+        'VirtualProtectEx(_targetProcessHandle, hookmem, &H8000, PAGE_EXECUTE_READWRITE, oldProtectionOut)
 
-            Dim a As New asm
-
-            'a.AddVar("hook", rpCtrlWrap + &H1BFD10)
-            a.AddVar("hook", rpCtrlWrap + &H1BEB90)
-            a.AddVar("newmem", hookmem)
-            a.AddVar("newctrl", hookmem + &H400)
-            ''a.AddVar("hookreturn", rpCtrlWrap + &H1BF676)
-            'a.AddVar("hookreturn", rpCtrlWrap + &H1BFD16)
-            a.AddVar("hookreturn", rpCtrlWrap + &H1BEB96)
-
-            a.pos = hookmem
-            a.Asm("mov edx, newctrl")
-
-            a.Asm("add esp,0x0C") 'Restore overwritten instruction
-
-            a.Asm("jmp hookreturn")
-
-            WriteProcessMemory(_targetProcessHandle, hookmem, a.bytes, a.bytes.Length, 0)
-
-            Console.WriteLine("Hook: " & Hex(CInt(hookmem)))
-
-            a.Clear()
-            a.AddVar("newmem", hookmem)
-            a.pos = rpCtrlWrap + &H1BEB90
-            a.Asm("jmp newmem")
-
-            WriteProcessMemory(_targetProcessHandle, rpCtrlWrap + &H1BEB90, a.bytes, a.bytes.Length, 0)
+        'Dim a As New asm
 
 
+        'a.AddVar("hook", rpCtrlWrap + &H1BEB90)
+        'a.AddVar("newmem", hookmem)
+        'a.AddVar("newctrl", hookmem + &H400)
+        '
+        '           a.AddVar("hookreturn", rpCtrlWrap + &H1BEB96)
 
-            pressthread = New Thread(AddressOf TimerPress)
-            pressthread.IsBackground = True
-            pressthread.Start()
+        'a.pos = hookmem
+        'a.Asm("mov edx, newctrl")
+
+        'a.Asm("add esp,0x0C") 'Restore overwritten instruction
+
+        'a.Asm("jmp hookreturn")
+
+        'WriteProcessMemory(_targetProcessHandle, hookmem, a.bytes, a.bytes.Length, 0)
+
+        'Console.WriteLine("Hook: " & Hex(CInt(hookmem)))
+
+        'a.Clear()
+        'a.AddVar("newmem", hookmem)
+        'a.pos = rpCtrlWrap + &H1BEB90
+        'a.Asm("jmp newmem")
+
+        'WriteProcessMemory(_targetProcessHandle, rpCtrlWrap + &H1BEB90, a.bytes, a.bytes.Length, 0)
 
 
 
+        pressthread = New Thread(AddressOf TimerPress)
+        pressthread.IsBackground = True
+        pressthread.Start()
 
-        End If
+
+
+
+        'End If
     End Sub
     Private Sub RestoreControl()
         ''WBytes(rpCtrlWrap + &H1D0980, {&H8B, &H55, &HC, &H83, &HC4, &HC})  'Old ver
@@ -630,18 +638,17 @@ Partial Public Class frmPS4Twitch
         If chkAttached.Checked Then
             Dim found As Boolean
 
-            found = ScanForProcess("PS4 Remote Play", True)
-
-            chkAttached.Checked = found
-            findDllAddresses()
-
+            found = ScanForProcess("Celeste", True)
+            'chkAttached.Checked = found
+            'If found Then findDllAddresses()
 
 
-            ctrlPtr = 1
+            mmf = MemoryMappedFile.CreateOrOpen("TwitchControl", &H1000)
+            mmfa = mmf.CreateViewAccessor()
 
             TakeControl()
         Else
-            RestoreControl()
+            'RestoreControl()
         End If
     End Sub
 
