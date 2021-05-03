@@ -18,13 +18,14 @@ Partial Public Class frmPS4Twitch
         Dim frameDiff = 1
 
         Do
-            WInt8(pauseLoc, 1)
+
             press()
 
             Do
 
                 SyncLock presslock
                     presstimer -= 1
+                    WInt8(pauseLoc, 1)
                 End SyncLock
 
 

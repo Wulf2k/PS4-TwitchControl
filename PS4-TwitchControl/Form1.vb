@@ -481,7 +481,13 @@ Partial Public Class frmPS4Twitch
             'outputChat("Personal items restricted to pre-approved users.")
             '       Return
             'End If
-            Case "options", "opt", "hopt", "reconnect1"
+            Case "reconnect1"
+                If Not modlist.Contains(role) Then
+
+                Else
+                    QueuedInput.Clear()
+                End If
+            Case "options", "opt", "hopt"
                 If Not modlist.Contains(role) Then
                     'DS2 doesn't matter for options
                     'outputChat("Options menu restricted to pre-approved users.")
