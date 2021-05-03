@@ -585,9 +585,9 @@ Partial Public Class frmPS4Twitch
 
         'If ctrlPtr Then
         'If False Then
-        'hookmem = VirtualAllocEx(_targetProcessHandle, 0, &H8000, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
-        'Dim oldProtectionOut As UInteger
-        'VirtualProtectEx(_targetProcessHandle, hookmem, &H8000, PAGE_EXECUTE_READWRITE, oldProtectionOut)
+        hookmem = VirtualAllocEx(_targetProcessHandle, 0, &H8000, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
+        Dim oldProtectionOut As UInteger
+        VirtualProtectEx(_targetProcessHandle, hookmem, &H8000, PAGE_EXECUTE_READWRITE, oldProtectionOut)
 
         'Dim a As New asm
 

@@ -1,11 +1,12 @@
 ﻿Public Class asm
     'TODO:  Deal with jumps to points not yet defined
     Public bytes() As Byte = {}
-    Public pos As Int32
+    Public pos As Int64
 
     Private reg8 As Hashtable = New Hashtable
     Private reg16 As Hashtable = New Hashtable
     Private reg32 As Hashtable = New Hashtable
+    Private reg64 As Hashtable = New Hashtable
     Private code As Hashtable = New Hashtable
     Private vars As Hashtable = New Hashtable
 
@@ -44,11 +45,21 @@
         reg32.Add("esi", 6)
         reg32.Add("edi", 7)
 
+        reg64.Clear()
+        reg64.Add("rax", 0)
+        reg64.Add("rcx", 1)
+        reg64.Add("rdx", 2)
+        reg64.Add("rbx", 3)
+        reg64.Add("rsp", 4)
+        reg64.Add("rbp", 5)
+        reg64.Add("rsi", 6)
+        reg64.Add("rdi", 7)
+
         code.Clear()
         code.Add("inc", &H40)
         code.Add("dec", &H48)
         'code.Add("push", &H50)
-        code.Add("pop", &H58)
+        'code.Add("pop", &H58)
         code.Add("pushad", &H60)
         code.Add("popad", &H61)
     End Sub
@@ -57,40 +68,31 @@
         bytes = bytes.Concat(newbytes).ToArray
     End Sub
     Public Sub AddVar(ByVal name As String, hexval As String)
-        AddVar(name, Convert.ToInt32(Microsoft.VisualBasic.Right(hexval, hexval.Length - 2), 16))
+        AddVar(name, Convert.ToInt64(hexval, 16))
     End Sub
     Public Sub AddVar(ByVal name As String, val As IntPtr)
-        AddVar(name, CInt(val))
+        AddVar(name, val.ToString("X"))
     End Sub
-    Public Sub AddVar(ByVal name As String, val As Int32)
+    Public Sub AddVar(ByVal name As String, val As Int64)
         name = name.Replace(":", "")
-        
 
-        If Not vars.contains(name) Then
+        If Not vars.Contains(name) Then
             vars.Add(name, val)
         Else
             vars(name) = val
-            For each entry In varrefs
-            If entry.value = name Then
-                Dim tmpbyt() as Byte
-                
-
-                Select Case bytes(entry.key)
-                    Case &HE8, &HE9
-                        tmpbyt = BitConverter.GetBytes(val - (pos - (bytes.Length - entry.Key)) - 5)
-                        Array.Copy(tmpbyt, 0, bytes, entry.key+1, tmpbyt.Length)
-
-                    Case &HF
-                        tmpbyt = BitConverter.GetBytes(val - (pos - (bytes.Length - entry.Key)) - 6)
-                        Array.Copy(tmpbyt, 0, bytes, entry.key+2, tmpbyt.Length)
-
-                End Select
-            End If
-        Next
-
-
-
-
+            For Each entry In varrefs
+                If entry.Value = name Then
+                    Dim tmpbyt() As Byte
+                    Select Case bytes(entry.Key)
+                        Case &HE8, &HE9
+                            tmpbyt = BitConverter.GetBytes(val - (pos - (bytes.Length - entry.Key)) - 5)
+                            Array.Copy(tmpbyt, 0, bytes, entry.Key + 1, tmpbyt.Length)
+                        Case &HF
+                            tmpbyt = BitConverter.GetBytes(CInt(val - (pos - (bytes.Length - entry.Key)) - 6))
+                            Array.Copy(tmpbyt, 0, bytes, entry.Key + 2, tmpbyt.Length)
+                    End Select
+                End If
+            Next
         End If
     End Sub
     Public Sub Clear()
@@ -98,15 +100,14 @@
         vars.Clear
         varrefs.Clear
         pos = 0
-
     End Sub
 
     Private Sub ParseInput(ByVal str As String,
                            ByRef cmd As String,
                            ByRef reg1 As String, ByRef reg2 As String,
                            ByRef ptr1 As Boolean, ByRef ptr2 As Boolean,
-                           ByRef plus1 As Int32, ByRef plus2 As Int32,
-                           ByRef val1 As Int32, ByRef val2 As Int32)
+                           ByRef plus1 As Int64, ByRef plus2 As Int64,
+                           ByRef val1 As Int64, ByRef val2 As Int64)
 
         'Raw parameters
         Dim params As String = ""
@@ -117,7 +118,7 @@
         'Separate Command from params
         If str.Contains(" ") Then
             cmd = str.Split(" ")(0)
-            params = Microsoft.VisualBasic.Right(str, str.Length - cmd.Length)
+            params = Right(str, str.Length - cmd.Length)
             params = params.Replace(" ", "")
         Else
             cmd = str
@@ -150,20 +151,19 @@
         'Check if there are offsets in params
         If param1.Contains("+") Or param1.Contains("-") Then
             If param1.Contains("0x") Then
-                plus1 = Convert.ToInt32(param1(3) & Microsoft.VisualBasic.Right(param1, param1.Length - 6), 16)
+                plus1 = Convert.ToInt32(param1(3) & Right(param1, param1.Length - 6), 16)
             Else
-                plus1 = Convert.ToInt32(param1(3) & Microsoft.VisualBasic.Right(param1, param1.Length - 4))
+                plus1 = Convert.ToInt32(param1(3) & Right(param1, param1.Length - 4))
             End If
             param1 = param1.Split("+")(0)
             param1 = param1.Split("-")(0)
         End If
         If param2.Contains("+") Or param2.Contains("-") Then
             If param2.Contains("0x") Then
-                'plus2 = Convert.ToInt32(param2(3) & Microsoft.VisualBasic.Right(param2, param2.Length - 6), 16)
-                plus2 = Convert.ToInt32(Microsoft.VisualBasic.Right(param2, param2.Length - 4), 16)
+                plus2 = Convert.ToInt32(param2(3) & Right(param2, param2.Length - 6), 16)
                 If param2(3) = "-" Then plus2 *= -1
             Else
-                plus2 = Convert.ToInt32(param2(3) & Microsoft.VisualBasic.Right(param2, param2.Length - 4))
+                plus2 = Convert.ToInt32(param2(3) & Right(param2, param2.Length - 4))
             End If
             param2 = param2.Split("+")(0)
             param2 = param2.Split("-")(0)
@@ -171,10 +171,10 @@
 
         'If not registers, convert params from hex to dec
         If param1.Contains("0x") Then
-            val1 = Convert.ToInt32(param1, 16)
+            val1 = Convert.ToInt64(param1, 16)
         End If
         If param2.Contains("0x") Then
-            val2 = Convert.ToInt32(param2, 16)
+            val2 = Convert.ToInt64(param2, 16)
         End If
 
         'If numeric, set values
@@ -186,6 +186,8 @@
         End If
 
         'Define registers, if not values
+        If reg64.Contains(param1) Then reg1 = param1
+        If reg64.Contains(param2) Then reg2 = param2
         If reg32.Contains(param1) Then reg1 = param1
         If reg32.Contains(param2) Then reg2 = param2
         If reg16.Contains(param1) Then reg1 = param1
@@ -219,12 +221,12 @@
         Dim ptr2 As Boolean = False
 
         'Offsets from registers
-        Dim plus1 As Int32 = 0
-        Dim plus2 As Int32 = 0
+        Dim plus1 As Int64 = 0
+        Dim plus2 As Int64 = 0
 
         'Values, if not registers
-        Dim val1 As Int32 = 0
-        Dim val2 As Int32 = 0
+        Dim val1 As Int64 = 0
+        Dim val2 As Int64 = 0
 
         ParseInput(str, cmd, reg1, reg2, ptr1, ptr2, plus1, plus2, val1, val2)
 
@@ -379,6 +381,7 @@
                     Else
                         newbytes = {&HE8}
                         Dim addr = Convert.ToInt32(val1) - pos - 5
+                        'Dim addr = Convert.ToInt64(val1) - pos - 5
                         newbytes = newbytes.Concat(BitConverter.GetBytes(addr)).ToArray
 
                     End If
@@ -405,6 +408,19 @@
 
 
             Case "cmp"
+                'reg64 horribly incomplete
+                If reg64.Contains(reg1) And reg2 = "" Then
+                    If ptr1 Then
+                        newbytes = {&H81, &H38}
+
+                        newbytes = newbytes.Concat(BitConverter.GetBytes(Convert.ToInt32(val2))).ToArray
+                        newbytes(1) = newbytes(1) Or reg64(reg1)
+                    End If
+                End If
+
+
+
+
                 If reg32.Contains(reg1) And reg2 = "" Then
                     newbytes = {&H81, &HF8}
                     If Math.Abs(val2) < &H80 Then
@@ -467,7 +483,10 @@
 
             Case "je"
                 newbytes = {&HF, &H84}
-                Dim addr = Convert.ToInt32(val1) - pos - 6
+                Dim tmpVal = (val1 - pos - 6)
+                tmpVal = tmpVal And &HFFFFFFFF
+                Dim addr = CInt(tmpVal)
+                'Dim addr = Convert.ToInt64(val1) - pos - 6
                 newbytes = newbytes.Concat(BitConverter.GetBytes(addr)).ToArray
                 Add(newbytes)
                 pos += newbytes.Count
@@ -479,10 +498,17 @@
                         'Is only a register
                         newbytes = {&HFF, &HE0}
                         newbytes(1) = newbytes(1) Or reg32(reg1)
-                    Else
+                    ElseIf Math.Abs(val1 - pos) < &H80 Then
+                        newbytes = {&HEB}
+                        Dim addr = Convert.ToSByte(val1 - pos - 2)
+                        newbytes = newbytes.Concat({addr}).ToArray
+                    ElseIf Math.Abs(val1 - pos) < &H80000000 Then
                         newbytes = {&HE9}
                         Dim addr = Convert.ToInt32(val1) - pos - 5
                         newbytes = newbytes.Concat(BitConverter.GetBytes(addr)).ToArray
+                    Else
+                        newbytes = {&HFF, &H25, 0, 0, 0, 0}
+                        newbytes = newbytes.Concat(BitConverter.GetBytes(val1)).ToArray
 
                     End If
                 Else
@@ -510,6 +536,7 @@
             Case "jne"
                 newbytes = {&HF, &H85}
                 Dim addr = Convert.ToInt32(val1) - pos - 6
+                'Dim addr = Convert.ToInt64(val1) - pos - 6
                 newbytes = newbytes.Concat(BitConverter.GetBytes(addr)).ToArray
                 Add(newbytes)
                 pos += newbytes.Count
@@ -525,12 +552,28 @@
                 End If
 
 
+                'TODO:  Complete reg64
+                If Not ptr1 And reg64.Contains(reg1) And reg2 = "" Then
+                    newbytes = {&H48, &HB8}
+                    newbytes(0) = newbytes(0) Or reg64(reg1)
+                    newbytes = newbytes.Concat(BitConverter.GetBytes(val2)).ToArray
+                End If
+                'TODO:  Complete reg64
+                If ptr1 And reg64.Contains(reg1) And reg2 = "" Then
+                    newbytes = {&HC7, 0}
+                    newbytes(0) = newbytes(0) Or reg64(reg1)
+                    newbytes = newbytes.Concat(BitConverter.GetBytes(CInt(val2))).ToArray
+                End If
+
+
                 If reg32.Contains(reg1) And reg2 = "" Then
                     newbytes = {&HB8}
                     newbytes(0) = newbytes(0) Or reg32(reg1)
-                    newbytes = newbytes.Concat(BitConverter.GetBytes(val2)).ToArray
+                    newbytes = newbytes.Concat(BitConverter.GetBytes(CInt(val2))).ToArray
                 End If
 
+
+                'TODO:  Did I not reg1/ptr1 and immediate 2?
                 If reg32.Contains(reg1) And reg32.Contains(reg2) Then
                     newbytes = {&H89, 0}
 
@@ -576,7 +619,11 @@
 
             Case "push"
                 If Not ptr1 Then
-                    If reg32.Contains(reg1) Then
+                    If reg64.Contains(reg1) Then
+                        'Is only a register
+                        newbytes = {&H50}
+                        newbytes(0) = newbytes(0) Or reg64(reg1)
+                    ElseIf reg32.Contains(reg1) Then
                         'Is only a register
                         newbytes = {&H50}
                         newbytes(0) = newbytes(0) Or reg32(reg1)
@@ -607,6 +654,20 @@
                         newbytes(1) = newbytes(1) Or reg32(reg1)
                         newbytes = newbytes.Concat(BitConverter.GetBytes(plus1)).ToArray
                     End If
+                End If
+                Add(newbytes)
+                pos += newbytes.Count
+                Return
+
+            Case "pop"
+                If reg64.Contains(reg1) Then
+                    'Is only a register
+                    newbytes = {&H58}
+                    newbytes(0) = newbytes(0) Or reg64(reg1)
+                ElseIf reg32.Contains(reg1) Then
+                    'Is only a register
+                    newbytes = {&H58}
+                    newbytes(0) = newbytes(0) Or reg32(reg1)
                 End If
                 Add(newbytes)
                 pos += newbytes.Count
