@@ -16,17 +16,23 @@ Partial Public Class frmPS4Twitch
 
     Private Sub TimerPress()
         TimerPress_Celeste()
+        'TimerPress_DarkSoulsRemastered()
     End Sub
     Private Sub press()
         'btnPress_Standard()
         btnPress_Celeste()
+        'btnPress_DarkSoulsRemastered()
     End Sub
 
     Private Sub execCMD(user As String, role As String, cmd As String)
         execCMD_Celeste(user, role, cmd)
+        'execCMD_DarkSoulsRemastered(user, role, cmd)
     End Sub
 
-
+    Private Sub ProcessCMD(user As String, role As String, cmd As String)
+        ProcessCMD_Celeste(user, role, cmd)
+        'ProcessCMD_DarkSoulsRemastered(user, role, cmd)
+    End Sub
 
 
 
@@ -236,13 +242,11 @@ Partial Public Class frmPS4Twitch
 
     Private Sub frmPS4Twitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        'Control which chat badges can execute mod commands
-        modlist.Add("moderator")
-        modlist.Add("broadcaster")
-
-
-
-
+        'Control which chat users can execute mod commands
+        modlist.Add("seannybee")
+        modlist.Add("schattentod")
+        modlist.Add("tompiet1")
+        modlist.Add("yuidesu")
     End Sub
 
     Private Sub btnJoinTwitchChat_Click(sender As Object, e As EventArgs) Handles btnJoinTwitchChat.Click
@@ -389,171 +393,7 @@ Partial Public Class frmPS4Twitch
     End Sub
 
 
-    Private Sub ProcessCMD(user As String, role As String, cmd As String)
 
-
-
-
-        Dim tmpuser = user
-        Dim tmpcmd = cmd
-        Dim CMDmulti As Integer = 1
-
-        'allow loop of entire string, with inner loops
-
-
-
-        If tmpcmd.Contains("*") Then
-            CMDmulti = Val(tmpcmd.Split("*")(1))
-            If CMDmulti > 20 Then CMDmulti = 20
-            For i = 1 To CMDmulti
-                ProcessCMD(tmpuser, role, tmpcmd.Split("*")(0))
-            Next
-            Return
-        End If
-
-
-        'Allow multiple strings per line, with a multiplier on each
-        If tmpcmd.Contains("\") Then
-            tmpcmd = tmpcmd.Replace(" ", "")
-            For Each part In tmpcmd.Split("\")
-                ProcessCMD(tmpuser, role, part)
-            Next
-            Return
-        End If
-
-
-
-        'Loop entire string
-        If tmpcmd.Contains("|") Then
-            CMDmulti = Val(tmpcmd.Split("|")(1))
-
-            'Fine, roll over ints, see if I care.
-            If CMDmulti < 0 Then CMDmulti = 0
-
-            'Allow a maximum of 1000 loops
-            If CMDmulti > 1000 Then CMDmulti = 1000
-            For i = 0 To CMDmulti - 1
-                ProcessCMD(tmpuser, role, tmpcmd.Split("|")(0))
-            Next
-            Return
-        End If
-
-        'Handle multi-command entries
-        If tmpcmd.Contains(",") Then
-            For Each part In tmpcmd.Split(",")
-                'Prevent buffer overflow in RemotePlay memory
-                tmpuser = Strings.Left(tmpuser, 15)
-                part = part.Replace(" ", "")
-                part = Strings.Left(part, 15)
-
-                ProcessCMD(tmpuser, role, part)
-            Next
-            Return
-        End If
-
-        tmpcmd = tmpcmd.ToLower
-        tmpcmd = tmpcmd.Replace(" ", "")
-
-
-        'Handle command multipliers
-        If tmpcmd.Length > 2 Then
-            If IsNumeric(tmpcmd(tmpcmd.Length - 1)) And tmpcmd(tmpcmd.Length - 2) = "x" Then
-                CMDmulti = Val(tmpcmd(tmpcmd.Length - 1))
-                tmpcmd = Microsoft.VisualBasic.Left(tmpcmd, tmpcmd.Length - 2)
-            End If
-        End If
-
-
-
-        'TODO: Improve this handling
-        Dim shorttmpcmd As String
-        If tmpcmd.Contains("-") Then
-            shorttmpcmd = tmpcmd.Split("-")(0)
-        Else
-            shorttmpcmd = tmpcmd
-        End If
-
-
-
-        Select Case shorttmpcmd
-            'Case "tpr", "tpl"      'Free for all on the tpwhatevs
-            '   If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb") Then
-            'outputChat("Personal items restricted to pre-approved users.")
-            '       Return
-            'End If
-            Case "reconnect1"
-                If Not modlist.Contains(role) Then
-
-                Else
-                    QueuedInput.Clear()
-                End If
-            Case "options", "opt", "hopt"
-                If Not modlist.Contains(role) Then
-                    'DS2 doesn't matter for options
-                    'outputChat("Options menu restricted to pre-approved users.")
-                    'Return
-                End If
-            Case "pshome"
-                If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb" Or tmpuser = "tompiet1") Then
-                    outputChat("Uhh....  No.")
-                    Return
-                End If
-            Case "tri", "htri"
-                If Not modlist.Contains(role) Then
-                    'outputChat("Consumable use restricted to pre-approved users.")
-                    'Return
-                End If
-            Case "clearallcmds", "ca"
-                'Testing removal of mod restriction on clear all commands
-
-
-                'If Not (modlist.Contains(tmpuser)) Then
-                'outputChat("Clearing all commands restricted to pre-approved users.")
-                'ProcessCMD({tmpuser, "clearcmds"})
-                'Else
-                outputChat(tmpuser & " has cleared the command queue.")
-
-                SyncLock queuelock
-                    QueuedInput.Clear()
-                End SyncLock
-
-                ProcessCMD(tmpuser, role, "nha")
-
-                SyncLock presslock
-                    'presstimer = 16
-                    presstimer = 1
-                End SyncLock
-
-
-                'End If
-            Case "clearcmds", "c"
-                SyncLock queuelock
-                    For i = QueuedInput.Count - 1 To 0 Step -1
-                        If QueuedInput(i).user = tmpuser Then
-                            QueuedInput.RemoveAt(i)
-                        End If
-                    Next
-                End SyncLock
-                ProcessCMD(tmpuser, role, "nha")
-                outputChat("All commands for " & tmpuser & " removed from queue.")
-                Return
-
-
-            Case "takecontrol"
-                If modlist.Contains(role) Then TakeControl()
-
-            Case "restorecontrol"
-                If modlist.Contains(role) Then RestoreControl()
-        End Select
-
-
-
-
-        'For direct analog stick inputs
-        For i = 0 To CMDmulti - 1
-            execCMD(tmpuser, role, tmpcmd)
-        Next
-    End Sub
 
 
     Private Sub Controller(buttons As Integer, RLR As Single, RUD As Single, LLR As Single, LUD As Single, LT As Single, RT As Single, hold As Integer, user As String, cmd As String)

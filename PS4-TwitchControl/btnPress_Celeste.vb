@@ -3,64 +3,65 @@ Imports Nefarius.ViGEm.Client.Targets.DualShock4
 Imports Nefarius.ViGEm.Client.Targets.Xbox360
 
 Partial Public Class frmPS4Twitch
-    Dim fc As UInteger
-    Dim cbase As IntPtr = IntPtr.Zero
-    Dim pauseLoc As IntPtr = IntPtr.Zero
+
+
+    'Dim fc As UInteger
+    'Dim cbase As IntPtr = IntPtr.Zero
+    'Dim pauseLoc As IntPtr = IntPtr.Zero
+
+
+    Dim timerfixer = 1
+
 
     Dim which As String = "ms"
     'Dim which As String = "nonms"
 
-
-
     Private Sub TimerPress_Celeste()
-
-        Dim prevFc = fc
-        Dim frameDiff = 1
+        Dim timer = 16
+        'Dim prevFc = fc
+        'Dim frameDiff = 1
 
         Do
-
             press()
-
             Do
-
+                'I don't even know at this point
+                If timerfixer = -1 Then timerfixer = 1
                 SyncLock presslock
-                    presstimer -= 1
-                    WInt8(pauseLoc, 1)
+                    presstimer -= (16 + Math.Abs(timerfixer))
+
+                    timer = presstimer
+                    'WInt8(pauseLoc, 1)
                 End SyncLock
 
-
-
-                Select Case which
-                    Case "ms"
-                        Do
-                            Thread.Sleep(1)
-                            If RUInt32(fcAddr - 8) > 0 Then
-                                prevFc = RUInt32(fcAddr)
-                            Else
-                                fc = 0
-                                prevFc = &HFFFFFFFF
-                            End If
-                        Loop While RInt8(pauseLoc) = 1
-
-                        'Loop While fc = prevFc
-                    Case "nonms"
-                        Do
-                            Thread.Sleep(1)
-                            If RUInt32(fcAddr + &H1C) > 0 Then
-                                prevFc = RUInt32(fcAddr)
-                            Else
-                                fc = 0
-                                prevFc = &HFFFFFFFF
-                            End If
-                        Loop While fc = prevFc
-                End Select
-
-
-
+                Thread.Sleep(16 + Math.Abs(timerfixer))
+                timerfixer -= 1
+                'All sadness.
+                'Select Case which
+                '                Case "ms"
+                'Do
+                '                Thread.Sleep(1)
+                'If RUInt32(fcAddr - 8) > 0 Then
+                '                prevFc = RUInt32(fcAddr)
+                'Else
+                '                fc = 0
+                'prevFc = &HFFFFFFFF
+                '                End If
+                ''Loop While RInt8(pauseLoc) = 1
+                'Loop While fc = prevFc
+                'Case "nonms"
+                '                Do
+                'Thread.Sleep(1)
+                '                If RUInt32(fcAddr + &H1C) > 0 Then
+                'prevFc = RUInt32(fcAddr)
+                '                Else
+                'fc = 0
+                '                prevFc = &HFFFFFFFF
+                'End If
+                '            Loop While fc = prevFc
+                'End Select
                 'Console.WriteLine(fc)
-
-                fc = prevFc
-            Loop While presstimer > 0
+                'fc = prevFc
+            Loop While timer > 0
         Loop
     End Sub
 
@@ -99,79 +100,71 @@ Partial Public Class frmPS4Twitch
                     Select Case which
                         Case "ms"
                             Shell("cmd.exe /c start shell:AppsFolder\MattMakesGamesInc.Celeste_79daxvg0dq3v6!App")
-                            Thread.Sleep(5000)
-                            ScanForProcess("Celeste", True)
-                            For Each dll As ProcessModule In _targetProcess.Modules
-                                Select Case dll.ModuleName.ToLower
-                                    Case "celeste.dll"
-                                        cbase = dll.BaseAddress
-                                End Select
-                            Next
-                            fcAddr = cbase + &H7654F0
 
+                            'Thread.Sleep(5000)
+                            'ScanForProcess("Celeste", True)
+                            'For Each dll As ProcessModule In _targetProcess.Modules
+                            '                            Select Case dll.ModuleName.ToLower
+                            'Case "celeste.dll"
+                            'cbase = dll.BaseAddress
+                            '                    End Select
+                            'Next
+                            'fcAddr = cbase + &H7654F0
 
+                            'hookmem = VirtualAllocEx(_targetProcessHandle, 0, &H8000, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
+                            'Dim oldProtectionOut As UInteger
+                            'VirtualProtectEx(_targetProcessHandle, hookmem, &H8000, PAGE_EXECUTE_READWRITE, oldProtectionOut)
 
+                            'pauseLoc = hookmem + &H400
 
-                            hookmem = VirtualAllocEx(_targetProcessHandle, 0, &H8000, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
-                            Dim oldProtectionOut As UInteger
-                            VirtualProtectEx(_targetProcessHandle, hookmem, &H8000, PAGE_EXECUTE_READWRITE, oldProtectionOut)
+                            'Dim a As New asm
+                            'a.AddVar("hook", cbase + &H4DA42F1)
+                            'a.AddVar("newmem", hookmem)
+                            'a.AddVar("pause", pauseLoc)
+                            'a.AddVar("hookreturn", cbase + &H4DA4304)
+                            'a.AddVar("startloop", 0)
+                            'a.AddVar("exitloop", 0)
+                            'a.pos = hookmem
 
-                            pauseLoc = hookmem + &H400
+                            'a.Asm("push rax")
+                            'a.Asm("push rbx")
+                            'a.Asm("push rcx")
 
-                            Dim a As New asm
-                            a.AddVar("hook", cbase + &H4DA42F1)
-                            a.AddVar("newmem", hookmem)
-                            a.AddVar("pause", pauseLoc)
-                            a.AddVar("hookreturn", cbase + &H4DA4304)
-                            a.AddVar("startloop", 0)
-                            a.AddVar("exitloop", 0)
-                            a.pos = hookmem
+                            'a.Asm("startloop:")
+                            'a.Asm("mov rax, pause")
+                            'a.Asm("cmp [rax], 0x1")
 
-                            a.Asm("push rax")
-                            a.Asm("push rbx")
-                            a.Asm("push rcx")
+                            'a.Asm("je exitloop")
+                            'a.Asm("jmp startloop")
 
-                            a.Asm("startloop:")
-                            a.Asm("mov rax, pause")
-                            a.Asm("cmp [rax], 0x1")
+                            'a.Asm("exitloop:")
+                            'a.Asm("mov [rax], 0")
 
-                            a.Asm("je exitloop")
-                            a.Asm("jmp startloop")
+                            'a.Asm("pop rcx")
+                            'a.Asm("pop rbx")
+                            'a.Asm("pop rax")
+                            'a.Asm("jmp hookreturn")
 
-                            a.Asm("exitloop:")
-                            a.Asm("mov [rax], 0")
+                            'WriteProcessMemory(_targetProcessHandle, hookmem, a.bytes, a.bytes.Length, 0)
+                            'Console.WriteLine("Hook: " & hookmem.ToString("X"))
 
-                            a.Asm("pop rcx")
-                            a.Asm("pop rbx")
-                            a.Asm("pop rax")
-                            a.Asm("jmp hookreturn")
-
-                            WriteProcessMemory(_targetProcessHandle, hookmem, a.bytes, a.bytes.Length, 0)
-                            Console.WriteLine("Hook: " & hookmem.ToString("X"))
-
-                            a.Clear()
-                            a.AddVar("newmem", hookmem)
-                            a.pos = cbase + &H4DA42F1
-                            a.Asm("jmp newmem")
-                            WriteProcessMemory(_targetProcessHandle, cbase + &H4DA42F1, a.bytes, a.bytes.Length, 0)
-
-
-
-
-
-
+                            'a.Clear()
+                            'a.AddVar("newmem", hookmem)
+                            'a.pos = cbase + &H4DA42F1
+                            'a.Asm("jmp newmem")
+                            'WriteProcessMemory(_targetProcessHandle, cbase + &H4DA42F1, a.bytes, a.bytes.Length, 0)
                         Case "nonms"
                             Shell("cmd.exe /c start c:\\temp\\celeste\\celeste.exe")
-                            Thread.Sleep(5000)
-                            ScanForProcess("Celeste", True)
-                            Dim Addr = &H1000000
-                            Do
-                                If (RInt64(Addr + &H894) = &H3C88889A3C88889A) Then
-                                    fcAddr = Addr + &H894 - &H1C
-                                    Exit Do
-                                End If
-                                Addr += &H1000
-                            Loop While Addr < &H10000000
+                            'Thread.Sleep(5000)
+                            'ScanForProcess("Celeste", True)
+                            'Dim Addr = &H1000000
+                            'Do
+                            '                            If (RInt64(Addr + &H894) = &H3C88889A3C88889A) Then
+                            'fcAddr = Addr + &H894 - &H1C
+                            '                            Exit Do
+                            'End If
+                            '                            Addr += &H1000
+                            'Loop While Addr < &H10000000
                     End Select
 
 
@@ -215,7 +208,7 @@ Partial Public Class frmPS4Twitch
                     'mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
 
 
-                        Case "reconnect3"
+                Case "reconnect3"
                     'Dim hndRpWindow As IntPtr
                     'hndRpWindow = FindWindowA(vbNullString, "PS4 Remote Play")
                     'SetForegroundWindow(hndRpWindow)
@@ -232,121 +225,121 @@ Partial Public Class frmPS4Twitch
                     'mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
                     'Cursor.Position = New Point(-50, -50)
 
-                        Case "hidecursor"
-                            Dim x = 1600
-                            Dim y = 1
+                Case "hidecursor"
+                    Dim x = 1600
+                    Dim y = 1
 
-                            Cursor.Position = New Point(x, y)
+                    Cursor.Position = New Point(x, y)
                     'mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
                     'mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
 
-                        Case "killoverlay"
-                            Shell("taskkill /f /im ps4-twitchhelper.exe")
+                Case "killoverlay"
+                    Shell("taskkill /f /im ps4-twitchhelper.exe")
 
-                        Case "startoverlay"
-                            'Shell("")
-                            Dim ProcessProperties As New ProcessStartInfo
-                            ProcessProperties.FileName = "C:\Users\Lane\Documents\GitHub\PS4-TwitchHelper\PS4-TwitchHelper\bin\Debug\PS4-TwitchHelper.exe"
+                Case "startoverlay"
+                    'Shell("")
+                    Dim ProcessProperties As New ProcessStartInfo
+                    ProcessProperties.FileName = "C:\Users\Lane\Documents\GitHub\PS4-TwitchHelper\PS4-TwitchHelper\bin\Debug\PS4-TwitchHelper.exe"
                     'Dim myProcess As Process = Process.Start(ProcessProperties)
 
 
 
-                        Case "nha"
-                            boolHoldL1 = False
-                            boolHoldL2 = False
-                            boolHoldL3 = False
-                            boolHoldR1 = False
-                            boolHoldR2 = False
-                            boolHoldR3 = False
-                            boolHoldO = False
-                            boolHoldSq = False
-                            boolHoldTri = False
-                            boolHoldX = False
-                            boolHoldDU = False
-                            boolHoldDD = False
-                            boolHoldDL = False
-                            boolHoldDR = False
-                            boolHoldOpt = False
+                Case "nha"
+                    boolHoldL1 = False
+                    boolHoldL2 = False
+                    boolHoldL3 = False
+                    boolHoldR1 = False
+                    boolHoldR2 = False
+                    boolHoldR3 = False
+                    boolHoldO = False
+                    boolHoldSq = False
+                    boolHoldTri = False
+                    boolHoldX = False
+                    boolHoldDU = False
+                    boolHoldDD = False
+                    boolHoldDL = False
+                    boolHoldDR = False
+                    boolHoldOpt = False
 
-                        Case "hopt"
-                            boolHoldOpt = True
-                        Case "nhopt"
-                            boolHoldOpt = False
+                Case "hopt"
+                    boolHoldOpt = True
+                Case "nhopt"
+                    boolHoldOpt = False
 
-                        Case "hl1"
-                            boolHoldL1 = True
-                        Case "nhl1"
-                            boolHoldL1 = False
+                Case "hl1"
+                    boolHoldL1 = True
+                Case "nhl1"
+                    boolHoldL1 = False
 
-                        Case "hl2"
-                            boolHoldL2 = True
-                        Case "nhl2"
-                            boolHoldL2 = False
+                Case "hl2"
+                    boolHoldL2 = True
+                Case "nhl2"
+                    boolHoldL2 = False
 
-                        Case "hl3"
-                            boolHoldL3 = True
-                        Case "nhl3"
-                            boolHoldL3 = False
-
-
-                        Case "hr1"
-                            boolHoldR1 = True
-                        Case "nhr1"
-                            boolHoldR1 = False
-
-                        Case "hr2"
-                            boolHoldR2 = True
-                        Case "nhr2"
-                            boolHoldR2 = False
-
-                        Case "hr3"
-                            boolHoldR3 = True
-                        Case "nhr3"
-                            boolHoldR3 = False
+                Case "hl3"
+                    boolHoldL3 = True
+                Case "nhl3"
+                    boolHoldL3 = False
 
 
-                        Case "ho", "holdo"
-                            boolHoldO = True
-                        Case "nho", "noholdo"
-                            boolHoldO = False
+                Case "hr1"
+                    boolHoldR1 = True
+                Case "nhr1"
+                    boolHoldR1 = False
 
-                        Case "hsq"
-                            boolHoldSq = True
-                        Case "nhsq"
-                            boolHoldSq = False
+                Case "hr2"
+                    boolHoldR2 = True
+                Case "nhr2"
+                    boolHoldR2 = False
 
-                        Case "htri"
-                            boolHoldTri = True
-                        Case "nhtri"
-                            boolHoldTri = False
-
-                        Case "hx"
-                            boolHoldX = True
-                        Case "nhx"
-                            boolHoldX = False
-
-                        Case "hdu"
-                            boolHoldDU = True
-                        Case "nhdu"
-                            boolHoldDU = False
-                        Case "hdd"
-                            boolHoldDD = True
-                        Case "nhdd"
-                            boolHoldDD = False
-                        Case "hdl"
-                            boolHoldDL = True
-                        Case "nhdl"
-                            boolHoldDL = False
-                        Case "hdr"
-                            boolHoldDR = True
-                        Case "nhdr"
-                            boolHoldDR = False
-                    End Select
+                Case "hr3"
+                    boolHoldR3 = True
+                Case "nhr3"
+                    boolHoldR3 = False
 
 
+                Case "ho", "holdo"
+                    boolHoldO = True
+                Case "nho", "noholdo"
+                    boolHoldO = False
 
-                    'If command has no duration, skip to next command.
-                    If QueuedInput(0).time < 1 Then
+                Case "hsq"
+                    boolHoldSq = True
+                Case "nhsq"
+                    boolHoldSq = False
+
+                Case "htri"
+                    boolHoldTri = True
+                Case "nhtri"
+                    boolHoldTri = False
+
+                Case "hx"
+                    boolHoldX = True
+                Case "nhx"
+                    boolHoldX = False
+
+                Case "hdu"
+                    boolHoldDU = True
+                Case "nhdu"
+                    boolHoldDU = False
+                Case "hdd"
+                    boolHoldDD = True
+                Case "nhdd"
+                    boolHoldDD = False
+                Case "hdl"
+                    boolHoldDL = True
+                Case "nhdl"
+                    boolHoldDL = False
+                Case "hdr"
+                    boolHoldDR = True
+                Case "nhdr"
+                    boolHoldDR = False
+            End Select
+
+
+
+            'If command has no duration, skip to next command.
+            If QueuedInput(0).time < 1 Then
                 PopQ()
                 press()
                 Return
@@ -412,7 +405,7 @@ Partial Public Class frmPS4Twitch
 
             Dim tmpcmd
             SyncLock presslock
-                tmpcmd = cmd & "-" & presstimer '/ 16
+                tmpcmd = cmd & "-" & presstimer / 16
             End SyncLock
 
 
@@ -425,7 +418,7 @@ Partial Public Class frmPS4Twitch
             For i = 0 To 9
                 If (QueuedInput.Count) > i Then
                     Dim str As String
-                    str = QueuedInput(i).cmd & "-" & Math.Floor(QueuedInput(i).time) '/ 16)
+                    str = QueuedInput(i).cmd & "-" & Math.Floor(QueuedInput(i).time / 16)
 
                     'if command too long, shorten it
                     If str.Length > 15 Then str = Strings.Left(str, 15)
@@ -841,5 +834,158 @@ Partial Public Class frmPS4Twitch
 
         End If
     End Sub
+
+    Private Sub ProcessCMD_Celeste(user As String, role As String, cmd As String)
+        Dim tmpuser = user
+        Dim tmpcmd = cmd
+        Dim CMDmulti As Integer = 1
+
+        'allow loop of entire string, with inner loops
+
+
+
+        If tmpcmd.Contains("*") Then
+            CMDmulti = Val(tmpcmd.Split("*")(1))
+            If CMDmulti > 20 Then CMDmulti = 20
+            For i = 1 To CMDmulti
+                ProcessCMD(tmpuser, role, tmpcmd.Split("*")(0))
+            Next
+            Return
+        End If
+
+
+        'Allow multiple strings per line, with a multiplier on each
+        If tmpcmd.Contains("\") Then
+            tmpcmd = tmpcmd.Replace(" ", "")
+            For Each part In tmpcmd.Split("\")
+                ProcessCMD(tmpuser, role, part)
+            Next
+            Return
+        End If
+
+
+
+        'Loop entire string
+        If tmpcmd.Contains("|") Then
+            CMDmulti = Val(tmpcmd.Split("|")(1))
+
+            'Fine, roll over ints, see if I care.
+            If CMDmulti < 0 Then CMDmulti = 0
+
+            'Allow a maximum of 1000 loops
+            If CMDmulti > 1000 Then CMDmulti = 1000
+            For i = 0 To CMDmulti - 1
+                ProcessCMD(tmpuser, role, tmpcmd.Split("|")(0))
+            Next
+            Return
+        End If
+
+        'Handle multi-command entries
+        If tmpcmd.Contains(",") Then
+            For Each part In tmpcmd.Split(",")
+                'Prevent buffer overflow in RemotePlay memory
+                tmpuser = Strings.Left(tmpuser, 15)
+                part = part.Replace(" ", "")
+                part = Strings.Left(part, 15)
+
+                ProcessCMD(tmpuser, role, part)
+            Next
+            Return
+        End If
+
+        tmpcmd = tmpcmd.ToLower
+        tmpcmd = tmpcmd.Replace(" ", "")
+
+
+        'Handle command multipliers
+        If tmpcmd.Length > 2 Then
+            If IsNumeric(tmpcmd(tmpcmd.Length - 1)) And tmpcmd(tmpcmd.Length - 2) = "x" Then
+                CMDmulti = Val(tmpcmd(tmpcmd.Length - 1))
+                tmpcmd = Microsoft.VisualBasic.Left(tmpcmd, tmpcmd.Length - 2)
+            End If
+        End If
+
+
+
+        'TODO: Improve this handling
+        Dim shorttmpcmd As String
+        If tmpcmd.Contains("-") Then
+            shorttmpcmd = tmpcmd.Split("-")(0)
+        Else
+            shorttmpcmd = tmpcmd
+        End If
+
+
+
+        Select Case shorttmpcmd
+            'Case "tpr", "tpl"      'Free for all on the tpwhatevs
+            '   If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb") Then
+            'outputChat("Personal items restricted to pre-approved users.")
+            '       Return
+            'End If
+            Case "reconnect1"
+                If Not modlist.Contains(user) Then
+                    Return
+                End If
+            Case "options", "opt", "hopt"
+                If Not modlist.Contains(user) Then
+                    outputChat("Options menu restricted to pre-approved users.")
+                    Return
+                End If
+            Case "pshome"
+                If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb" Or tmpuser = "tompiet1") Then
+                    outputChat("Uhh....  No.")
+                    Return
+                End If
+            Case "tri", "htri"
+                If Not modlist.Contains(user) Then
+                    'outputChat("Consumable use restricted to pre-approved users.")
+                    'Return
+                End If
+            Case "clearallcmds", "ca"
+                'Testing removal of mod restriction on clear all commands
+
+
+                'If Not (modlist.Contains(tmpuser)) Then
+                'outputChat("Clearing all commands restricted to pre-approved users.")
+                'ProcessCMD({tmpuser, "clearcmds"})
+                'Else
+                outputChat(tmpuser & " has cleared the command queue.")
+
+                SyncLock queuelock
+                    QueuedInput.Clear()
+                End SyncLock
+
+                ProcessCMD(tmpuser, role, "nha")
+
+                SyncLock presslock
+                    presstimer = 0
+                End SyncLock
+
+
+                'End If
+            Case "clearcmds", "c"
+                SyncLock queuelock
+                    For i = QueuedInput.Count - 1 To 0 Step -1
+                        If QueuedInput(i).user = tmpuser Then
+                            QueuedInput.RemoveAt(i)
+                        End If
+                    Next
+                End SyncLock
+                ProcessCMD(tmpuser, role, "nha")
+                outputChat("All commands for " & tmpuser & " removed from queue.")
+                Return
+
+        End Select
+
+
+
+
+        'For direct analog stick inputs
+        For i = 0 To CMDmulti - 1
+            execCMD(tmpuser, role, tmpcmd)
+        Next
+    End Sub
+
 
 End Class
