@@ -246,6 +246,7 @@ Partial Public Class frmPS4Twitch
         modlist.Add("seannybee")
         modlist.Add("schattentod")
         modlist.Add("tompiet1")
+        modlist.Add("wulf2k")
         modlist.Add("yuidesu")
     End Sub
 
@@ -398,7 +399,7 @@ Partial Public Class frmPS4Twitch
 
     Private Sub Controller(buttons As Integer, RLR As Single, RUD As Single, LLR As Single, LUD As Single, LT As Single, RT As Single, hold As Integer, user As String, cmd As String)
 
-        'hold = hold * 16
+        hold = hold * 16.667
 
         If hold > 66000 Then hold = 66000
         'SyncLock queuelock

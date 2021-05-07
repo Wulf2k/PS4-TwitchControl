@@ -405,12 +405,12 @@ Partial Public Class frmPS4Twitch
 
             Dim tmpcmd
             SyncLock presslock
-                tmpcmd = cmd & "-" & presstimer / 16
+                tmpcmd = cmd & "-" & CInt(presstimer / 16.667)
             End SyncLock
 
 
 
-            If tmpcmd = "-1" Then tmpcmd = ""
+            If tmpcmd(0) = "-" Then tmpcmd = ""
 
             b = System.Text.Encoding.ASCII.GetBytes(tmpcmd & Chr(0))
             mmfa.WriteArray(&H310, b, 0, b.Length)
@@ -418,7 +418,7 @@ Partial Public Class frmPS4Twitch
             For i = 0 To 9
                 If (QueuedInput.Count) > i Then
                     Dim str As String
-                    str = QueuedInput(i).cmd & "-" & Math.Floor(QueuedInput(i).time / 16)
+                    str = QueuedInput(i).cmd & "-" & Math.Floor(QueuedInput(i).time / 16.667)
 
                     'if command too long, shorten it
                     If str.Length > 15 Then str = Strings.Left(str, 15)
