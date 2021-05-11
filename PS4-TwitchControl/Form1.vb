@@ -246,6 +246,7 @@ Partial Public Class frmPS4Twitch
     Private Sub frmPS4Twitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         'Control which chat users can execute mod commands
+        modlist.Add("nightbot")
         modlist.Add("seannybee")
         modlist.Add("schattentod")
         modlist.Add("tompiet1")
