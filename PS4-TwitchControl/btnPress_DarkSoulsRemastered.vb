@@ -490,7 +490,7 @@ Partial Public Class frmPS4Twitch
                 Return
 
             Case "share"
-                'Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 1, user, cmd)
+                Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 1, user, cmd)
                 Return
 
             Case "options", "opt"
