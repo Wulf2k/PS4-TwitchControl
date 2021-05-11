@@ -600,8 +600,8 @@ Partial Public Class frmPS4Twitch
 
 
         'parse 'walks', 'looks', 'analog's, and 'rolls'
-        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a") Or (cmd(0) = "j")) Or
-            (Strings.Left(cmd, 2) = "da") Then
+        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
+            (Strings.Left(cmd, 2) = "ro") Then
 
             Dim axispad = 0
             Dim cmdpad = 0
