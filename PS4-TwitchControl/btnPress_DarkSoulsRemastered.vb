@@ -71,7 +71,7 @@ Partial Public Class frmPS4Twitch
 
                 Case "savebackup"
                     Try
-                        Dim fileloc = "C:\Users\dontw\OneDrive\Documents\NBGI\DARK SOULS REMASTERED\10279151\DRAKS0005.sl2"
+                        Dim fileloc = $"{My.Computer.FileSystem.SpecialDirectories.MyDocuments}\NBGI\DARK SOULS REMASTERED\10279151\DRAKS0005.sl2"
                         Dim dst1 = "C:\temp\DRAKS0005.sl2"
                         Dim dst2 = $"C:\temp\DRAKS0005-{DateTime.Now.Year}{DateTime.Now.Month.ToString("D2")}{DateTime.Now.Day.ToString("D2")}{DateTime.Now.Hour.ToString("D2")}{DateTime.Now.Minute.ToString("D2")}{DateTime.Now.Second.ToString("D2")}.sl2"
                         IO.File.Copy(fileloc, dst1, True)
@@ -84,7 +84,7 @@ Partial Public Class frmPS4Twitch
                     Try
 
                     Catch ex As Exception
-                        Dim fileloc = "C:\Users\dontw\OneDrive\Documents\NBGI\DARK SOULS REMASTERED\10279151\DRAKS0005.sl2"
+                        Dim fileloc = $"{My.Computer.FileSystem.SpecialDirectories.MyDocuments}\NBGI\DARK SOULS REMASTERED\10279151\DRAKS0005.sl2"
                         Dim src = "C:\temp\DRAKS0005.sl2"
 
                         IO.File.Copy(src, fileloc, True)
@@ -605,8 +605,7 @@ Partial Public Class frmPS4Twitch
 
             Dim axispad = 0
             Dim cmdpad = 0
-            Dim jump As Boolean = False
-            Dim dash As Boolean = False
+            Dim roll As Boolean = False
 
 
             'Set default walk duration if none specified
@@ -623,15 +622,11 @@ Partial Public Class frmPS4Twitch
 
 
 
-            If Strings.Left(cmd, 2) = "da" Then
+            'If 'roll', then roll params will be offset 1 character
+            If Strings.Left(cmd, 2) = "ro" Then
                 cmdpad = 1
-                If duration = 0 Then duration = 12
-                dash = True
-            End If
-
-            If cmd(0) = "j" Then
-                If duration = 0 Then duration = 12
-                jump = True
+                If duration = 0 Then duration = 40
+                roll = True
             End If
 
             'If 'look', then modify right stick's axises
@@ -685,11 +680,9 @@ Partial Public Class frmPS4Twitch
             'Remove cmd padding
             cmd = cmd.Replace(".", "")
 
-            If jump Then
-                Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(!)")
-            ElseIf dash Then
-                Controller(BTN_SQUARE, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
-                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration - 2, user, cmd & "(-)")
+            If roll Then
+                Controller(BTN_O, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
+                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(-)")
             Else
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
             End If
