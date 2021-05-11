@@ -64,24 +64,37 @@ Partial Public Class frmPS4Twitch
                     Catch
                     End Try
 
-
                     Dim ProcessProperties As New ProcessStartInfo
                     ProcessProperties.FileName = exe
                     ProcessProperties.WorkingDirectory = currDir
                     Dim myProcess As Process = Process.Start(ProcessProperties)
 
+                Case "savebackup"
+                    Try
+                        Dim fileloc = "C:\Users\dontw\OneDrive\Documents\NBGI\DARK SOULS REMASTERED\10279151\DRAKS0005.sl2"
+                        Dim dst1 = "C:\temp\DRAKS0005.sl2"
+                        Dim dst2 = $"C:\temp\DRAKS0005-{DateTime.Now.Year}{DateTime.Now.Month.ToString("D2")}{DateTime.Now.Day.ToString("D2")}{DateTime.Now.Hour.ToString("D2")}{DateTime.Now.Minute.ToString("D2")}{DateTime.Now.Second.ToString("D2")}.sl2"
+                        IO.File.Copy(fileloc, dst1, True)
+                        IO.File.Copy(fileloc, dst2, True)
+                    Catch ex As Exception
 
+                    End Try
 
+                Case "saverestore"
+                    Try
 
+                    Catch ex As Exception
+                        Dim fileloc = "C:\Users\dontw\OneDrive\Documents\NBGI\DARK SOULS REMASTERED\10279151\DRAKS0005.sl2"
+                        Dim src = "C:\temp\DRAKS0005.sl2"
 
-
+                        IO.File.Copy(src, fileloc, True)
+                    End Try
 
                 Case "hidecursor"
                     Dim x = 1600
                     Dim y = 1
 
                     Cursor.Position = New Point(x, y)
-
 
                 Case "nha"
                     boolHoldL1 = False
@@ -263,7 +276,7 @@ Partial Public Class frmPS4Twitch
                     If str.Length > 15 Then str = Strings.Left(str, 15)
                     str = str & Chr(0)
 
-                    b = System.Text.Encoding.ASCII.GetBytes(str)
+                    b = System.Text.Encoding.ASCII.GetBytes(str + Chr(0))
                     mmfa.WriteArray(&H320 + i * &H10, b, 0, b.Length)
                 Else
                     mmfa.WriteArray(&H320 + i * &H10, {0}, 0, 1)
@@ -423,6 +436,7 @@ Partial Public Class frmPS4Twitch
                  "hdl", "nhdl",
                  "hdr", "nhdr",
                  "reconnect1",
+                 "savebackup", "saverestore",
                  "hidecursor"
 
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
@@ -772,7 +786,7 @@ Partial Public Class frmPS4Twitch
             'outputChat("Personal items restricted to pre-approved users.")
             '       Return
             'End If
-            Case "reconnect1"
+            Case "reconnect1", "savebackup", "saverestore"
                 If Not modlist.Contains(user) Then
                     Return
                 End If

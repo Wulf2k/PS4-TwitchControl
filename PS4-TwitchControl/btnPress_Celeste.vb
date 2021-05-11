@@ -425,6 +425,7 @@ Partial Public Class frmPS4Twitch
                     str = str & Chr(0)
 
                     b = System.Text.Encoding.ASCII.GetBytes(str)
+
                     mmfa.WriteArray(&H320 + i * &H10, b, 0, b.Length)
                 Else
                     mmfa.WriteArray(&H320 + i * &H10, {0}, 0, 1)
