@@ -11,10 +11,15 @@ Partial Public Class frmPS4Twitch
         Do
             press()
             Do
+                If timerfixer = -1 Then timerfixer = 1
                 SyncLock presslock
-                    presstimer -= 16
+                    presstimer -= (16 + Math.Abs(timerfixer))
+
                     timer = presstimer
                 End SyncLock
+
+                Thread.Sleep(16 + Math.Abs(timerfixer))
+                timerfixer -= 1
             Loop While timer > 0
         Loop
     End Sub
@@ -51,14 +56,24 @@ Partial Public Class frmPS4Twitch
                 Case "reconnect1"
                     Shell("cmd.exe /c taskkill /f /im DarkSoulsRemastered.*")
                     Thread.Sleep(1000)
-                    Dim currDir = Microsoft.Win32.Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 570940", "InstallLocation", vbNull).ToString()
-                    Dim exe = $"{currDir}\\DarkSoulsRemastered.exe"
+                    Dim currDir = Microsoft.Win32.Registry.GetValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 570940", "InstallLocation", Nothing)
+                    Dim exe = $"{currDir}\DarkSoulsRemastered.exe"
 
                     Try
-                        IO.File.WriteAllText($"{currDir}\\steam_appid.txt", "570940")
+                        IO.File.WriteAllText($"{currDir}\steam_appid.txt", "570940")
                     Catch
                     End Try
-                    Shell($"cmd.exe {exe}")
+
+
+                    Dim ProcessProperties As New ProcessStartInfo
+                    ProcessProperties.FileName = exe
+                    ProcessProperties.WorkingDirectory = currDir
+                    Dim myProcess As Process = Process.Start(ProcessProperties)
+
+
+
+
+
 
 
                 Case "hidecursor"
@@ -229,12 +244,12 @@ Partial Public Class frmPS4Twitch
 
             Dim tmpcmd
             SyncLock presslock
-                tmpcmd = cmd & "-" & presstimer / 16
+                tmpcmd = cmd & "-" & CInt(presstimer / 16.667)
             End SyncLock
 
 
 
-            If tmpcmd = "-1" Then tmpcmd = ""
+            If tmpcmd(0) = "-" Then tmpcmd = ""
 
             b = System.Text.Encoding.ASCII.GetBytes(tmpcmd & Chr(0))
             mmfa.WriteArray(&H310, b, 0, b.Length)
@@ -242,7 +257,7 @@ Partial Public Class frmPS4Twitch
             For i = 0 To 9
                 If (QueuedInput.Count) > i Then
                     Dim str As String
-                    str = QueuedInput(i).cmd & "-" & Math.Floor(QueuedInput(i).time / 16)
+                    str = QueuedInput(i).cmd & "-" & Math.Floor(QueuedInput(i).time / 16.667)
 
                     'if command too long, shorten it
                     If str.Length > 15 Then str = Strings.Left(str, 15)

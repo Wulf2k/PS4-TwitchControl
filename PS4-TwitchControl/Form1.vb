@@ -14,24 +14,27 @@ Partial Public Class frmPS4Twitch
     Dim mmf As MemoryMappedFile
     Dim mmfa As MemoryMappedViewAccessor
 
+    Dim timerfixer = 1
+
+
     Private Sub TimerPress()
-        TimerPress_Celeste()
-        'TimerPress_DarkSoulsRemastered()
+        'TimerPress_Celeste()
+        TimerPress_DarkSoulsRemastered()
     End Sub
     Private Sub press()
         'btnPress_Standard()
-        btnPress_Celeste()
-        'btnPress_DarkSoulsRemastered()
+        'btnPress_Celeste()
+        btnPress_DarkSoulsRemastered()
     End Sub
 
     Private Sub execCMD(user As String, role As String, cmd As String)
-        execCMD_Celeste(user, role, cmd)
-        'execCMD_DarkSoulsRemastered(user, role, cmd)
+        'execCMD_Celeste(user, role, cmd)
+        execCMD_DarkSoulsRemastered(user, role, cmd)
     End Sub
 
     Private Sub ProcessCMD(user As String, role As String, cmd As String)
-        ProcessCMD_Celeste(user, role, cmd)
-        'ProcessCMD_DarkSoulsRemastered(user, role, cmd)
+        'ProcessCMD_Celeste(user, role, cmd)
+        ProcessCMD_DarkSoulsRemastered(user, role, cmd)
     End Sub
 
 

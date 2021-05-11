@@ -10,7 +10,7 @@ Partial Public Class frmPS4Twitch
     'Dim pauseLoc As IntPtr = IntPtr.Zero
 
 
-    Dim timerfixer = 1
+
 
 
     Dim which As String = "ms"
