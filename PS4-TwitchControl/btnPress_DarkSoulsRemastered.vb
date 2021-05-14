@@ -468,6 +468,13 @@ Partial Public Class frmPS4Twitch
 
 
 
+            Case "savebackup"
+                Controller(0, 0, 0, 0, 0, 0, 0, 60, user, "Backing")
+                Controller(0, 0, 0, 0, 0, 0, 0, 60, user, "up")
+                Controller(0, 0, 0, 0, 0, 0, 0, 60, user, "the")
+                Controller(0, 0, 0, 0, 0, 0, 0, 60, user, "save")
+
+
             Case "du"
                 If duration = 0 Then duration = 4
                 Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
