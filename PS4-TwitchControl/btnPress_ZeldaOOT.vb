@@ -5,7 +5,7 @@ Imports Nefarius.ViGEm.Client.Targets.Xbox360
 Partial Public Class frmPS4Twitch
 
 
-
+    'frametime 50
     Private Sub TimerPress_ZeldaOOT()
         Dim timer = frametime
         Do
@@ -14,7 +14,7 @@ Partial Public Class frmPS4Twitch
                 'If timerfixer = -1 Then timerfixer = 1
                 SyncLock presslock
                     'presstimer -= (frametime + Math.Abs(timerfixer))
-
+                    presstimer -= frametime
                     timer = presstimer
                 End SyncLock
 
@@ -592,13 +592,13 @@ Partial Public Class frmPS4Twitch
 
             'Set default walk duration if none specified
             If cmd(0) = "w" Then
-                If duration = 0 Then duration = 60
+                If duration = 0 Then duration = 20
             End If
 
             If cmd(0) = "a" Then
                 'TODO:  Damnit this is ugly.  Redo, with proper parsing.
                 cmd = Strings.Left(cmd.Replace(".", "5"), 5)
-                If duration = 0 Then duration = 60
+                If duration = 0 Then duration = 20
                 cmdparams = Mid(cmd, 2, 4)
             End If
 
@@ -607,14 +607,14 @@ Partial Public Class frmPS4Twitch
             'If 'roll', then roll params will be offset 1 character
             If Strings.Left(cmd, 2) = "ro" Then
                 cmdpad = 1
-                If duration = 0 Then duration = 9
+                If duration = 0 Then duration = 10
                 roll = True
             End If
 
             'If 'look', then modify right stick's axises
             If cmd(0) = "l" Then
                 axispad = 2
-                If duration = 0 Then duration = 14
+                If duration = 0 Then duration = 1
             End If
 
 
@@ -663,7 +663,7 @@ Partial Public Class frmPS4Twitch
             cmd = cmd.Replace(".", "")
 
             If roll Then
-                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, 1, user, cmd & "(-)")
+                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(-)")
                 Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, 1, user, cmd & "(!)")
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(-)")
             Else
