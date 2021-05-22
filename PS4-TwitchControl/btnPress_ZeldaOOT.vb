@@ -799,8 +799,8 @@ Partial Public Class frmPS4Twitch
                 End If
             Case "options", "opt", "hopt"
                 If Not modlist.Contains(user) Then
-                    outputChat("Options menu restricted to pre-approved users.")
-                    Return
+                    'outputChat("Options menu restricted to pre-approved users.")
+                    'Return
                 End If
             Case "pshome"
                 If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb" Or tmpuser = "tompiet1") Then
