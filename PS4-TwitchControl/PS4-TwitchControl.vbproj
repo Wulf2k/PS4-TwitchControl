@@ -77,7 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="asm.vb" />
-    <Compile Include="btnPress_StardewValley.vb">
+    <Compile Include="btnPress_ZeldaOOT.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="btnPress_DarkSoulsRemastered.vb">

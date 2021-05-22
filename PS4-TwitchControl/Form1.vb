@@ -15,30 +15,31 @@ Partial Public Class frmPS4Twitch
     Dim mmfa As MemoryMappedViewAccessor
 
     Dim timerfixer = 1
+    Dim frametime = 50
 
 
     Private Sub TimerPress()
         'TimerPress_Celeste()
         'TimerPress_DarkSoulsRemastered()
-        TimerPress_StardewValley()
+        TimerPress_ZeldaOOT()
     End Sub
     Private Sub press()
         'btnPress_Standard()
         'btnPress_Celeste()
         'btnPress_DarkSoulsRemastered()
-        btnPress_StardewValley()
+        btnPress_ZeldaOOT()
     End Sub
 
     Private Sub execCMD(user As String, role As String, cmd As String)
         'execCMD_Celeste(user, role, cmd)
         'execCMD_DarkSoulsRemastered(user, role, cmd)
-        execCMD_StardewValley(user, role, cmd)
+        execCMD_ZeldaOOT(user, role, cmd)
     End Sub
 
     Private Sub ProcessCMD(user As String, role As String, cmd As String)
         'ProcessCMD_Celeste(user, role, cmd)
         'ProcessCMD_DarkSoulsRemastered(user, role, cmd)
-        ProcessCMD_StardewValley(user, role, cmd)
+        ProcessCMD_ZeldaOOT(user, role, cmd)
     End Sub
 
 
@@ -155,7 +156,7 @@ Partial Public Class frmPS4Twitch
 
 
     Dim dbgtime As DateTime = Now
-    Dim presstimer As Integer = 16
+    Dim presstimer As Integer = frametime
     Private pressthread As Thread
 
     Dim queuelock As New Object
@@ -409,7 +410,7 @@ Partial Public Class frmPS4Twitch
 
     Private Sub Controller(buttons As Integer, RLR As Single, RUD As Single, LLR As Single, LUD As Single, LT As Single, RT As Single, hold As Integer, user As String, cmd As String)
 
-        hold = hold * 16.667
+        hold = hold * frametime
 
         If hold > 66000 Then hold = 66000
         'SyncLock queuelock
