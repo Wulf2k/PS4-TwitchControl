@@ -19,22 +19,26 @@ Partial Public Class frmPS4Twitch
 
     Private Sub TimerPress()
         'TimerPress_Celeste()
-        TimerPress_DarkSoulsRemastered()
+        'TimerPress_DarkSoulsRemastered()
+        TimerPress_StardewValley()
     End Sub
     Private Sub press()
         'btnPress_Standard()
         'btnPress_Celeste()
-        btnPress_DarkSoulsRemastered()
+        'btnPress_DarkSoulsRemastered()
+        btnPress_StardewValley()
     End Sub
 
     Private Sub execCMD(user As String, role As String, cmd As String)
         'execCMD_Celeste(user, role, cmd)
-        execCMD_DarkSoulsRemastered(user, role, cmd)
+        'execCMD_DarkSoulsRemastered(user, role, cmd)
+        execCMD_StardewValley(user, role, cmd)
     End Sub
 
     Private Sub ProcessCMD(user As String, role As String, cmd As String)
         'ProcessCMD_Celeste(user, role, cmd)
-        ProcessCMD_DarkSoulsRemastered(user, role, cmd)
+        'ProcessCMD_DarkSoulsRemastered(user, role, cmd)
+        ProcessCMD_StardewValley(user, role, cmd)
     End Sub
 
 
