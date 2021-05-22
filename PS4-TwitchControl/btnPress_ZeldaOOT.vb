@@ -114,14 +114,14 @@ Partial Public Class frmPS4Twitch
                 Case "nhopt"
                     boolHoldOpt = False
 
-                Case "hl1"
+                Case "hl1", "hl"
                     boolHoldL1 = True
-                Case "nhl1"
+                Case "nhl1", "nhl"
                     boolHoldL1 = False
 
-                Case "hl2"
+                Case "hl2", "hz"
                     boolHoldL2 = True
-                Case "nhl2"
+                Case "nhl2", "nhz"
                     boolHoldL2 = False
 
                 Case "hl3"
@@ -130,9 +130,9 @@ Partial Public Class frmPS4Twitch
                     boolHoldL3 = False
 
 
-                Case "hr1"
+                Case "hr1", "hr"
                     boolHoldR1 = True
-                Case "nhr1"
+                Case "nhr1", "nhr"
                     boolHoldR1 = False
 
                 Case "hr2"
@@ -146,9 +146,9 @@ Partial Public Class frmPS4Twitch
                     boolHoldR3 = False
 
 
-                Case "ho", "holdo"
+                Case "ho", "holdo", "hb"
                     boolHoldO = True
-                Case "nho", "noholdo"
+                Case "nho", "noholdo", "nhb"
                     boolHoldO = False
 
                 Case "hsq"
@@ -161,9 +161,9 @@ Partial Public Class frmPS4Twitch
                 Case "nhtri"
                     boolHoldTri = False
 
-                Case "hx"
+                Case "hx", "ha"
                     boolHoldX = True
-                Case "nhx"
+                Case "nhx", "nha"
                     boolHoldX = False
 
                 Case "hdu"
@@ -416,17 +416,17 @@ Partial Public Class frmPS4Twitch
         Select Case cmd
             'Hold toggles
             Case "nha",
-                 "holdo", "ho", "noholdo", "nho",
+                 "holdo", "ho", "noholdo", "nho", "hb", "nhb",
                  "hopt", "nhopt",
-                 "hl1", "nhl1",
-                 "hl2", "nhl2",
+                 "hl1", "nhl1", "hl", "nhl",
+                 "hl2", "nhl2", "hz", "nhz",
                  "hl3", "nhl3",
-                 "hr1", "nhr1",
+                 "hr1", "nhr1", "hr", "nhr",
                  "hr2", "nhr2",
                  "hr3", "nhr3",
                  "hsq", "nhsq",
                  "htri", "nhtri",
-                 "hx", "nhx",
+                 "hx", "nhx", "ha", "nha",
                  "hdu", "nhdu",
                  "hdd", "nhdd",
                  "hdl", "nhdl",
@@ -434,6 +434,7 @@ Partial Public Class frmPS4Twitch
                  "reconnect1",
                  "savebackup", "saverestore",
                  "hidecursor"
+
 
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
 
@@ -494,13 +495,13 @@ Partial Public Class frmPS4Twitch
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "o"
+            Case "o", "b"
                 If duration = 0 Then duration = 1
                 Controller(BTN_O, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "x"
+            Case "x", "a"
                 If duration = 0 Then duration = 1
                 Controller(BTN_X, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
@@ -519,17 +520,39 @@ Partial Public Class frmPS4Twitch
                 Return
 
 
-            Case "l1"
+            Case "cl"
+                If duration = 0 Then duration = 1
+                Controller(0, -1, 0, 0, 0, 0, 0, duration, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(-)")
+                Return
+            Case "cd"
+                If duration = 0 Then duration = 1
+                Controller(0, 0, -1, 0, 0, 0, 0, duration, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(-)")
+                Return
+            Case "cr"
+                If duration = 0 Then duration = 1
+                Controller(0, 1, 0, 0, 0, 0, 0, duration, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(-)")
+                Return
+            Case "cu"
+                If duration = 0 Then duration = 1
+                Controller(0, 0, 1, 0, 0, 0, 0, duration, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(-)")
+                Return
+
+
+            Case "l1", "l"
                 If duration = 0 Then duration = 1
                 Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
-            Case "l2"
+            Case "l2", "z"
                 If duration = 0 Then duration = 1
                 Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 1, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
-            Case "r1"
+            Case "r1", "r"
                 If duration = 0 Then duration = 1
                 Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
@@ -595,12 +618,6 @@ Partial Public Class frmPS4Twitch
                 If duration = 0 Then duration = 20
             End If
 
-            If cmd(0) = "a" Then
-                'TODO:  Damnit this is ugly.  Redo, with proper parsing.
-                cmd = Strings.Left(cmd.Replace(".", "5"), 5)
-                If duration = 0 Then duration = 20
-                cmdparams = Mid(cmd, 2, 4)
-            End If
 
 
 
