@@ -710,7 +710,9 @@ Partial Public Class frmPS4Twitch
 
         'allow loop of entire string, with inner loops
 
-
+        If tmpcmd.Contains("wulf") Then
+            Return
+        End If
 
         If tmpcmd.Contains("*") Then
             CMDmulti = Val(tmpcmd.Split("*")(1))
