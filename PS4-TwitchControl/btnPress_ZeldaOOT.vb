@@ -109,9 +109,9 @@ Partial Public Class frmPS4Twitch
                     boolHoldDR = False
                     boolHoldOpt = False
 
-                Case "hopt"
+                Case "hopt", "hstart"
                     boolHoldOpt = True
-                Case "nhopt"
+                Case "nhopt", "nhstart"
                     boolHoldOpt = False
 
                 Case "hl1", "hl"
@@ -417,7 +417,7 @@ Partial Public Class frmPS4Twitch
             'Hold toggles
             Case "nha",
                  "holdo", "ho", "noholdo", "nho", "hb", "nhb",
-                 "hopt", "nhopt",
+                 "hopt", "nhopt", "hstart", "nhstart",
                  "hl1", "nhl1", "hl", "nhl",
                  "hl2", "nhl2", "hz", "nhz",
                  "hl3", "nhl3",
@@ -489,7 +489,7 @@ Partial Public Class frmPS4Twitch
                 Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 1, user, cmd)
                 Return
 
-            Case "options", "opt"
+            Case "options", "opt", "start"
                 If duration = 0 Then duration = 1
                 Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
@@ -540,6 +540,18 @@ Partial Public Class frmPS4Twitch
                 Controller(0, 0, 1, 0, 0, 0, 0, duration, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(-)")
                 Return
+
+            Case "ss"
+                My.Computer.Keyboard.SendKeys("{F5}", True)
+                Return
+            Case "ls"
+                My.Computer.Keyboard.SendKeys("{F7}", True)
+                Return
+            Case "rs"
+                My.Computer.Keyboard.SendKeys("{F1}", True)
+                Return
+
+
 
 
             Case "l1", "l"
@@ -779,7 +791,7 @@ Partial Public Class frmPS4Twitch
             'outputChat("Personal items restricted to pre-approved users.")
             '       Return
             'End If
-            Case "reconnect1", "savebackup", "saverestore"
+            Case "reconnect1", "savebackup", "saverestore", "ss", "ls", "rs"
                 If Not modlist.Contains(user) Then
                     Return
                 End If
