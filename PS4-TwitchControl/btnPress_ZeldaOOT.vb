@@ -65,26 +65,17 @@ Partial Public Class frmPS4Twitch
                     'ProcessProperties.WorkingDirectory = currDir
                     'Dim myProcess As Process = Process.Start(ProcessProperties)
 
-                Case "savebackup"
-                    Try
-                        'Dim fileloc = $"{My.Computer.FileSystem.SpecialDirectories.MyDocuments}\NBGI\DARK SOULS REMASTERED\10279151\DRAKS0005.sl2"
-                        'Dim dst1 = "C:\temp\DRAKS0005.sl2"
-                        'Dim dst2 = $"C:\temp\DRAKS0005-{DateTime.Now.Year}{DateTime.Now.Month.ToString("D2")}{DateTime.Now.Day.ToString("D2")}{DateTime.Now.Hour.ToString("D2")}{DateTime.Now.Minute.ToString("D2")}{DateTime.Now.Second.ToString("D2")}.sl2"
-                        'IO.File.Copy(fileloc, dst1, True)
-                        'IO.File.Copy(fileloc, dst2, True)
-                    Catch ex As Exception
 
-                    End Try
+                Case "ss"
+                    My.Computer.Keyboard.SendKeys("{F5}", True)
+                    Return
+                Case "ls"
+                    My.Computer.Keyboard.SendKeys("{F7}", True)
+                    Return
+                Case "rs"
+                    My.Computer.Keyboard.SendKeys("{F1}", True)
+                    Return
 
-                Case "saverestore"
-                    Try
-
-                    Catch ex As Exception
-                        'Dim fileloc = $"{My.Computer.FileSystem.SpecialDirectories.MyDocuments}\NBGI\DARK SOULS REMASTERED\10279151\DRAKS0005.sl2"
-                        'Dim src = "C:\temp\DRAKS0005.sl2"
-
-                        'IO.File.Copy(src, fileloc, True)
-                    End Try
 
                 Case "hidecursor"
                     Dim x = 1600
@@ -432,7 +423,7 @@ Partial Public Class frmPS4Twitch
                  "hdl", "nhdl",
                  "hdr", "nhdr",
                  "reconnect1",
-                 "savebackup", "saverestore",
+                 "ss", "ls", "rs",
                  "hidecursor"
 
 
@@ -539,16 +530,6 @@ Partial Public Class frmPS4Twitch
                 If duration = 0 Then duration = 1
                 Controller(0, 0, 1, 0, 0, 0, 0, duration, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(-)")
-                Return
-
-            Case "ss"
-                My.Computer.Keyboard.SendKeys("{F5}", True)
-                Return
-            Case "ls"
-                My.Computer.Keyboard.SendKeys("{F7}", True)
-                Return
-            Case "rs"
-                My.Computer.Keyboard.SendKeys("{F1}", True)
                 Return
 
 
