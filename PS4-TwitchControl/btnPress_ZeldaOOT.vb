@@ -154,7 +154,7 @@ Partial Public Class frmPS4Twitch
 
                 Case "hx", "ha"
                     boolHoldX = True
-                Case "nhx", "nha"
+                Case "nhx"
                     boolHoldX = False
 
                 Case "hdu"
@@ -417,7 +417,7 @@ Partial Public Class frmPS4Twitch
                  "hr3", "nhr3",
                  "hsq", "nhsq",
                  "htri", "nhtri",
-                 "hx", "nhx", "ha", "nha",
+                 "hx", "nhx", "ha",
                  "hdu", "nhdu",
                  "hdd", "nhdd",
                  "hdl", "nhdl",
@@ -496,7 +496,7 @@ Partial Public Class frmPS4Twitch
                 If duration = 0 Then duration = 1
                 Controller(BTN_X, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
-                Return
+                If cmd.Length < 2 And Not cmd = "a" Then Return
 
             Case "sq"
                 If duration = 0 Then duration = 1
