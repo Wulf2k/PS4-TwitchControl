@@ -68,13 +68,13 @@ Partial Public Class frmPS4Twitch
 
                 Case "ss"
                     My.Computer.Keyboard.SendKeys("{F5}", True)
-                    Return
+
                 Case "ls"
                     My.Computer.Keyboard.SendKeys("{F7}", True)
-                    Return
+
                 Case "rs"
                     My.Computer.Keyboard.SendKeys("{F1}", True)
-                    Return
+
 
 
                 Case "hidecursor"
@@ -496,7 +496,7 @@ Partial Public Class frmPS4Twitch
                 If duration = 0 Then duration = 1
                 Controller(BTN_X, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
-                If cmd.Length < 2 And Not cmd = "a" Then Return
+                Return
 
             Case "sq"
                 If duration = 0 Then duration = 1
@@ -611,7 +611,12 @@ Partial Public Class frmPS4Twitch
                 If duration = 0 Then duration = 20
             End If
 
-
+            If cmd(0) = "a" Then
+                'TODO:  Damnit this is ugly.  Redo, with proper parsing.
+                cmd = Strings.Left(cmd.Replace(".", "5"), 5)
+                If duration = 0 Then duration = 20
+                cmdparams = Mid(cmd, 2, 4)
+            End If
 
 
             'If 'roll', then roll params will be offset 1 character
