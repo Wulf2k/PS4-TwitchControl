@@ -180,6 +180,10 @@ Partial Public Class frmPS4Twitch
     Shared boolHoldDR = False
     Shared boolHoldOpt = False
 
+
+    Dim boolHoldAxis() As Boolean = {False, False, False, False}
+    Dim boolHoldAxisVal() As Single = {0, 0, 0, 0}
+
     Private ctrlPtr As IntPtr
 
     Dim IRC As New IrcCon

@@ -100,6 +100,17 @@ Partial Public Class frmPS4Twitch
                     boolHoldDR = False
                     boolHoldOpt = False
 
+                    For i = 0 To 3
+                        boolHoldAxis(i) = False
+                        boolHoldAxisVal(i) = 0
+                    Next
+
+                Case "nhw"
+                    For i = 0 To 3
+                        boolHoldAxis(i) = False
+                        boolHoldAxisVal(i) = 0
+                    Next
+
                 Case "hopt", "hstart"
                     boolHoldOpt = True
                 Case "nhopt", "nhstart"
@@ -213,7 +224,11 @@ Partial Public Class frmPS4Twitch
             If boolHoldX Then buttons = (buttons Or BTN_X)
             If boolHoldSq Then buttons = (buttons Or BTN_SQUARE)
 
-
+            'Apply held analogs
+            If boolHoldAxis(0) Then QueuedInput(0).LStickLR = boolHoldAxisVal(0)
+            If boolHoldAxis(1) Then QueuedInput(0).LStickUD = boolHoldAxisVal(1)
+            If boolHoldAxis(2) Then QueuedInput(0).RstickLR = boolHoldAxisVal(2)
+            If boolHoldAxis(3) Then QueuedInput(0).RstickUD = boolHoldAxisVal(3)
 
 
             'Process specified axises
@@ -226,6 +241,9 @@ Partial Public Class frmPS4Twitch
             user = QueuedInput(0).user
             cmd = QueuedInput(0).cmd
             'refTimerPress.Interval = QueuedInput(0).time
+
+
+
             SyncLock presslock
                 presstimer = QueuedInput(0).time
             End SyncLock
@@ -387,6 +405,8 @@ Partial Public Class frmPS4Twitch
         Dim buttons = 0
         Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}
         Dim halfhold As Boolean = False
+        Dim analoghold As Boolean = False
+        Dim analogholdrelease As Boolean = False
         Dim duration As Integer = 0
 
         Dim partcmd As String = ""
@@ -407,6 +427,7 @@ Partial Public Class frmPS4Twitch
         Select Case cmd
             'Hold toggles
             Case "nha",
+                 "hw", "nhw",
                  "holdo", "ho", "noholdo", "nho", "hb", "nhb",
                  "hopt", "nhopt", "hstart", "nhstart",
                  "hl1", "nhl1", "hl", "nhl",
@@ -587,13 +608,23 @@ Partial Public Class frmPS4Twitch
 
 
 
-        'parse out half-hold
-        If cmd(0) = "h" Then
-            halfhold = True
+        'parse out no-hold
+        If cmd(0) = "n" Then
+            analogholdrelease = True
             cmd = Strings.Right(cmd, cmd.Length - 1)
         End If
 
+        'parse out half-hold
+        If cmd(0) = "h" Then
+            analoghold = True
+            cmd = Strings.Right(cmd, cmd.Length - 1)
+        End If
 
+        'parse out short-walk
+        If cmd(0) = "s" Then
+            halfhold = True
+            cmd = Strings.Right(cmd, cmd.Length - 1)
+        End If
 
 
 
@@ -607,11 +638,11 @@ Partial Public Class frmPS4Twitch
 
 
             'Set default walk duration if none specified
-            If cmd(0) = "w" Then
+            If cmd(0) = "w" And Not analoghold Then
                 If duration = 0 Then duration = 20
             End If
 
-            If cmd(0) = "a" Then
+            If cmd(0) = "a" And Not analoghold Then
                 'TODO:  Damnit this is ugly.  Redo, with proper parsing.
                 cmd = Strings.Left(cmd.Replace(".", "5"), 5)
                 If duration = 0 Then duration = 20
@@ -671,9 +702,18 @@ Partial Public Class frmPS4Twitch
                 If halfhold Then
                     axis(i) = axis(i) / 2
                 End If
+                If analoghold And Not axis(i) = 0 Then
+                    boolHoldAxis(i) = Not analogholdrelease
+                    boolHoldAxisVal(i) = axis(i)
+                End If
             Next
 
-            If halfhold Then cmd = "h" & cmd
+
+
+            If halfhold Then cmd = "s" & cmd
+            If analoghold Then cmd = "h" & cmd
+            If analogholdrelease Then cmd = "n" & cmd
+
             'Remove cmd padding
             cmd = cmd.Replace(".", "")
 
