@@ -365,7 +365,7 @@ Partial Public Class frmPS4Twitch
         Next
 
         SyncLock queuelock
-            If QueuedInput.Count > 1 Then
+            If QueuedInput.Count > 0 Then
                 microTimer.Enabled = True
                 microTimer.Start()
             Else

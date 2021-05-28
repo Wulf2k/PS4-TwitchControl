@@ -30,7 +30,7 @@ Partial Public Class frmPS4Twitch
         SyncLock queuelock
 
             'TODO:  Fix up below, randomly seems to be hitting this spot with an empty queue
-            If QueuedInput.Count < 2 Then
+            If QueuedInput.Count < 1 Then
 
                 Return
             End If
@@ -40,26 +40,79 @@ Partial Public Class frmPS4Twitch
             'Handle hold-toggles
             Select Case QueuedInput(0).cmd
                 Case "reconnect1"
-                    'Shell("cmd.exe /c taskkill /f /im DarkSoulsRemastered.*")
-                    'Thread.Sleep(1000)
-                    'Dim currDir = Microsoft.Win32.Registry.GetValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 570940", "InstallLocation", Nothing)
-                    'Dim exe = $"{currDir}\DarkSoulsRemastered.exe"
+                    Shell("cmd.exe /c taskkill /f /im Project64.exe")
+                    Thread.Sleep(1000)
+                    Dim currDir = "C:\Emus\N64"
+                    Dim exe = $"{currDir}\Project64.exe"
 
 
-                    'Dim ProcessProperties As New ProcessStartInfo
-                    'ProcessProperties.FileName = exe
-                    'ProcessProperties.WorkingDirectory = currDir
-                    'Dim myProcess As Process = Process.Start(ProcessProperties)
+                    Dim ProcessProperties As New ProcessStartInfo
+                    ProcessProperties.FileName = exe
+                    ProcessProperties.WorkingDirectory = currDir
+                    Dim myProcess As Process = Process.Start(ProcessProperties)
 
+                    IO.File.Delete("C:\Emus\N64\Config\Project64.cfg")
+                    IO.File.Copy("C:\Emus\N64\Config\Project64.cfg.bak", "C:\Emus\N64\Config\Project64.cfg")
+
+                    outputChat("Project64.exe launched.")
+
+                Case "reconnect2"
+                    Dim hwnd As IntPtr
+                    hwnd = FindWindowA(Nothing, "Project64 2.3.2.202")
+                    If Not hwnd.Equals(IntPtr.Zero) Then
+                        SetForegroundWindow(hwnd)
+                        My.Computer.Keyboard.SendKeys("%{f}", True)
+                        My.Computer.Keyboard.SendKeys("{1}", True)
+                        outputChat("Project64 ROM loaded.")
+                    Else
+                        outputChat($"'Project64 2.3.2.202' window not found.")
+                    End If
+
+                Case "focus"
+                    Dim hwnd As IntPtr
+                    hwnd = FindWindowA(Nothing, "Project64 2.3.2.202")
+                    If Not hwnd.Equals(IntPtr.Zero) Then
+                        SetForegroundWindow(hwnd)
+                        outputChat($"Setting focus to hwnd {hwnd.ToString("X")}")
+                    Else
+                        outputChat($"'Project64 2.3.2.202' window not found.")
+                    End If
 
                 Case "ss"
-                    My.Computer.Keyboard.SendKeys("{F5}", True)
+
+
+                    Dim hwnd As IntPtr
+                    hwnd = FindWindowA(Nothing, "Project64 2.3.2.202")
+                    If Not hwnd.Equals(IntPtr.Zero) Then
+                        SetForegroundWindow(hwnd)
+                        My.Computer.Keyboard.SendKeys("{F5}", True)
+                        outputChat($"State saved.")
+                    Else
+                        outputChat($"'Project64 2.3.2.202' window not found.")
+                    End If
+
 
                 Case "ls"
-                    My.Computer.Keyboard.SendKeys("{F7}", True)
+                    Dim hwnd As IntPtr
+                    hwnd = FindWindowA(Nothing, "Project64 2.3.2.202")
+                    If Not hwnd.Equals(IntPtr.Zero) Then
+                        SetForegroundWindow(hwnd)
+                        My.Computer.Keyboard.SendKeys("{F7}", True)
+                        outputChat($"State loaded.")
+                    Else
+                        outputChat($"'Project64 2.3.2.202' window not found.")
+                    End If
 
                 Case "rs"
-                    My.Computer.Keyboard.SendKeys("{F1}", True)
+                    Dim hwnd As IntPtr
+                    hwnd = FindWindowA(Nothing, "Project64 2.3.2.202")
+                    If Not hwnd.Equals(IntPtr.Zero) Then
+                        SetForegroundWindow(hwnd)
+                        My.Computer.Keyboard.SendKeys("{F1}", True)
+                        outputChat($"Game reset.")
+                    Else
+                        outputChat($"'Project64 2.3.2.202' window not found.")
+                    End If
 
 
 
@@ -430,8 +483,9 @@ Partial Public Class frmPS4Twitch
                  "hdd", "nhdd",
                  "hdl", "nhdl",
                  "hdr", "nhdr",
-                 "reconnect1",
+                 "reconnect1", "reconnect2",
                  "ss", "ls", "rs",
+                 "focus",
                  "hidecursor"
 
 
@@ -840,6 +894,7 @@ Partial Public Class frmPS4Twitch
 
                 SyncLock presslock
                     presstimer = 0
+                    microTimer.Interval = 0
                 End SyncLock
 
 
