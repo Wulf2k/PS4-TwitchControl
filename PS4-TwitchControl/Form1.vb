@@ -15,13 +15,21 @@ Partial Public Class frmPS4Twitch
     Dim mmfa As MemoryMappedViewAccessor
 
     Dim timerfixer = 1
-    Dim frametime = 50
+    Dim frametime = 50000 'in microseconds
+
+    Dim microTimer As MicroLibrary.MicroTimer = New MicroLibrary.MicroTimer()
 
 
     Private Sub TimerPress()
         'TimerPress_Celeste()
         'TimerPress_DarkSoulsRemastered()
-        TimerPress_ZeldaOOT()
+        'TimerPress_ZeldaOOT()
+
+        AddHandler microTimer.MicroTimerElapsed, AddressOf press
+        microTimer.Interval = frametime
+        microTimer.Enabled = True
+        'microTimer.Start()
+
     End Sub
     Private Sub press()
         'btnPress_Standard()
@@ -263,6 +271,14 @@ Partial Public Class frmPS4Twitch
         modlist.Add("wea000")
         modlist.Add("wulf2k")
         modlist.Add("yuidesu")
+
+
+
+    End Sub
+
+    Private Sub frmPS4Twitch_FormClose(sender As Object, e As EventArgs) Handles MyBase.FormClosed
+        microTimer.Enabled = False
+
     End Sub
 
     Private Sub btnJoinTwitchChat_Click(sender As Object, e As EventArgs) Handles btnJoinTwitchChat.Click
@@ -348,6 +364,17 @@ Partial Public Class frmPS4Twitch
 
         Next
 
+        SyncLock queuelock
+            If QueuedInput.Count > 1 Then
+                microTimer.Enabled = True
+                microTimer.Start()
+            Else
+                microTimer.Enabled = False
+                microTimer.Stop()
+            End If
+        End SyncLock
+
+
     End Sub
 
     Private Sub PushQ(ByRef buttons As Integer, RStickLR As Single, RStickUD As Single, LStickLR As Single,
@@ -406,6 +433,8 @@ Partial Public Class frmPS4Twitch
     Private Sub outputChat(ByVal txt As String)
 
 
+        IRC.Send($"PRIVMSG {txtTwitchChat.Text} :{txt}")
+
     End Sub
 
 
@@ -413,20 +442,6 @@ Partial Public Class frmPS4Twitch
 
 
     Private Sub Controller(buttons As Integer, RLR As Single, RUD As Single, LLR As Single, LUD As Single, LT As Single, RT As Single, hold As Integer, user As String, cmd As String)
-
-        hold = hold * frametime
-
-        If hold > 66000 Then hold = 66000
-        'SyncLock queuelock
-        'If QueuedInput.Count > 0 Then
-        'If QueuedInput(QueuedInput.Count - 1).cmd = cmd Then
-        'Stop combining identical inputs
-        'QueuedInput(QueuedInput.Count - 1).time = QueuedInput(QueuedInput.Count - 1).time + hold
-        'Return
-        'End If
-        'End If
-        'End SyncLock
-
         PushQ(buttons, RLR, RUD, LLR, LUD, LT, RT, hold, user, cmd)
     End Sub
 
@@ -441,42 +456,12 @@ Partial Public Class frmPS4Twitch
 
         XBctrl.AutoSubmitReport = False
 
-        'ctrl.SetButtonState(DualShock4Button.Circle, True)
-        'ctrl.SetAxisValue(DualShock4Axis.LeftThumbX, 40)
 
 
-        'If ctrlPtr Then
-        'If False Then
+
         hookmem = VirtualAllocEx(_targetProcessHandle, 0, &H8000, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
         Dim oldProtectionOut As UInteger
         VirtualProtectEx(_targetProcessHandle, hookmem, &H8000, PAGE_EXECUTE_READWRITE, oldProtectionOut)
-
-        'Dim a As New asm
-
-
-        'a.AddVar("hook", rpCtrlWrap + &H1BEB90)
-        'a.AddVar("newmem", hookmem)
-        'a.AddVar("newctrl", hookmem + &H400)
-        '
-        '           a.AddVar("hookreturn", rpCtrlWrap + &H1BEB96)
-
-        'a.pos = hookmem
-        'a.Asm("mov edx, newctrl")
-
-        'a.Asm("add esp,0x0C") 'Restore overwritten instruction
-
-        'a.Asm("jmp hookreturn")
-
-        'WriteProcessMemory(_targetProcessHandle, hookmem, a.bytes, a.bytes.Length, 0)
-
-        'Console.WriteLine("Hook: " & Hex(CInt(hookmem)))
-
-        'a.Clear()
-        'a.AddVar("newmem", hookmem)
-        'a.pos = rpCtrlWrap + &H1BEB90
-        'a.Asm("jmp newmem")
-
-        'WriteProcessMemory(_targetProcessHandle, rpCtrlWrap + &H1BEB90, a.bytes, a.bytes.Length, 0)
 
 
 
@@ -484,10 +469,6 @@ Partial Public Class frmPS4Twitch
         pressthread.IsBackground = True
         pressthread.Start()
 
-
-
-
-        'End If
     End Sub
     Private Sub RestoreControl()
         ''WBytes(rpCtrlWrap + &H1D0980, {&H8B, &H55, &HC, &H83, &HC4, &HC})  'Old ver

@@ -5,26 +5,9 @@ Imports Nefarius.ViGEm.Client.Targets.Xbox360
 Partial Public Class frmPS4Twitch
 
 
-    'frametime 50
-    Private Sub TimerPress_ZeldaOOT()
-        Dim timer = frametime
-        Do
-            press()
-            Do
-                'If timerfixer = -1 Then timerfixer = 1
-                SyncLock presslock
-                    'presstimer -= (frametime + Math.Abs(timerfixer))
-                    presstimer -= frametime
-                    timer = presstimer
-                End SyncLock
-
-                Thread.Sleep(frametime)
-                'timerfixer -= 1
-            Loop While timer > 0
-        Loop
-    End Sub
-
     Private Sub btnPress_ZeldaOOT()
+
+        'Console.WriteLine(DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.ffffff"))
 
         Dim buttons = 0
         Dim LStickLR As Single = 0
@@ -47,7 +30,10 @@ Partial Public Class frmPS4Twitch
         SyncLock queuelock
 
             'TODO:  Fix up below, randomly seems to be hitting this spot with an empty queue
-            If QueuedInput.Count = 0 Then Return
+            If QueuedInput.Count < 2 Then
+
+                Return
+            End If
 
             buttons = QueuedInput(0).buttons
 
@@ -245,7 +231,8 @@ Partial Public Class frmPS4Twitch
 
 
             SyncLock presslock
-                presstimer = QueuedInput(0).time
+                'presstimer = QueuedInput(0).time
+                microTimer.Interval = QueuedInput(0).time * frametime
             End SyncLock
 
             PopQ()
@@ -819,14 +806,19 @@ Partial Public Class frmPS4Twitch
             'outputChat("Personal items restricted to pre-approved users.")
             '       Return
             'End If
+            Case "hello"
+                outputChat("Hello.")
+
+
             Case "reconnect1", "savebackup", "saverestore", "ss", "ls", "rs"
                 If Not modlist.Contains(user) Then
+                    outputChat("Command restricted.")
                     Return
                 End If
             Case "options", "opt", "hopt"
                 If Not modlist.Contains(user) Then
-                    'outputChat("Options menu restricted to pre-approved users.")
-                    'Return
+
+
                 End If
             Case "pshome"
                 If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb" Or tmpuser = "tompiet1") Then
@@ -835,18 +827,10 @@ Partial Public Class frmPS4Twitch
                 End If
             Case "tri", "htri"
                 If Not modlist.Contains(user) Then
-                    'outputChat("Consumable use restricted to pre-approved users.")
-                    'Return
+
                 End If
             Case "clearallcmds", "ca"
-                'Testing removal of mod restriction on clear all commands
 
-
-                'If Not (modlist.Contains(tmpuser)) Then
-                'outputChat("Clearing all commands restricted to pre-approved users.")
-                'ProcessCMD({tmpuser, "clearcmds"})
-                'Else
-                outputChat(tmpuser & " has cleared the command queue.")
 
                 SyncLock queuelock
                     QueuedInput.Clear()
