@@ -19,21 +19,19 @@ Partial Public Class frmPS4Twitch
         Dim user As String = ""
         Dim cmd As String = ""
 
-        SyncLock queuelock
-            'If nothing in queue, push a 'nothing'-press onto it for 1 frame
-            If QueuedInput.Count = 0 Then
-                Controller(0, 0, 0, 0, 0, 0, 0, 1, "", "")
-            End If
-        End SyncLock
+        'SyncLock queuelock
+        'If nothing in queue, push a 'nothing'-press onto it for 1 frame
+        'If QueuedInput.Count = 0 Then
+        '        Controller(0, 0, 0, 0, 0, 0, 0, 1, "", "")
+        'End If
+        'End SyncLock
 
         'Try
         SyncLock queuelock
-
             'TODO:  Fix up below, randomly seems to be hitting this spot with an empty queue
-            If QueuedInput.Count < 1 Then
-
-                Return
-            End If
+            'If QueuedInput.Count < 1 Then
+            'Return
+            ';End If
 
             buttons = QueuedInput(0).buttons
 
@@ -575,23 +573,23 @@ Partial Public Class frmPS4Twitch
 
             Case "cl"
                 If duration = 0 Then duration = 1
-                Controller(0, -1, 0, 0, 0, 0, 0, duration, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(-)")
+                Controller(0, -1, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "cd"
                 If duration = 0 Then duration = 1
-                Controller(0, 0, -1, 0, 0, 0, 0, duration, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(-)")
+                Controller(0, 0, -1, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "cr"
                 If duration = 0 Then duration = 1
-                Controller(0, 1, 0, 0, 0, 0, 0, duration, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(-)")
+                Controller(0, 1, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "cu"
                 If duration = 0 Then duration = 1
-                Controller(0, 0, 1, 0, 0, 0, 0, duration, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(-)")
+                Controller(0, 0, 1, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
