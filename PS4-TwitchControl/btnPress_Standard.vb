@@ -824,10 +824,10 @@ Partial Public Class frmPS4Twitch
 
 
             Case "takecontrol"
-                If modlist.Contains(role) Then TakeControl()
+                'If modlist.Contains(role) Then TakeControl()
 
             Case "restorecontrol"
-                If modlist.Contains(role) Then RestoreControl()
+                'If modlist.Contains(role) Then RestoreControl()
         End Select
 
 

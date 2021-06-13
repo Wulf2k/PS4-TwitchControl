@@ -15,7 +15,7 @@ Partial Public Class frmPS4Twitch
     Dim mmfa As MemoryMappedViewAccessor
 
     Dim timerfixer = 1
-    Dim frametime = 50000 'in microseconds
+    Dim frametime = 33333 'in microseconds
 
     Dim microTimer As MicroLibrary.MicroTimer = New MicroLibrary.MicroTimer()
 
@@ -35,19 +35,22 @@ Partial Public Class frmPS4Twitch
         'btnPress_Standard()
         'btnPress_Celeste()
         'btnPress_DarkSoulsRemastered()
-        btnPress_ZeldaOOT()
+        'btnPress_ZeldaOOT()
+        btnPress_PokemonPlatinum()
     End Sub
 
     Private Sub execCMD(user As String, role As String, cmd As String)
         'execCMD_Celeste(user, role, cmd)
         'execCMD_DarkSoulsRemastered(user, role, cmd)
-        execCMD_ZeldaOOT(user, role, cmd)
+        'execCMD_ZeldaOOT(user, role, cmd)
+        execCMD_PokemonPlatinum(user, role, cmd)
     End Sub
 
     Private Sub ProcessCMD(user As String, role As String, cmd As String)
         'ProcessCMD_Celeste(user, role, cmd)
         'ProcessCMD_DarkSoulsRemastered(user, role, cmd)
-        ProcessCMD_ZeldaOOT(user, role, cmd)
+        'ProcessCMD_ZeldaOOT(user, role, cmd)
+        ProcessCMD_PokemonPlatinum(user, role, cmd)
     End Sub
 
 
@@ -99,6 +102,7 @@ Partial Public Class frmPS4Twitch
     Private Declare Function OpenProcess Lib "kernel32.dll" (ByVal dwDesiredAcess As UInt32, ByVal bInheritHandle As Boolean, ByVal dwProcessId As Int32) As IntPtr
     Private Declare Function ReadProcessMemory Lib "kernel32" (ByVal hProcess As IntPtr, ByVal lpBaseAddress As IntPtr, ByVal lpBuffer() As Byte, ByVal iSize As Integer, ByRef lpNumberOfBytesRead As Integer) As Boolean
     Private Declare Function SetForegroundWindow Lib "user32.dll" (ByVal hwnd As Integer) As Integer
+    Private Declare Function ShowWindow Lib "user32.dll" (ByVal hwnd As Integer, nCmdShow As Integer) As Integer
     Private Declare Function VirtualAllocEx Lib "kernel32.dll" (ByVal hProcess As IntPtr, ByVal lpAddress As IntPtr, ByVal dwSize As IntPtr, ByVal flAllocationType As Integer, ByVal flProtect As Integer) As IntPtr
     Private Declare Function VirtualProtectEx Lib "kernel32.dll" (hProcess As IntPtr, lpAddress As IntPtr, ByVal lpSize As IntPtr, ByVal dwNewProtect As UInt32, ByRef dwOldProtect As UInt32) As Boolean
     Private Declare Function VirtualFreeEx Lib "kernel32.dll" (hProcess As IntPtr, lpAddress As IntPtr, ByVal dwSize As Integer, ByVal dwFreeType As Integer) As Boolean
@@ -186,6 +190,7 @@ Partial Public Class frmPS4Twitch
     Shared boolHoldDD = False
     Shared boolHoldDL = False
     Shared boolHoldDR = False
+    Shared boolHoldShare = False
     Shared boolHoldOpt = False
 
 
@@ -264,6 +269,7 @@ Partial Public Class frmPS4Twitch
 
         'Control which chat users can execute mod commands
         modlist.Add("emonkreg")
+        modlist.Add("nick666101")
         modlist.Add("nightbot")
         modlist.Add("seannyb")
         modlist.Add("schattentod")
@@ -338,9 +344,6 @@ Partial Public Class frmPS4Twitch
 
         For Each line In msg
             line = line.TrimEnd
-            'line = line.ToLower
-            'fuck it, user lowercase
-
 
             If line.Length < 1000 Then
                 txtChat.AppendText($"-> {line}")
@@ -391,12 +394,7 @@ Partial Public Class frmPS4Twitch
             QueuedInput.RemoveAt(0)
         End SyncLock
     End Sub
-    Private Function parseEmber(ByVal txt As String) As Integer
-        Dim ember = 0
-        txt = Microsoft.VisualBasic.Right(txt, txt.Length - 5)
-        ember = Val(txt)
-        Return ember
-    End Function
+
     Private Function parseChat(ByVal txt As String) As String()
         txt = Microsoft.VisualBasic.Right(txt, txt.Length - InStr(2, txt, Chr(13)))
 
@@ -409,8 +407,6 @@ Partial Public Class frmPS4Twitch
 
         txt = txt.ToLower
         txt = txt.Replace(" ", "")
-
-        'MsgBox(txt)
 
         If Asc(txt(0)) = 10 Then txt = Microsoft.VisualBasic.Right(txt, txt.Length - 1)
 
@@ -447,43 +443,21 @@ Partial Public Class frmPS4Twitch
 
     Private Sub TakeControl()
 
-
         DS4ctrl = client.CreateDualShock4Controller()
         XBctrl = client.CreateXbox360Controller()
 
         'DS4ctrl.Connect()
         XBctrl.Connect()
-
         XBctrl.AutoSubmitReport = False
-
-
-
-
-        hookmem = VirtualAllocEx(_targetProcessHandle, 0, &H8000, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
-        Dim oldProtectionOut As UInteger
-        VirtualProtectEx(_targetProcessHandle, hookmem, &H8000, PAGE_EXECUTE_READWRITE, oldProtectionOut)
-
-
 
         pressthread = New Thread(AddressOf TimerPress)
         pressthread.IsBackground = True
         pressthread.Start()
 
     End Sub
-    Private Sub RestoreControl()
-        ''WBytes(rpCtrlWrap + &H1D0980, {&H8B, &H55, &HC, &H83, &HC4, &HC})  'Old ver
-        'WBytes(rpCtrlWrap + &H1BFD10, {&H8B, &H55, &HC, &H83, &HC4, &HC})
-        WBytes(rpCtrlWrap + &H1BEB90, {&H8B, &H55, &HC, &H83, &HC4, &HC})
 
-        'pressthread.Abort
-    End Sub
     Private Sub chkAttached_CheckedChanged(sender As Object, e As EventArgs) Handles chkAttached.CheckedChanged
         If chkAttached.Checked Then
-            Dim found As Boolean
-
-            found = ScanForProcess("Celeste", True)
-            'chkAttached.Checked = found
-            'If found Then findDllAddresses()
 
 
             mmf = MemoryMappedFile.CreateOrOpen("TwitchControl", &H1000)
