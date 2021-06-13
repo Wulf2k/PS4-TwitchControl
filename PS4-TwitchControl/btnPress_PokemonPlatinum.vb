@@ -322,7 +322,7 @@ Partial Public Class frmPS4Twitch
             For i = 0 To 9
                 If (QueuedInput.Count) > i Then
                     Dim str As String
-                    str = QueuedInput(i).cmd & "-" & Math.Floor(QueuedInput(i).time / frametime)
+                    str = QueuedInput(i).cmd & "-" & QueuedInput(i).time
 
                     'if command too long, shorten it
                     If str.Length > 15 Then str = Strings.Left(str, 15)
