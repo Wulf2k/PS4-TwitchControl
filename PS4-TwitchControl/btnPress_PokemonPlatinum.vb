@@ -486,7 +486,7 @@ Partial Public Class frmPS4Twitch
                  "hr3", "nhr3",
                  "hsq", "nhsq",
                  "htri", "nhtri", "hy", "nhy",
-                 "hx", "nhx", "ha",
+                 "hx", "nhx", "ha", "nha",
                  "hdu", "nhdu",
                  "hdd", "nhdd",
                  "hdl", "nhdl",
@@ -840,6 +840,7 @@ Partial Public Class frmPS4Twitch
         If tmpcmd.Length > 2 Then
             If IsNumeric(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x"))) Then
                 CMDmulti = Val(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x")))
+                If CMDmulti > 999 Then CMDmulti = 999
                 tmpcmd = Microsoft.VisualBasic.Left(tmpcmd, tmpcmd.LastIndexOf("x"))
             End If
         End If
