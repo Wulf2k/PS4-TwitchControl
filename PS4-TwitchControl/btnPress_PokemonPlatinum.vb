@@ -106,7 +106,7 @@ Partial Public Class frmPS4Twitch
 
                 Case "rs"
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "Project64 2.3.2.202")
+                    hwnd = FindWindowA(Nothing, "DeSmuME 0.9.11 x64")
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         SetForegroundWindow(hwnd)
                         My.Computer.Keyboard.SendKeys("^{R}", True)
@@ -292,7 +292,7 @@ Partial Public Class frmPS4Twitch
 
             SyncLock presslock
                 presstimer = QueuedInput(0).time
-                microTimer.Interval = QueuedInput(0).time * frametime
+                microTimer.Interval = Math.Ceiling(QueuedInput(0).time * frametime)
             End SyncLock
 
             PopQ()
@@ -309,7 +309,7 @@ Partial Public Class frmPS4Twitch
 
             Dim tmpcmd
             SyncLock presslock
-                tmpcmd = cmd & "-" & CInt(presstimer / frametime)
+                tmpcmd = cmd & "-" & presstimer
             End SyncLock
 
 
@@ -526,103 +526,119 @@ Partial Public Class frmPS4Twitch
 
 
             Case "du"
-                If duration = 0 Then duration = 1
-                Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dd"
-                If duration = 0 Then duration = 1
-                Controller(BTN_DPAD_DOWN, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_DPAD_DOWN, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dl"
-                If duration = 0 Then duration = 1
-                Controller(BTN_DPAD_LEFT, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_DPAD_LEFT, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dr"
-                If duration = 0 Then duration = 1
-                Controller(BTN_DPAD_RIGHT, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_DPAD_RIGHT, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
+
+            Case "wu"
+                Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 8, user, cmd)
+                Return
+            Case "wd"
+                Controller(BTN_DPAD_DOWN, 0, 0, 0, 0, 0, 0, 8, user, cmd)
+                Return
+            Case "wl"
+                Controller(BTN_DPAD_LEFT, 0, 0, 0, 0, 0, 0, 8, user, cmd)
+                Return
+            Case "wr"
+                Controller(BTN_DPAD_RIGHT, 0, 0, 0, 0, 0, 0, 8, user, cmd)
+                Return
+
+
+
             Case "share", "select"
-                If duration = 0 Then duration = 1
-                Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "options", "opt", "start"
-                If duration = 0 Then duration = 1
-                Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "o", "a"
-                If duration = 0 Then duration = 1
-                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "b"
-                If duration = 0 Then duration = 1
-                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "sq", "y"
-                If duration = 0 Then duration = 1
-                Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "tri", "x"
-                If duration = 0 Then duration = 1
-                Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
             Case "l1", "l"
-                If duration = 0 Then duration = 1
-                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "l2"
-                If duration = 0 Then duration = 1
-                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r1", "r"
-                If duration = 0 Then duration = 1
-                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r2"
-                If duration = 0 Then duration = 1
-                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
 
             Case "l3"
-                If duration = 0 Then duration = 1
-                Controller(BTN_L3, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_L3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "r3"
-                If duration = 0 Then duration = 1
-                Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
 
             Case "pshome"
-                Controller(BTN_PSHOME, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 1, user, cmd & "(-)")
+                Controller(BTN_PSHOME, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
                 Return
         End Select
 
@@ -822,9 +838,9 @@ Partial Public Class frmPS4Twitch
 
         'Handle command multipliers
         If tmpcmd.Length > 2 Then
-            If IsNumeric(tmpcmd(tmpcmd.Length - 1)) And tmpcmd(tmpcmd.Length - 2) = "x" Then
-                CMDmulti = Val(tmpcmd(tmpcmd.Length - 1))
-                tmpcmd = Microsoft.VisualBasic.Left(tmpcmd, tmpcmd.Length - 2)
+            If IsNumeric(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x"))) Then
+                CMDmulti = Val(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x")))
+                tmpcmd = Microsoft.VisualBasic.Left(tmpcmd, tmpcmd.LastIndexOf("x"))
             End If
         End If
 
