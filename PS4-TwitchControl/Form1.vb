@@ -384,9 +384,14 @@ Partial Public Class frmPS4Twitch
                       LStickUD As Single, LTrigger As Single, RTrigger As Single, time As Integer, user As String,
                       cmd As String)
         SyncLock queuelock
-            QueuedInput.Add(New QdInput() With {.buttons = buttons, .RstickLR = RStickLR, .RstickUD = RStickUD,
+            Try
+                QueuedInput.Add(New QdInput() With {.buttons = buttons, .RstickLR = RStickLR, .RstickUD = RStickUD,
                                                 .LStickLR = LStickLR, .LStickUD = LStickUD, .LTrigger = LTrigger,
                                                 .RTrigger = RTrigger, .time = time, .user = user, .cmd = cmd})
+            Catch ex As Exception
+
+            End Try
+
         End SyncLock
     End Sub
     Private Sub PopQ()

@@ -785,7 +785,8 @@ Partial Public Class frmPS4Twitch
 
         If tmpcmd.Contains("*") Then
             CMDmulti = Val(tmpcmd.Split("*")(1))
-            If CMDmulti > 20 Then CMDmulti = 20
+            If CMDmulti > 999 Then CMDmulti = 999
+            If CMDmulti < 1 Then CMDmulti = 1
             For i = 1 To CMDmulti
                 ProcessCMD(tmpuser, role, tmpcmd.Split("*")(0))
             Next
@@ -808,11 +809,8 @@ Partial Public Class frmPS4Twitch
         If tmpcmd.Contains("|") Then
             CMDmulti = Val(tmpcmd.Split("|")(1))
 
-            'Fine, roll over ints, see if I care.
-            If CMDmulti < 0 Then CMDmulti = 0
-
-            'Allow a maximum of 1000 loops
-            If CMDmulti > 1000 Then CMDmulti = 1000
+            If CMDmulti > 999 Then CMDmulti = 999
+            If CMDmulti < 1 Then CMDmulti = 1
             For i = 0 To CMDmulti - 1
                 ProcessCMD(tmpuser, role, tmpcmd.Split("|")(0))
             Next
@@ -841,6 +839,7 @@ Partial Public Class frmPS4Twitch
             If IsNumeric(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x"))) Then
                 CMDmulti = Val(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x")))
                 If CMDmulti > 999 Then CMDmulti = 999
+                If CMDmulti < 1 Then CMDmulti = 1
                 tmpcmd = Microsoft.VisualBasic.Left(tmpcmd, tmpcmd.LastIndexOf("x"))
             End If
         End If
