@@ -575,7 +575,7 @@ Partial Public Class frmPS4Twitch
                 Return
 
             Case "o", "a"
-                If duration = 0 Then duration = 2
+                If duration = 0 Then duration = 6
                 Controller(BTN_O, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
