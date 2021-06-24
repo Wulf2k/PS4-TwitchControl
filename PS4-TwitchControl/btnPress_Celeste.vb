@@ -3,69 +3,11 @@ Imports Nefarius.ViGEm.Client.Targets.DualShock4
 Imports Nefarius.ViGEm.Client.Targets.Xbox360
 
 Partial Public Class frmPS4Twitch
-
-
-    'Dim fc As UInteger
-    'Dim cbase As IntPtr = IntPtr.Zero
-    'Dim pauseLoc As IntPtr = IntPtr.Zero
-
-
-
-
-
-    Dim which As String = "ms"
-    'Dim which As String = "nonms"
-
-    Private Sub TimerPress_Celeste()
-        Dim timer = 16
-        'Dim prevFc = fc
-        'Dim frameDiff = 1
-
-        Do
-            press()
-            Do
-                'I don't even know at this point
-                If timerfixer = -1 Then timerfixer = 1
-                SyncLock presslock
-                    presstimer -= (16 + Math.Abs(timerfixer))
-
-                    timer = presstimer
-                    'WInt8(pauseLoc, 1)
-                End SyncLock
-
-                Thread.Sleep(16 + Math.Abs(timerfixer))
-                timerfixer -= 1
-                'All sadness.
-                'Select Case which
-                '                Case "ms"
-                'Do
-                '                Thread.Sleep(1)
-                'If RUInt32(fcAddr - 8) > 0 Then
-                '                prevFc = RUInt32(fcAddr)
-                'Else
-                '                fc = 0
-                'prevFc = &HFFFFFFFF
-                '                End If
-                ''Loop While RInt8(pauseLoc) = 1
-                'Loop While fc = prevFc
-                'Case "nonms"
-                '                Do
-                'Thread.Sleep(1)
-                '                If RUInt32(fcAddr + &H1C) > 0 Then
-                'prevFc = RUInt32(fcAddr)
-                '                Else
-                'fc = 0
-                '                prevFc = &HFFFFFFFF
-                'End If
-                '            Loop While fc = prevFc
-                'End Select
-                'Console.WriteLine(fc)
-                'fc = prevFc
-            Loop While timer > 0
-        Loop
-    End Sub
+    Dim which = "ms"
 
     Private Sub btnPress_Celeste()
+
+
 
         Dim buttons = 0
         Dim LStickLR As Single = 0
@@ -77,23 +19,32 @@ Partial Public Class frmPS4Twitch
         Dim user As String = ""
         Dim cmd As String = ""
 
-        SyncLock queuelock
-            'If nothing in queue, push a 'nothing'-press onto it for 1 frame
-            If QueuedInput.Count = 0 Then
-                Controller(0, 0, 0, 0, 0, 0, 0, 1, "", "")
-            End If
-        End SyncLock
+
+
+        If QueuedInput.Count = 1 AndAlso Not QueuedInput(0).cmd = "idle" Then
+            Controller(0, 0, 0, 0, 0, 0, 0, 1, "", "idle")
+        End If
+
 
         'Try
         SyncLock queuelock
-
             'TODO:  Fix up below, randomly seems to be hitting this spot with an empty queue
-            If QueuedInput.Count = 0 Then Return
+            If QueuedInput.Count < 1 Then
+                Return
+
+            End If
+
 
             buttons = QueuedInput(0).buttons
 
             'Handle hold-toggles
             Select Case QueuedInput(0).cmd
+                Case "idle"
+                    microTimer.Enabled = False
+                    microTimer.Stop()
+                    QueuedInput(0).cmd = ""
+
+
                 Case "reconnect1"
                     Shell("cmd.exe /c taskkill /f /im celeste.*")
                     Thread.Sleep(1000)
@@ -101,129 +52,20 @@ Partial Public Class frmPS4Twitch
                         Case "ms"
                             Shell("cmd.exe /c start shell:AppsFolder\MattMakesGamesInc.Celeste_79daxvg0dq3v6!App")
 
-                            'Thread.Sleep(5000)
-                            'ScanForProcess("Celeste", True)
-                            'For Each dll As ProcessModule In _targetProcess.Modules
-                            '                            Select Case dll.ModuleName.ToLower
-                            'Case "celeste.dll"
-                            'cbase = dll.BaseAddress
-                            '                    End Select
-                            'Next
-                            'fcAddr = cbase + &H7654F0
-
-                            'hookmem = VirtualAllocEx(_targetProcessHandle, 0, &H8000, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
-                            'Dim oldProtectionOut As UInteger
-                            'VirtualProtectEx(_targetProcessHandle, hookmem, &H8000, PAGE_EXECUTE_READWRITE, oldProtectionOut)
-
-                            'pauseLoc = hookmem + &H400
-
-                            'Dim a As New asm
-                            'a.AddVar("hook", cbase + &H4DA42F1)
-                            'a.AddVar("newmem", hookmem)
-                            'a.AddVar("pause", pauseLoc)
-                            'a.AddVar("hookreturn", cbase + &H4DA4304)
-                            'a.AddVar("startloop", 0)
-                            'a.AddVar("exitloop", 0)
-                            'a.pos = hookmem
-
-                            'a.Asm("push rax")
-                            'a.Asm("push rbx")
-                            'a.Asm("push rcx")
-
-                            'a.Asm("startloop:")
-                            'a.Asm("mov rax, pause")
-                            'a.Asm("cmp [rax], 0x1")
-
-                            'a.Asm("je exitloop")
-                            'a.Asm("jmp startloop")
-
-                            'a.Asm("exitloop:")
-                            'a.Asm("mov [rax], 0")
-
-                            'a.Asm("pop rcx")
-                            'a.Asm("pop rbx")
-                            'a.Asm("pop rax")
-                            'a.Asm("jmp hookreturn")
-
-                            'WriteProcessMemory(_targetProcessHandle, hookmem, a.bytes, a.bytes.Length, 0)
-                            'Console.WriteLine("Hook: " & hookmem.ToString("X"))
-
-                            'a.Clear()
-                            'a.AddVar("newmem", hookmem)
-                            'a.pos = cbase + &H4DA42F1
-                            'a.Asm("jmp newmem")
-                            'WriteProcessMemory(_targetProcessHandle, cbase + &H4DA42F1, a.bytes, a.bytes.Length, 0)
                         Case "nonms"
                             Shell("cmd.exe /c start c:\\temp\\celeste\\celeste.exe")
-                            'Thread.Sleep(5000)
-                            'ScanForProcess("Celeste", True)
-                            'Dim Addr = &H1000000
-                            'Do
-                            '                            If (RInt64(Addr + &H894) = &H3C88889A3C88889A) Then
-                            'fcAddr = Addr + &H894 - &H1C
-                            '                            Exit Do
-                            'End If
-                            '                            Addr += &H1000
-                            'Loop While Addr < &H10000000
                     End Select
 
 
-
-                    'Dim hndRpWindow As IntPtr
-                    'Dim hndButtOk As IntPtr
-                    'hndRpWindow = FindWindowA(vbNullString, "PS4 Remote Play")
-                    'hndButtOk = FindWindowExA(hndRpWindow, 0, "WindowsForms10.BUTTON.app.0.141b42a_r9_ad1", "OK")
-                    'SetForegroundWindow(hndButtOk)
-
-
-                    'Dim pos As RECT
-                    'GetWindowRect(hndButtOk, pos)
-
-                    'Dim x = pos.Left + 10
-                    'Dim y = pos.Top + 10
-
-                    'Cursor.Position = New Point(x, y)
-                    'mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
-                    'mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
-
-
-                Case "reconnect2"
-                    'Dim hndRpWindow As IntPtr
-                    'Dim hndButtOk As IntPtr
-
-                    'hndRpWindow = FindWindowA(vbNullString, "PS4 Remote Play")
-                    'hndButtOk = FindWindowExA(hndRpWindow, 0, "WindowsForms10.STATIC.app.0.141b42a_r9_ad1", vbNullString)
-                    'Console.WriteLine(hndButtOk)
-
-                    'SetForegroundWindow(hndButtOk)
-
-                    'Dim pos As RECT
-                    'GetWindowRect(hndButtOk, pos)
-
-                    'Dim x = pos.Left + 620
-                    'Dim y = pos.Top + 320
-
-                    'Cursor.Position = New Point(x, y)
-                    'mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
-                    'mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
-
-
-                Case "reconnect3"
-                    'Dim hndRpWindow As IntPtr
-                    'hndRpWindow = FindWindowA(vbNullString, "PS4 Remote Play")
-                    'SetForegroundWindow(hndRpWindow)
-
-                    'Dim pos As RECT
-                    'GetWindowRect(hndRpWindow, pos)
-
-                    'Dim x = pos.Right - 50
-                    'Dim y = pos.Bottom - 50
-
-                    'Cursor.Position = New Point(x, y)
-                    'Thread.Sleep(500)
-                    'mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
-                    'mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
-                    'Cursor.Position = New Point(-50, -50)
+                Case "focus"
+                    Dim hwnd As IntPtr
+                    hwnd = FindWindowA(Nothing, "Celeste")
+                    If Not hwnd.Equals(IntPtr.Zero) Then
+                        ShowWindow(hwnd, 3)
+                        outputChat("Celeste focused.")
+                    Else
+                        outputChat($"'Celeste' window not found.")
+                    End If
 
                 Case "hidecursor"
                     Dim x = 1600
@@ -244,7 +86,7 @@ Partial Public Class frmPS4Twitch
 
 
 
-                Case "nha"
+                Case "nh"
                     boolHoldL1 = False
                     boolHoldL2 = False
                     boolHoldL3 = False
@@ -569,7 +411,7 @@ Partial Public Class frmPS4Twitch
 
         Select Case cmd
             'Hold toggles
-            Case "nha",
+            Case "nh",
                  "holdo", "ho", "noholdo", "nho",
                  "hopt", "nhopt",
                  "hl1", "nhl1",
@@ -957,7 +799,7 @@ Partial Public Class frmPS4Twitch
                     QueuedInput.Clear()
                 End SyncLock
 
-                ProcessCMD(tmpuser, role, "nha")
+                ProcessCMD(tmpuser, role, "nh")
 
                 SyncLock presslock
                     presstimer = 0
@@ -973,7 +815,6 @@ Partial Public Class frmPS4Twitch
                         End If
                     Next
                 End SyncLock
-                ProcessCMD(tmpuser, role, "nha")
                 outputChat("All commands for " & tmpuser & " removed from queue.")
                 Return
 
