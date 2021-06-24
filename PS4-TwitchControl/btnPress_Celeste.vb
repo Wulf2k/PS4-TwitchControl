@@ -348,7 +348,7 @@ Partial Public Class frmPS4Twitch
             'DS4ctrl.SetSliderValue(DualShock4Slider.RightTrigger, &HFFUI * RTrigger)
 
 
-
+            XBctrl.ResetReport()
             XBctrl.SetButtonState(Xbox360Button.B, buttons And BTN_O)
             XBctrl.SetButtonState(Xbox360Button.A, buttons And BTN_X)
             XBctrl.SetButtonState(Xbox360Button.X, buttons And BTN_SQUARE)
@@ -374,7 +374,7 @@ Partial Public Class frmPS4Twitch
             XBctrl.SetButtonState(Xbox360Button.Down, buttons And BTN_DPAD_DOWN)
             XBctrl.SetButtonState(Xbox360Button.Left, buttons And BTN_DPAD_LEFT)
 
-            'XBctrl.SubmitReport()
+            XBctrl.SubmitReport()
 
 
             'Do DPad properly
