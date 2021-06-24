@@ -456,7 +456,7 @@ Partial Public Class frmPS4Twitch
                  "hdr", "nhdr",
                  "reconnect1",
                  "focus",
-                 "hidecursor",
+                 "hidecursor"
 
 
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
