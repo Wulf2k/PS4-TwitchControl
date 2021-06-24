@@ -101,7 +101,24 @@ Partial Public Class frmPS4Twitch
                     boolHoldDD = False
                     boolHoldDL = False
                     boolHoldDR = False
+                    boolHoldShare = False
                     boolHoldOpt = False
+
+                    For i = 0 To 3
+                        boolHoldAxis(i) = False
+                        boolHoldAxisVal(i) = 0
+                    Next
+
+                Case "nhw"
+                    For i = 0 To 3
+                        boolHoldAxis(i) = False
+                        boolHoldAxisVal(i) = 0
+                    Next
+
+                Case "share", "hselect"
+                    boolHoldShare = True
+                Case "nhshare", "nhselect"
+                    boolHoldShare = False
 
                 Case "hopt"
                     boolHoldOpt = True
@@ -216,7 +233,11 @@ Partial Public Class frmPS4Twitch
             If boolHoldX Then buttons = (buttons Or BTN_X)
             If boolHoldSq Then buttons = (buttons Or BTN_SQUARE)
 
-
+            'Apply held analogs
+            If boolHoldAxis(0) Then QueuedInput(0).LStickLR = boolHoldAxisVal(0)
+            If boolHoldAxis(1) Then QueuedInput(0).LStickUD = boolHoldAxisVal(1)
+            If boolHoldAxis(2) Then QueuedInput(0).RstickLR = boolHoldAxisVal(2)
+            If boolHoldAxis(3) Then QueuedInput(0).RstickUD = boolHoldAxisVal(3)
 
 
             'Process specified axises
@@ -229,8 +250,12 @@ Partial Public Class frmPS4Twitch
             user = QueuedInput(0).user
             cmd = QueuedInput(0).cmd
             'refTimerPress.Interval = QueuedInput(0).time
+
+
+
             SyncLock presslock
                 presstimer = QueuedInput(0).time
+                microTimer.Interval = Math.Ceiling(QueuedInput(0).time * frametime)
             End SyncLock
 
             PopQ()
@@ -247,7 +272,7 @@ Partial Public Class frmPS4Twitch
 
             Dim tmpcmd
             SyncLock presslock
-                tmpcmd = cmd & "-" & CInt(presstimer / 16.667)
+                tmpcmd = cmd & "-" & presstimer
             End SyncLock
 
 
@@ -260,14 +285,13 @@ Partial Public Class frmPS4Twitch
             For i = 0 To 9
                 If (QueuedInput.Count) > i Then
                     Dim str As String
-                    str = QueuedInput(i).cmd & "-" & Math.Floor(QueuedInput(i).time / 16.667)
+                    str = QueuedInput(i).cmd & "-" & QueuedInput(i).time
 
                     'if command too long, shorten it
                     If str.Length > 15 Then str = Strings.Left(str, 15)
                     str = str & Chr(0)
 
-                    b = System.Text.Encoding.ASCII.GetBytes(str)
-
+                    b = System.Text.Encoding.ASCII.GetBytes(str + Chr(0))
                     mmfa.WriteArray(&H320 + i * &H10, b, 0, b.Length)
                 Else
                     mmfa.WriteArray(&H320 + i * &H10, {0}, 0, 1)
@@ -387,11 +411,12 @@ Partial Public Class frmPS4Twitch
     End Sub
 
     Private Sub execCMD_Celeste(user As String, role As String, cmd As String)
-        'Console.WriteLine($"{user} = {role}: {cmd}")
 
         Dim buttons = 0
         Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}
         Dim halfhold As Boolean = False
+        Dim analoghold As Boolean = False
+        Dim analogholdrelease As Boolean = False
         Dim duration As Integer = 0
 
         Dim partcmd As String = ""
@@ -412,8 +437,10 @@ Partial Public Class frmPS4Twitch
         Select Case cmd
             'Hold toggles
             Case "nh",
+                 "hw", "nhw",
                  "holdo", "ho", "noholdo", "nho",
                  "hopt", "nhopt",
+                 "hshare", "nhshare",
                  "hl1", "nhl1",
                  "hl2", "nhl2",
                  "hl3", "nhl3",
@@ -427,9 +454,10 @@ Partial Public Class frmPS4Twitch
                  "hdd", "nhdd",
                  "hdl", "nhdl",
                  "hdr", "nhdr",
-                 "reconnect1", "reconnect2", "reconnect3",
+                 "reconnect1",
+                 "focus",
                  "hidecursor",
-                 "killoverlay", "startoverlay"
+
 
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
 
@@ -459,7 +487,6 @@ Partial Public Class frmPS4Twitch
                 Return
 
 
-
             Case "du"
                 If duration = 0 Then duration = 4
                 Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
@@ -482,7 +509,9 @@ Partial Public Class frmPS4Twitch
                 Return
 
             Case "share"
-                'Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 1, user, cmd)
+                If duration = 0 Then duration = 2
+                Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "options", "opt"
@@ -539,7 +568,6 @@ Partial Public Class frmPS4Twitch
 
 
 
-
             Case "l3"
                 If duration = 0 Then duration = 4
                 Controller(BTN_L3, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
@@ -569,13 +597,23 @@ Partial Public Class frmPS4Twitch
 
 
 
-        'parse out half-hold
-        If cmd(0) = "h" Then
-            halfhold = True
+        'parse out no-hold
+        If cmd(0) = "n" Then
+            analogholdrelease = True
             cmd = Strings.Right(cmd, cmd.Length - 1)
         End If
 
+        'parse out half-hold
+        If cmd(0) = "h" Then
+            If duration > 0 Then analoghold = True
+            cmd = Strings.Right(cmd, cmd.Length - 1)
+        End If
 
+        'parse out short-walk
+        If cmd(0) = "s" Then
+            halfhold = True
+            cmd = Strings.Right(cmd, cmd.Length - 1)
+        End If
 
 
 
@@ -659,9 +697,18 @@ Partial Public Class frmPS4Twitch
                 If halfhold Then
                     axis(i) = axis(i) / 2
                 End If
+                If analoghold And Not axis(i) = 0 Then
+                    boolHoldAxis(i) = Not analogholdrelease
+                    boolHoldAxisVal(i) = axis(i)
+                End If
             Next
 
-            If halfhold Then cmd = "h" & cmd
+
+
+            If halfhold Then cmd = "s" & cmd
+            If analoghold Then cmd = "h" & cmd
+            If analogholdrelease Then cmd = "n" & cmd
+
             'Remove cmd padding
             cmd = cmd.Replace(".", "")
 
@@ -685,11 +732,14 @@ Partial Public Class frmPS4Twitch
 
         'allow loop of entire string, with inner loops
 
-
+        If tmpcmd.Contains("wulf") Then
+            Return
+        End If
 
         If tmpcmd.Contains("*") Then
             CMDmulti = Val(tmpcmd.Split("*")(1))
-            If CMDmulti > 20 Then CMDmulti = 20
+            If CMDmulti > 999 Then CMDmulti = 999
+            If CMDmulti < 1 Then CMDmulti = 1
             For i = 1 To CMDmulti
                 ProcessCMD(tmpuser, role, tmpcmd.Split("*")(0))
             Next
@@ -712,11 +762,8 @@ Partial Public Class frmPS4Twitch
         If tmpcmd.Contains("|") Then
             CMDmulti = Val(tmpcmd.Split("|")(1))
 
-            'Fine, roll over ints, see if I care.
-            If CMDmulti < 0 Then CMDmulti = 0
-
-            'Allow a maximum of 1000 loops
-            If CMDmulti > 1000 Then CMDmulti = 1000
+            If CMDmulti > 999 Then CMDmulti = 999
+            If CMDmulti < 1 Then CMDmulti = 1
             For i = 0 To CMDmulti - 1
                 ProcessCMD(tmpuser, role, tmpcmd.Split("|")(0))
             Next
@@ -742,9 +789,11 @@ Partial Public Class frmPS4Twitch
 
         'Handle command multipliers
         If tmpcmd.Length > 2 Then
-            If IsNumeric(tmpcmd(tmpcmd.Length - 1)) And tmpcmd(tmpcmd.Length - 2) = "x" Then
-                CMDmulti = Val(tmpcmd(tmpcmd.Length - 1))
-                tmpcmd = Microsoft.VisualBasic.Left(tmpcmd, tmpcmd.Length - 2)
+            If IsNumeric(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x"))) Then
+                CMDmulti = Val(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x")))
+                If CMDmulti > 999 Then CMDmulti = 999
+                If CMDmulti < 1 Then CMDmulti = 1
+                tmpcmd = Microsoft.VisualBasic.Left(tmpcmd, tmpcmd.LastIndexOf("x"))
             End If
         End If
 
@@ -766,8 +815,13 @@ Partial Public Class frmPS4Twitch
             'outputChat("Personal items restricted to pre-approved users.")
             '       Return
             'End If
+            Case "hello"
+                outputChat("Hello.")
+
+
             Case "reconnect1"
                 If Not modlist.Contains(user) Then
+                    outputChat("Command restricted.")
                     Return
                 End If
             Case "options", "opt", "hopt"
@@ -782,18 +836,10 @@ Partial Public Class frmPS4Twitch
                 End If
             Case "tri", "htri"
                 If Not modlist.Contains(user) Then
-                    'outputChat("Consumable use restricted to pre-approved users.")
-                    'Return
+
                 End If
             Case "clearallcmds", "ca"
-                'Testing removal of mod restriction on clear all commands
 
-
-                'If Not (modlist.Contains(tmpuser)) Then
-                'outputChat("Clearing all commands restricted to pre-approved users.")
-                'ProcessCMD({tmpuser, "clearcmds"})
-                'Else
-                outputChat(tmpuser & " has cleared the command queue.")
 
                 SyncLock queuelock
                     QueuedInput.Clear()
@@ -802,7 +848,8 @@ Partial Public Class frmPS4Twitch
                 ProcessCMD(tmpuser, role, "nh")
 
                 SyncLock presslock
-                    presstimer = 0
+                    microTimer.Enabled = False
+                    microTimer.Stop()
                 End SyncLock
 
 
