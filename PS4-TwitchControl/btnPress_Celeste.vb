@@ -374,7 +374,7 @@ Partial Public Class frmPS4Twitch
             XBctrl.SetButtonState(Xbox360Button.Down, buttons And BTN_DPAD_DOWN)
             XBctrl.SetButtonState(Xbox360Button.Left, buttons And BTN_DPAD_LEFT)
 
-            XBctrl.SubmitReport()
+            'XBctrl.SubmitReport()
 
 
             'Do DPad properly

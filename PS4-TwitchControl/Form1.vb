@@ -453,7 +453,7 @@ Partial Public Class frmPS4Twitch
 
         'DS4ctrl.Connect()
         XBctrl.Connect()
-        XBctrl.AutoSubmitReport = False
+        XBctrl.AutoSubmitReport = True
 
         pressthread = New Thread(AddressOf TimerPress)
         pressthread.IsBackground = True
