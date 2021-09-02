@@ -33,24 +33,24 @@ Partial Public Class frmPS4Twitch
     End Sub
     Private Sub press()
         'btnPress_Standard()
-        btnPress_Celeste()
+        'btnPress_Celeste()
         'btnPress_DarkSoulsRemastered()
         'btnPress_ZeldaOOT()
-        'btnPress_PokemonPlatinum()
+        btnPress_PokemonPlatinum()
     End Sub
 
     Private Sub execCMD(user As String, role As String, cmd As String)
-        execCMD_Celeste(user, role, cmd)
+        'execCMD_Celeste(user, role, cmd)
         'execCMD_DarkSoulsRemastered(user, role, cmd)
         'execCMD_ZeldaOOT(user, role, cmd)
-        'execCMD_PokemonPlatinum(user, role, cmd)
+        execCMD_PokemonPlatinum(user, role, cmd)
     End Sub
 
     Private Sub ProcessCMD(user As String, role As String, cmd As String)
-        ProcessCMD_Celeste(user, role, cmd)
+        'ProcessCMD_Celeste(user, role, cmd)
         'ProcessCMD_DarkSoulsRemastered(user, role, cmd)
         'ProcessCMD_ZeldaOOT(user, role, cmd)
-        'ProcessCMD_PokemonPlatinum(user, role, cmd)
+        ProcessCMD_PokemonPlatinum(user, role, cmd)
     End Sub
 
 
