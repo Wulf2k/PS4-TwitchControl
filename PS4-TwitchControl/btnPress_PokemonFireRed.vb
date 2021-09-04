@@ -46,73 +46,73 @@ Partial Public Class frmPS4Twitch
 
 
                 Case "reconnect1"
-                    Shell("cmd.exe /c taskkill /f /im DeSmuME_0.9.11_x64.exe")
+                    Shell("cmd.exe /c taskkill /f /im visualboyadvance-m.exe")
                     Thread.Sleep(1000)
-                    Dim currDir = "C:\Emus\DS"
-                    Dim exe = $"{currDir}\DeSmuME_0.9.11_x64.exe"
+                    Dim currDir = "C:\Emus\GBA"
+                    Dim exe = $"{currDir}\visualboyadvance-m.exe"
 
 
                     Dim ProcessProperties As New ProcessStartInfo
                     ProcessProperties.FileName = exe
                     ProcessProperties.WorkingDirectory = currDir
-                    ProcessProperties.Arguments = $"""c:\emus\DS\Roms\Pokemon - FireRed Version (USA).gba"""
+                    ProcessProperties.Arguments = $"""c:\emus\GBA\Roms\Pokemon - FireRed Version (USA).gba"""
                     Dim myProcess As Process = Process.Start(ProcessProperties)
 
                     Thread.Sleep(1000)
 
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "DeSmuME 0.9.11 x64")
+                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         ShowWindow(hwnd, 3)
-                        outputChat("DeSmuME_0.9.11_x64.exe launched.")
+                        outputChat("visualboyadvance-m.exe launched.")
                     Else
-                        outputChat($"'DeSmuME 0.9.11 0x64' window not found.")
+                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
                     End If
 
 
                 Case "focus"
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "DeSmuME 0.9.11 x64")
+                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         ShowWindow(hwnd, 3)
-                        outputChat("DeSmuME 0.9.11 x64 focused.")
+                        outputChat("Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4 focused.")
                     Else
-                        outputChat($"'DeSmuME 0.9.11 0x64' window not found.")
+                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
                     End If
 
 
                 Case "ss"
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "DeSmuME 0.9.11 x64")
+                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         SetForegroundWindow(hwnd)
                         My.Computer.Keyboard.SendKeys("+{F1}", True)
                         outputChat($"State saved.")
                     Else
-                        outputChat($"'DeSmuME 0.9.11 x64' window not found.")
+                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
                     End If
 
 
                 Case "ls"
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "DeSmuME 0.9.11 x64")
+                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         SetForegroundWindow(hwnd)
                         My.Computer.Keyboard.SendKeys("{F1}", True)
                         outputChat($"State loaded.")
                     Else
-                        outputChat($"'DeSmuME 0.9.11 x64' window not found.")
+                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
                     End If
 
                 Case "rs"
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "DeSmuME 0.9.11 x64")
+                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         SetForegroundWindow(hwnd)
                         My.Computer.Keyboard.SendKeys("^{R}", True)
                         outputChat($"Game reset.")
                     Else
-                        outputChat($"'DeSmuME 0.9.11 x64' window not found.")
+                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
                     End If
 
 
