@@ -563,26 +563,26 @@ Partial Public Class frmPS4Twitch
 
 
             Case "share", "select"
-                If duration = 0 Then duration = 5
-                Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
+                If duration = 0 Then duration = 10
+                Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "options", "opt", "start"
-                If duration = 0 Then duration = 5
-                Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
+                If duration = 0 Then duration = 10
+                Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "o", "a"
-                If duration = 0 Then duration = 5
-                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
+                If duration = 0 Then duration = 10
+                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "b"
-                If duration = 0 Then duration = 5
-                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
+                If duration = 0 Then duration = 10
+                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
@@ -600,8 +600,8 @@ Partial Public Class frmPS4Twitch
 
 
             Case "l1", "l"
-                If duration = 0 Then duration = 5
-                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
+                If duration = 0 Then duration = 10
+                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "l2"
@@ -610,8 +610,8 @@ Partial Public Class frmPS4Twitch
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r1", "r"
-                If duration = 0 Then duration = 5
-                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
+                If duration = 0 Then duration = 10
+                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r2"
