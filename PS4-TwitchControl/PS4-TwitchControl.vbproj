@@ -83,6 +83,9 @@
     <Compile Include="btnPress_PokemonPlatinum.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="btnPress_ZeldaMM.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="microTimer.vb" />
     <Compile Include="btnPress_ZeldaOOT.vb">
       <SubType>Form</SubType>
