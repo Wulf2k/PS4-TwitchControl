@@ -43,7 +43,7 @@ Partial Public Class frmPS4Twitch
         'execCMD_Celeste(user, role, cmd)
         'execCMD_DarkSoulsRemastered(user, role, cmd)
         execCMD_GoW(user, role, cmd)
-        execCMD_ZeldaMM(user, role, cmd)
+        'execCMD_ZeldaMM(user, role, cmd)
         'execCMD_ZeldaOOT(user, role, cmd)
         'execCMD_PokemonPlatinum(user, role, cmd)
         'execCMD_PokemonFireRed(user, role, cmd)
