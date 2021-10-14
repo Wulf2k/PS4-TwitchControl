@@ -558,25 +558,25 @@ Partial Public Class frmPS4Twitch
 
             Case "o"
                 If duration = 0 Then duration = 2
-                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "x"
                 If duration = 0 Then duration = 10
-                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
+                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "sq"
                 If duration = 0 Then duration = 2
-                Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "tri"
                 If duration = 0 Then duration = 2
-                Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 15, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
