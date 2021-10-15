@@ -82,27 +82,27 @@ Partial Public Class frmPS4Twitch
 
 
                 Case "ss"
-                    Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, winTitle)
-                    If Not hwnd.Equals(IntPtr.Zero) Then
-                        SetForegroundWindow(hwnd)
-                        My.Computer.Keyboard.SendKeys("{F1}", True)
-                        outputChat($"State saved.")
-                    Else
-                        outputChat($"Window not found.")
-                    End If
+                    'Dim hwnd As IntPtr
+                    'hwnd = FindWindowA(Nothing, winTitle)
+                    'If Not hwnd.Equals(IntPtr.Zero) Then
+                    'SetForegroundWindow(hwnd)
+                    My.Computer.Keyboard.SendKeys("{F1}", True)
+                    'outputChat($"State saved.")
+                    ' Else
+                    'outputChat($"Window not found.")
+                    'End If
 
 
                 Case "ls"
-                    Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, winTitle)
-                    If Not hwnd.Equals(IntPtr.Zero) Then
-                        SetForegroundWindow(hwnd)
-                        My.Computer.Keyboard.SendKeys("{F3}", True)
-                        outputChat($"State loaded.")
-                    Else
-                        outputChat($"Window not found.")
-                    End If
+                    'Dim hwnd As IntPtr
+                    'hwnd = FindWindowA(Nothing, winTitle)
+                    'If Not hwnd.Equals(IntPtr.Zero) Then
+                    'SetForegroundWindow(hwnd)
+                    My.Computer.Keyboard.SendKeys("{F3}", True)
+                    '    outputChat($"State loaded.")
+                    'Else
+                    'outputChat($"Window not found.")
+                    'End If
 
                 Case "rs"
                     Dim hwnd As IntPtr
