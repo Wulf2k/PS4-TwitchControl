@@ -7,6 +7,8 @@ Partial Public Class frmPS4Twitch
 
         'Console.WriteLine(DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.ffffff"))
 
+        Dim winTitle As String = "PCSX2 1.4.0"
+
         Dim buttons = 0
         Dim LStickLR As Single = 0
         Dim LStickUD As Single = 0
@@ -59,58 +61,58 @@ Partial Public Class frmPS4Twitch
                     Thread.Sleep(1000)
 
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
+                    hwnd = FindWindowA(Nothing, winTitle)
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         ShowWindow(hwnd, 3)
                         outputChat("visualboyadvance-m.exe launched.")
                     Else
-                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
+                        outputChat($"Window not found.")
                     End If
 
 
                 Case "focus"
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
+                    hwnd = FindWindowA(Nothing, winTitle)
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         ShowWindow(hwnd, 3)
                         outputChat("Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4 focused.")
                     Else
-                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
+                        outputChat($"Window not found.")
                     End If
 
 
                 Case "ss"
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
+                    hwnd = FindWindowA(Nothing, winTitle)
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         SetForegroundWindow(hwnd)
-                        My.Computer.Keyboard.SendKeys("+{F1}", True)
+                        My.Computer.Keyboard.SendKeys("{F1}", True)
                         outputChat($"State saved.")
                     Else
-                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
+                        outputChat($"Window not found.")
                     End If
 
 
                 Case "ls"
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
+                    hwnd = FindWindowA(Nothing, winTitle)
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         SetForegroundWindow(hwnd)
-                        My.Computer.Keyboard.SendKeys("{F1}", True)
+                        My.Computer.Keyboard.SendKeys("{F3}", True)
                         outputChat($"State loaded.")
                     Else
-                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
+                        outputChat($"Window not found.")
                     End If
 
                 Case "rs"
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
+                    hwnd = FindWindowA(Nothing, winTitle)
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         SetForegroundWindow(hwnd)
                         My.Computer.Keyboard.SendKeys("^{R}", True)
                         outputChat($"Game reset.")
                     Else
-                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
+                        outputChat($"Window not found.")
                     End If
 
 
