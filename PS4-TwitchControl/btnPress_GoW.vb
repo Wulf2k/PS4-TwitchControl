@@ -7,7 +7,7 @@ Partial Public Class frmPS4Twitch
 
         'Console.WriteLine(DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.ffffff"))
 
-        Dim winTitle As String = "PCSX2 1.4.0"
+        Dim winTitle As String = "PCSX2  1.4.0"
 
         Dim buttons = 0
         Dim LStickLR As Single = 0
