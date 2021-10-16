@@ -476,10 +476,10 @@ Partial Public Class frmPS4Twitch
                  "ho", "nho",
                  "hopt", "nhopt", "hstart", "nhstart",
                  "hselect", "nhselect",
-                 "hl1", "nhl1",
+                 "hl1", "nhl1", "hl", "nhl",
                  "hl2", "nhl2",
                  "hl3", "nhl3",
-                 "hr1", "nhr1",
+                 "hr1", "nhr1", "hr", "nhr",
                  "hr2", "nhr2",
                  "hr3", "nhr3",
                  "hsq", "nhsq",
@@ -585,8 +585,8 @@ Partial Public Class frmPS4Twitch
 
             Case "l1", "l"
                 If duration = 0 Then duration = 2
-                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 28, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
+                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 20, user, cmd & "(!)")
+                'Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "l2"
                 If duration = 0 Then duration = 2
@@ -595,8 +595,8 @@ Partial Public Class frmPS4Twitch
                 Return
             Case "r1", "r"
                 If duration = 0 Then duration = 2
-                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 30, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
+                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 20, user, cmd & "(!)")
+                'Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r2"
                 If duration = 0 Then duration = 2
