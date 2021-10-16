@@ -7,7 +7,7 @@ Partial Public Class frmPS4Twitch
 
         'Console.WriteLine(DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.ffffff"))
 
-        Dim winTitle As String = "PCSX2  1.4.0"
+        Dim winTitle As String = "PCSX2"
 
         Dim buttons = 0
         Dim LStickLR As Single = 0
@@ -75,34 +75,34 @@ Partial Public Class frmPS4Twitch
                     hwnd = FindWindowA(Nothing, winTitle)
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         ShowWindow(hwnd, 3)
-                        outputChat("Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4 focused.")
+                        outputChat("Focused.")
                     Else
                         outputChat($"Window not found.")
                     End If
 
 
                 Case "ss"
-                    'Dim hwnd As IntPtr
-                    'hwnd = FindWindowA(Nothing, winTitle)
-                    'If Not hwnd.Equals(IntPtr.Zero) Then
-                    'SetForegroundWindow(hwnd)
-                    My.Computer.Keyboard.SendKeys("{F1}", True)
-                    'outputChat($"State saved.")
-                    ' Else
-                    'outputChat($"Window not found.")
-                    'End If
+                    Dim hwnd As IntPtr
+                    hwnd = FindWindowA(Nothing, winTitle)
+                    If Not hwnd.Equals(IntPtr.Zero) Then
+                        SetForegroundWindow(hwnd)
+                        My.Computer.Keyboard.SendKeys("{F1}", True)
+                        outputChat($"State saved.")
+                    Else
+                        outputChat($"Window not found.")
+                    End If
 
 
                 Case "ls"
-                    'Dim hwnd As IntPtr
-                    'hwnd = FindWindowA(Nothing, winTitle)
-                    'If Not hwnd.Equals(IntPtr.Zero) Then
-                    'SetForegroundWindow(hwnd)
-                    My.Computer.Keyboard.SendKeys("{F3}", True)
-                    '    outputChat($"State loaded.")
-                    'Else
-                    'outputChat($"Window not found.")
-                    'End If
+                    Dim hwnd As IntPtr
+                    hwnd = FindWindowA(Nothing, winTitle)
+                    If Not hwnd.Equals(IntPtr.Zero) Then
+                        SetForegroundWindow(hwnd)
+                        My.Computer.Keyboard.SendKeys("{F3}", True)
+                        outputChat($"State loaded.")
+                    Else
+                        outputChat($"Window not found.")
+                    End If
 
                 Case "rs"
                     Dim hwnd As IntPtr
@@ -583,9 +583,9 @@ Partial Public Class frmPS4Twitch
                 Return
 
 
-            Case "l1"
+            Case "l1", "l"
                 If duration = 0 Then duration = 2
-                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 28, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "l2"
@@ -595,7 +595,7 @@ Partial Public Class frmPS4Twitch
                 Return
             Case "r1", "r"
                 If duration = 0 Then duration = 2
-                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 30, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r2"
