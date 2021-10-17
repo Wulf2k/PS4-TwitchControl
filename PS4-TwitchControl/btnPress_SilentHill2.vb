@@ -3,7 +3,7 @@ Imports Nefarius.ViGEm.Client.Targets.DualShock4
 Imports Nefarius.ViGEm.Client.Targets.Xbox360
 
 Partial Public Class frmPS4Twitch
-    Private Sub btnPress_GoW()
+    Private Sub btnPress_SilentHill2()
 
         'Console.WriteLine(DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.ffffff"))
 
@@ -194,24 +194,24 @@ Partial Public Class frmPS4Twitch
                     boolHoldR3 = False
 
 
-                Case "ho", "holdo", "ha"
+                Case "ho"
                     boolHoldO = True
-                Case "nho", "noholdo", "nha"
+                Case "nho"
                     boolHoldO = False
 
-                Case "hsq", "hy"
+                Case "hsq"
                     boolHoldSq = True
-                Case "nhsq", "nhy"
+                Case "nhsq"
                     boolHoldSq = False
 
-                Case "htri", "hx"
+                Case "htri"
                     boolHoldTri = True
-                Case "nhtri", "nhx"
+                Case "nhtri"
                     boolHoldTri = False
 
-                Case "hb"
+                Case "hx"
                     boolHoldX = True
-                Case "nhb"
+                Case "nhx"
                     boolHoldX = False
 
                 Case "hdu"
@@ -248,6 +248,7 @@ Partial Public Class frmPS4Twitch
             If boolHoldL3 Then buttons = (buttons Or BTN_L3)
             If boolHoldR3 Then buttons = (buttons Or BTN_R3)
             If boolHoldOpt Then buttons = (buttons Or BTN_OPTIONS)
+            If boolHoldShare Then buttons = (buttons Or BTN_SHARE)
 
             If boolHoldDU Then buttons = (buttons Or BTN_DPAD_UP)
             If boolHoldDD Then buttons = (buttons Or BTN_DPAD_DOWN)
@@ -446,7 +447,7 @@ Partial Public Class frmPS4Twitch
         'Console.WriteLine("press exception")
         ' End Try
     End Sub
-    Private Sub execCMD_GoW(user As String, role As String, cmd As String)
+    Private Sub execCMD_SilentHill2(user As String, role As String, cmd As String)
         Dim buttons = 0
         Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}
         Dim halfhold As Boolean = False
@@ -754,7 +755,7 @@ Partial Public Class frmPS4Twitch
 
         End If
     End Sub
-    Private Sub ProcessCMD_GoW(user As String, role As String, cmd As String)
+    Private Sub ProcessCMD_SilentHill2(user As String, role As String, cmd As String)
         Dim tmpuser = user
         Dim tmpcmd = cmd
         Dim CMDmulti As Integer = 1

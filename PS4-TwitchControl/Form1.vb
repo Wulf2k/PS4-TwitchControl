@@ -32,30 +32,33 @@ Partial Public Class frmPS4Twitch
         'btnPress_Standard()
         'btnPress_Celeste()
         'btnPress_DarkSoulsRemastered()
-        btnPress_GoW()
+        'btnPress_PokemonFireRed()
+        'btnPress_PokemonPlatinum()
+        btnPress_SilentHill2()
         'btnPress_ZeldaMM()
         'btnPress_ZeldaOOT()
-        'btnPress_PokemonPlatinum()
-        'btnPress_PokemonFireRed()
+
     End Sub
 
     Private Sub execCMD(user As String, role As String, cmd As String)
         'execCMD_Celeste(user, role, cmd)
         'execCMD_DarkSoulsRemastered(user, role, cmd)
-        execCMD_GoW(user, role, cmd)
+        'execCMD_PokemonFireRed(user, role, cmd)
+        'execCMD_PokemonPlatinum(user, role, cmd)
+        execCMD_SilentHill2(user, role, cmd)
         'execCMD_ZeldaMM(user, role, cmd)
         'execCMD_ZeldaOOT(user, role, cmd)
-        'execCMD_PokemonPlatinum(user, role, cmd)
-        'execCMD_PokemonFireRed(user, role, cmd)
+
     End Sub
 
     Private Sub ProcessCMD(user As String, role As String, cmd As String)
         'ProcessCMD_Celeste(user, role, cmd)
         'ProcessCMD_DarkSoulsRemastered(user, role, cmd)
-        ProcessCMD_GoW(user, role, cmd)
-        'ProcessCMD_ZeldaOOT(user, role, cmd)
-        'ProcessCMD_PokemonPlatinum(user, role, cmd)
         'ProcessCMD_PokemonFireRed(user, role, cmd)
+        'ProcessCMD_PokemonPlatinum(user, role, cmd)
+        ProcessCMD_SilentHill2(user, role, cmd)
+        'ProcessCMD_ZeldaOOT(user, role, cmd)
+
     End Sub
 
 

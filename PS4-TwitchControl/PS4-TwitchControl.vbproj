@@ -77,7 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="asm.vb" />
-    <Compile Include="btnPress_GoW.vb">
+    <Compile Include="btnPress_SilentHill2.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="btnPress_PokemonFireRed.vb">
