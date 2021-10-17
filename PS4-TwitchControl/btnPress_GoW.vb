@@ -818,7 +818,8 @@ Partial Public Class frmPS4Twitch
 
         'Handle command multipliers
         If tmpcmd.Length > 2 Then
-            If IsNumeric(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x"))) Then
+            If IsNumeric(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x"))) And (tmpcmd.LastIndexOf("x") > tmpcmd.LastIndexOf("-")) Then
+
                 CMDmulti = Val(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x")))
                 If CMDmulti > 999 Then CMDmulti = 999
                 If CMDmulti < 1 Then CMDmulti = 1
