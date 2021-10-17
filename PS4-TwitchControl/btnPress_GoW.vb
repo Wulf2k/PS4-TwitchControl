@@ -189,7 +189,7 @@ Partial Public Class frmPS4Twitch
                     boolHoldR2 = False
 
                 Case "hr3"
-                    boolHoldR3 = True
+                    'boolHoldR3 = True
                 Case "nhr3"
                     boolHoldR3 = False
 
@@ -614,7 +614,7 @@ Partial Public Class frmPS4Twitch
 
             Case "r3"
                 If duration = 0 Then duration = 2
-                Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                'Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
