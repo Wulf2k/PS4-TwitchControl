@@ -644,7 +644,7 @@ Partial Public Class frmPS4Twitch
 
         'parse out half-hold
         If cmd(0) = "h" Then
-            If duration > 0 Then analoghold = True
+            If duration = 0 Then analoghold = True
             cmd = Strings.Right(cmd, cmd.Length - 1)
         End If
 
