@@ -594,7 +594,7 @@ Partial Public Class frmPS4Twitch
                 Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
-            Case "r1"
+            Case "r1", "z"
                 If duration = 0 Then duration = 2
                 Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 20, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
