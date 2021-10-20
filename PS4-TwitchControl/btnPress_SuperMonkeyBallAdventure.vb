@@ -850,7 +850,7 @@ Partial Public Class frmPS4Twitch
                 outputChat("Hello.")
 
 
-            Case "reconnect1", "ss", "ls", "rs"
+            Case "reconnect1", "ss", "ls", "rs", "l3", "r3"
                 If Not modlist.Contains(user) Then
                     outputChat("Command restricted.")
                     Return
