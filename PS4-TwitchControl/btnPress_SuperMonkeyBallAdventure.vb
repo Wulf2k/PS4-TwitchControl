@@ -70,36 +70,36 @@ Partial Public Class frmPS4Twitch
                     End If
 
 
-                Case "focus"
-                    Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, winTitle)
-                    If Not hwnd.Equals(IntPtr.Zero) Then
-                        ShowWindow(hwnd, 3)
-                        outputChat("Focused.")
-                    Else
-                        outputChat($"Window not found.")
-                    End If
+                    ''Case "focus"
+                    ''Dim hwnd As IntPtr
+                    ''hwnd = FindWindowA(Nothing, winTitle)
+                    ''If Not hwnd.Equals(IntPtr.Zero) Then
+                    ''ShowWindow(hwnd, 3)
+                    ''outputChat("Focused.")
+                    ''Else
+                    ''outputChat($"Window not found.")
+                    ''End If
 
 
-                Case "ss"
+                    ''Case "ss"
                     'Dim hwnd As IntPtr
                     'hwnd = FindWindowA(Nothing, winTitle)
                     'If Not hwnd.Equals(IntPtr.Zero) Then
                     'SetForegroundWindow(hwnd)
-                    My.Computer.Keyboard.SendKeys("+{F1}", True)
-                    outputChat($"State saved.")
+                    ''My.Computer.Keyboard.SendKeys("+{F1}", True)
+                    ''outputChat($"State saved.")
                     'Else
                     'outputChat($"Window not found.")
                     'End If
 
 
-                Case "ls"
+                    ''Case "ls"
                     'Dim hwnd As IntPtr
                     'hwnd = FindWindowA(Nothing, winTitle)
                     'If Not hwnd.Equals(IntPtr.Zero) Then
                     'SetForegroundWindow(hwnd)
-                    My.Computer.Keyboard.SendKeys("{F1}", True)
-                        outputChat($"State loaded.")
+                    ''My.Computer.Keyboard.SendKeys("{F1}", True)
+                    ''outputChat($"State loaded.")
                     'Else
                     'outputChat($"Window not found.")
                     'End If
@@ -607,13 +607,13 @@ Partial Public Class frmPS4Twitch
 
 
 
-            Case "l3"
+            Case "ls" ', "l3"
                 If duration = 0 Then duration = 2
                 Controller(BTN_L3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "r3"
+            Case "ss" ', "r3"
                 If duration = 0 Then duration = 2
                 Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
