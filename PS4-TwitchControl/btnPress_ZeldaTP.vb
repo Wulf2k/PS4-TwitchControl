@@ -695,7 +695,7 @@ Partial Public Class frmPS4Twitch
             'If 'roll', then roll params will be offset 1 character and modify right stick's axises
             If Strings.Left(cmd, 2) = "ro" Then
                 cmdpad = 1
-                If duration = 0 Then duration = 10
+                If duration = 0 Then duration = 18
                 roll = True
             End If
 
