@@ -35,10 +35,9 @@ Partial Public Class frmPS4Twitch
         'btnPress_PokemonFireRed()
         'btnPress_PokemonPlatinum()
         'btnPress_SilentHill2()
-        btnPress_SuperMonkeyBallAdventure()
         'btnPress_ZeldaMM()
         'btnPress_ZeldaOOT()
-
+        btnPress_ZeldaTP()
     End Sub
 
     Private Sub execCMD(user As String, role As String, cmd As String)
@@ -47,10 +46,9 @@ Partial Public Class frmPS4Twitch
         'execCMD_PokemonFireRed(user, role, cmd)
         'execCMD_PokemonPlatinum(user, role, cmd)
         'execCMD_SilentHill2(user, role, cmd)
-        execCMD_SuperMonkeyBallAdventure(user, role, cmd)
         'execCMD_ZeldaMM(user, role, cmd)
         'execCMD_ZeldaOOT(user, role, cmd)
-
+        execCMD_ZeldaTP(user, role, cmd)
     End Sub
 
     Private Sub ProcessCMD(user As String, role As String, cmd As String)
@@ -59,8 +57,8 @@ Partial Public Class frmPS4Twitch
         'ProcessCMD_PokemonFireRed(user, role, cmd)
         'ProcessCMD_PokemonPlatinum(user, role, cmd)
         'ProcessCMD_SilentHill2(user, role, cmd)
-        ProcessCMD_SuperMonkeyBallAdventure(user, role, cmd)
         'ProcessCMD_ZeldaOOT(user, role, cmd)
+        ProcessCMD_ZeldaTP(user, role, cmd)
 
     End Sub
 

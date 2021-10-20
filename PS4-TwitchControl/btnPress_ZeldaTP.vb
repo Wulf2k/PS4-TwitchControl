@@ -3,7 +3,7 @@ Imports Nefarius.ViGEm.Client.Targets.DualShock4
 Imports Nefarius.ViGEm.Client.Targets.Xbox360
 
 Partial Public Class frmPS4Twitch
-    Private Sub btnPress_SuperMonkeyBallAdventure()
+    Private Sub btnPress_ZeldaTP()
 
         'Console.WriteLine(DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.ffffff"))
 
@@ -46,6 +46,12 @@ Partial Public Class frmPS4Twitch
 
 
                 Case "reconnect1"
+                    Return
+
+
+
+
+
                     Shell("cmd.exe /c taskkill /f /im visualboyadvance-m.exe")
                     Thread.Sleep(1000)
                     Dim currDir = "C:\Emus\GBA"
@@ -70,7 +76,13 @@ Partial Public Class frmPS4Twitch
                     End If
 
 
-                    ''Case "focus"
+                Case "focus"
+                    Return
+
+
+
+
+
                     ''Dim hwnd As IntPtr
                     ''hwnd = FindWindowA(Nothing, winTitle)
                     ''If Not hwnd.Equals(IntPtr.Zero) Then
@@ -82,6 +94,7 @@ Partial Public Class frmPS4Twitch
 
 
                     ''Case "ss"
+                    ''Return
                     'Dim hwnd As IntPtr
                     'hwnd = FindWindowA(Nothing, winTitle)
                     'If Not hwnd.Equals(IntPtr.Zero) Then
@@ -93,7 +106,9 @@ Partial Public Class frmPS4Twitch
                     'End If
 
 
-                    ''Case "ls"
+                    'Case "ls"
+                    'Return
+
                     'Dim hwnd As IntPtr
                     'hwnd = FindWindowA(Nothing, winTitle)
                     'If Not hwnd.Equals(IntPtr.Zero) Then
@@ -447,7 +462,7 @@ Partial Public Class frmPS4Twitch
         'Console.WriteLine("press exception")
         ' End Try
     End Sub
-    Private Sub execCMD_SuperMonkeyBallAdventure(user As String, role As String, cmd As String)
+    Private Sub execCMD_ZeldaTP(user As String, role As String, cmd As String)
         Dim buttons = 0
         Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}
         Dim halfhold As Boolean = False
@@ -607,13 +622,13 @@ Partial Public Class frmPS4Twitch
 
 
 
-            Case "l3"
+            Case "l3", "ls"
                 If duration = 0 Then duration = 2
                 Controller(BTN_L3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "r3"
+            Case "r3", "ss"
                 If duration = 0 Then duration = 2
                 Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
@@ -755,7 +770,7 @@ Partial Public Class frmPS4Twitch
 
         End If
     End Sub
-    Private Sub ProcessCMD_SuperMonkeyBallAdventure(user As String, role As String, cmd As String)
+    Private Sub ProcessCMD_ZeldaTP(user As String, role As String, cmd As String)
         Dim tmpuser = user
         Dim tmpcmd = cmd
         Dim CMDmulti As Integer = 1
