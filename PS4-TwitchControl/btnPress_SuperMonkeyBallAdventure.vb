@@ -162,14 +162,14 @@ Partial Public Class frmPS4Twitch
                 Case "nhopt", "nhstart"
                     boolHoldOpt = False
 
-                Case "hl1", "hl"
+                Case "hl1"
                     boolHoldL1 = True
-                Case "nhl1", "nhl"
+                Case "nhl1"
                     boolHoldL1 = False
 
-                Case "hl2"
+                Case "hl2", "hl"
                     boolHoldL2 = True
-                Case "nhl2"
+                Case "nhl2", "nhl"
                     boolHoldL2 = False
 
                 Case "hl3"
@@ -178,40 +178,40 @@ Partial Public Class frmPS4Twitch
                     boolHoldL3 = False
 
 
-                Case "hr1", "hr"
+                Case "hr1", "hz"
                     boolHoldR1 = True
-                Case "nhr1", "nhr"
+                Case "nhr1", "nhz"
                     boolHoldR1 = False
 
-                Case "hr2"
+                Case "hr2", "hr"
                     boolHoldR2 = True
-                Case "nhr2"
+                Case "nhr2", "nhr"
                     boolHoldR2 = False
 
                 Case "hr3"
-                    'boolHoldR3 = True
+                    boolHoldR3 = True
                 Case "nhr3"
                     boolHoldR3 = False
 
 
-                Case "ho"
+                Case "hx" ', "ho"
                     boolHoldO = True
-                Case "nho"
+                Case "nhx" ', "nho"
                     boolHoldO = False
 
-                Case "hsq"
+                Case "hb" ', "hsq"
                     boolHoldSq = True
-                Case "nhsq"
+                Case "nhb" ', "nhsq"
                     boolHoldSq = False
 
-                Case "htri"
+                Case "hy" ', "htri"
                     boolHoldTri = True
-                Case "nhtri"
+                Case "nhy" ', "nhtri"
                     boolHoldTri = False
 
-                Case "hx"
+                Case "ha" ', "hx"
                     boolHoldX = True
-                Case "nhx"
+                Case "nha" ', "nhx"
                     boolHoldX = False
 
                 Case "hdu"
@@ -477,15 +477,15 @@ Partial Public Class frmPS4Twitch
                  "ho", "nho",
                  "hopt", "nhopt", "hstart", "nhstart",
                  "hselect", "nhselect",
-                 "hl1", "nhl1", "hl", "nhl",
-                 "hl2", "nhl2",
+                 "hl1", "nhl1",
+                 "hl2", "nhl2", "hl", "nhl",
                  "hl3", "nhl3",
-                 "hr1", "nhr1", "hr", "nhr",
-                 "hr2", "nhr2",
+                 "hr1", "nhr1", "hz", "nhz",
+                 "hr2", "nhr2", "hr", "nhr",
                  "hr3", "nhr3",
-                 "hsq", "nhsq",
-                 "htri", "nhtri",
-                 "hx", "nhx",
+                 "hsq", "nhsq", "hb", "nhb",
+                 "htri", "nhtri", "hy", "nhy",
+                 "hx", "nhx", "ha", "nha",
                  "hdu", "nhdu",
                  "hdd", "nhdd",
                  "hdl", "nhdl",
@@ -559,47 +559,47 @@ Partial Public Class frmPS4Twitch
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "o"
+            Case "x" ', "o"
                 If duration = 0 Then duration = 2
                 Controller(BTN_O, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "x"
+            Case "a" ', "x"
                 If duration = 0 Then duration = 10
                 Controller(BTN_X, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "sq"
+            Case "b" ', "sq"
                 If duration = 0 Then duration = 2
                 Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "tri"
+            Case "y" ', "tri"
                 If duration = 0 Then duration = 2
                 Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 15, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
-            Case "l1", "l"
+            Case "l1",
                 If duration = 0 Then duration = 2
                 Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 20, user, cmd & "(!)")
                 'Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
-            Case "l2"
+            Case "l2", "l"
                 If duration = 0 Then duration = 2
                 Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
-            Case "r1", "r"
+            Case "r1",
                 If duration = 0 Then duration = 2
                 Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 20, user, cmd & "(!)")
                 'Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
-            Case "r2"
+            Case "r2", "r"
                 If duration = 0 Then duration = 2
                 Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
@@ -615,7 +615,7 @@ Partial Public Class frmPS4Twitch
 
             Case "r3"
                 If duration = 0 Then duration = 2
-                'Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
@@ -657,7 +657,7 @@ Partial Public Class frmPS4Twitch
 
 
         'parse 'walks', 'looks', 'analog's, and 'rolls'
-        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
+        If ((cmd(0) = "w") Or (cmd(0) = "l")) Or    'If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
             (Strings.Left(cmd, 2) = "ro") Then
 
             Dim axispad = 0
