@@ -34,7 +34,8 @@ Partial Public Class frmPS4Twitch
         'btnPress_DarkSoulsRemastered()
         'btnPress_PokemonFireRed()
         'btnPress_PokemonPlatinum()
-        btnPress_SilentHill2()
+        'btnPress_SilentHill2()
+        btnPress_SuperMonkeyBallAdventure()
         'btnPress_ZeldaMM()
         'btnPress_ZeldaOOT()
 
@@ -45,7 +46,8 @@ Partial Public Class frmPS4Twitch
         'execCMD_DarkSoulsRemastered(user, role, cmd)
         'execCMD_PokemonFireRed(user, role, cmd)
         'execCMD_PokemonPlatinum(user, role, cmd)
-        execCMD_SilentHill2(user, role, cmd)
+        'execCMD_SilentHill2(user, role, cmd)
+        execCMD_SuperMonkeyBallAdventure(user, role, cmd)
         'execCMD_ZeldaMM(user, role, cmd)
         'execCMD_ZeldaOOT(user, role, cmd)
 
@@ -56,7 +58,8 @@ Partial Public Class frmPS4Twitch
         'ProcessCMD_DarkSoulsRemastered(user, role, cmd)
         'ProcessCMD_PokemonFireRed(user, role, cmd)
         'ProcessCMD_PokemonPlatinum(user, role, cmd)
-        ProcessCMD_SilentHill2(user, role, cmd)
+        'ProcessCMD_SilentHill2(user, role, cmd)
+        ProcessCMD_SuperMonkeyBallAdventure(user, role, cmd)
         'ProcessCMD_ZeldaOOT(user, role, cmd)
 
     End Sub
