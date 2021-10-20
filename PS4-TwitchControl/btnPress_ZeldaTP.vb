@@ -76,8 +76,8 @@ Partial Public Class frmPS4Twitch
                     End If
 
 
-                Case "focus"
-                    Return
+                'Case "focus"
+                    'Return
 
 
 
@@ -119,16 +119,16 @@ Partial Public Class frmPS4Twitch
                     'outputChat($"Window not found.")
                     'End If
 
-                Case "rs"
-                    Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, winTitle)
-                    If Not hwnd.Equals(IntPtr.Zero) Then
-                        SetForegroundWindow(hwnd)
-                        My.Computer.Keyboard.SendKeys("^{R}", True)
-                        outputChat($"Game reset.")
-                    Else
-                        outputChat($"Window not found.")
-                    End If
+                    'Case "rs"
+                    'Dim hwnd As IntPtr
+                    'hwnd = FindWindowA(Nothing, winTitle)
+                    'If Not hwnd.Equals(IntPtr.Zero) Then
+                    '                    SetForegroundWindow(hwnd)
+                    'My.Computer.Keyboard.SendKeys("^{R}", True)
+                    '                    outputChat($"Game reset.")
+                    'Else
+                    '                    outputChat($"Window not found.")
+                    'End If
 
 
 
@@ -506,10 +506,9 @@ Partial Public Class frmPS4Twitch
                  "hdl", "nhdl",
                  "hdr", "nhdr",
                  "reconnect1", "reconnect2",
-                 "ss", "ls", "rs",
                  "focus",
                  "hidecursor"
-
+                '"ss", "ls", "rs",
 
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
 
@@ -599,14 +598,14 @@ Partial Public Class frmPS4Twitch
                 Return
 
 
-            Case "l1"
+            Case "l1", "rs"
                 If duration = 0 Then duration = 2
                 Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 20, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "l2", "l"
                 If duration = 0 Then duration = 2
-                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 2, user, cmd & "(!)")
+                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r1", "z"
@@ -696,7 +695,6 @@ Partial Public Class frmPS4Twitch
             'If 'roll', then roll params will be offset 1 character and modify right stick's axises
             If Strings.Left(cmd, 2) = "ro" Then
                 cmdpad = 1
-                axispad = 2
                 If duration = 0 Then duration = 10
                 roll = True
             End If
@@ -762,7 +760,8 @@ Partial Public Class frmPS4Twitch
             cmd = cmd.Replace(".", "")
 
             If roll Then
-                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(!)")
+                Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
+                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(-)")
             Else
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
             End If
@@ -865,7 +864,7 @@ Partial Public Class frmPS4Twitch
                 outputChat("Hello.")
 
 
-            Case "reconnect1", "ss", "ls", "rs", "l3", "r3"
+            Case "reconnect1", "ss", "ls", "rs", "l3", "r3", "l1"
                 If Not modlist.Contains(user) Then
                     outputChat("Command restricted.")
                     Return
