@@ -588,8 +588,8 @@ Partial Public Class frmPS4Twitch
                 Return
 
             Case "x" ', "o"
-                If duration = 0 Then duration = 2
-                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
+                If duration = 0 Then duration = 10
+                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
@@ -600,31 +600,31 @@ Partial Public Class frmPS4Twitch
                 Return
 
             Case "b" ', "sq"
-                If duration = 0 Then duration = 2
-                Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
+                If duration = 0 Then duration = 10
+                Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "y" ', "tri"
-                If duration = 0 Then duration = 2
-                Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 15, user, cmd & "(!)")
+                If duration = 0 Then duration = 15
+                Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
             Case "l1", "rs"
-                If duration = 0 Then duration = 2
-                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 20, user, cmd & "(!)")
+                If duration = 0 Then duration = 20
+                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "l2", "l"
-                If duration = 0 Then duration = 2
-                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 5, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r1", "z"
-                If duration = 0 Then duration = 2
-                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 20, user, cmd & "(!)")
+                If duration = 0 Then duration = 20
+                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r2", "r"

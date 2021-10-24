@@ -130,6 +130,7 @@
     <Compile Include="btnPress_Standard.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="titanOne.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Form1.resx">
