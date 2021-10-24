@@ -202,6 +202,10 @@ Partial Public Class frmPS4Twitch
     Shared boolHoldShare = False
     Shared boolHoldOpt = False
 
+    Dim boolInvertLX = False
+    Dim boolInvertLY = False
+    Dim boolInvertRX = False
+    Dim boolInvertRY = False
 
     Dim boolHoldAxis() As Boolean = {False, False, False, False}
     Dim boolHoldAxisVal() As Single = {0, 0, 0, 0}

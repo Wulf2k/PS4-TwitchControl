@@ -130,6 +130,18 @@ Partial Public Class frmPS4Twitch
                     '                    outputChat($"Window not found.")
                     'End If
 
+                Case "invertlx"
+                    boolInvertLX = Not boolInvertLX
+                    outputChat("InvertLX = " + boolInvertLX)
+                Case "invertly"
+                    boolInvertLY = Not boolInvertLY
+                    outputChat("InvertLY = " + boolInvertLY)
+                Case "invertrx"
+                    boolInvertRX = Not boolInvertRX
+                    outputChat("InvertRX = " + boolInvertRX)
+                Case "invertry"
+                    boolInvertRY = Not boolInvertRY
+                    outputChat("InvertRY = " + boolInvertRY)
 
 
                 Case "hidecursor"
@@ -507,7 +519,8 @@ Partial Public Class frmPS4Twitch
                  "hdr", "nhdr",
                  "reconnect1", "reconnect2",
                  "focus",
-                 "hidecursor"
+                 "hidecursor",
+                 "invertlx", "invertly", "invertrx", "invertry"
                 '"ss", "ls", "rs",
 
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
@@ -750,6 +763,10 @@ Partial Public Class frmPS4Twitch
                 End If
             Next
 
+            If boolInvertLX Then axis(0) *= -1.0
+            If boolInvertLY Then axis(1) *= -1.0
+            If boolInvertRX Then axis(2) *= -1.0
+            If boolInvertRY Then axis(3) *= -1.0
 
 
             If halfhold Then cmd = "s" & cmd
