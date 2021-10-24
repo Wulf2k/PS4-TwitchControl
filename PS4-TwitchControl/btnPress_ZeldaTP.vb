@@ -132,16 +132,16 @@ Partial Public Class frmPS4Twitch
 
                 Case "invertlx"
                     boolInvertLX = Not boolInvertLX
-                    outputChat("InvertLX = " + boolInvertLX)
+                    outputChat("InvertLX = " + boolInvertLX.ToString)
                 Case "invertly"
                     boolInvertLY = Not boolInvertLY
-                    outputChat("InvertLY = " + boolInvertLY)
+                    outputChat("InvertLY = " + boolInvertLY.ToString)
                 Case "invertrx"
                     boolInvertRX = Not boolInvertRX
-                    outputChat("InvertRX = " + boolInvertRX)
+                    outputChat("InvertRX = " + boolInvertRX.ToString)
                 Case "invertry"
                     boolInvertRY = Not boolInvertRY
-                    outputChat("InvertRY = " + boolInvertRY)
+                    outputChat("InvertRY = " + boolInvertRY.ToString)
 
 
                 Case "hidecursor"
@@ -521,6 +521,7 @@ Partial Public Class frmPS4Twitch
                  "focus",
                  "hidecursor",
                  "invertlx", "invertly", "invertrx", "invertry"
+
                 '"ss", "ls", "rs",
 
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
