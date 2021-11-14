@@ -699,7 +699,7 @@ Partial Public Class frmPS4Twitch
 
 
             Case "retry"
-                ProcessCMD(user, role, "start,ddx2,a,hh,a,hx5,a,h-115,start")
+                ProcessCMD(user, role, "nh,h-2,start,ddx2,a,hh,a,hx5,a,h-115,")
                 Return
 
 
