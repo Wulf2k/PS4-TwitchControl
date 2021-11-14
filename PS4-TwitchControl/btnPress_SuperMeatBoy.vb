@@ -828,7 +828,7 @@ Partial Public Class frmPS4Twitch
             cmd = cmd.Replace(".", "")
 
             If jump Then
-                Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd)
+                Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
             Else
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
             End If
