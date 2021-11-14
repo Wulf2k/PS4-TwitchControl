@@ -80,6 +80,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="asm.vb" />
+    <Compile Include="btnPress_SuperMeatBoy.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="btnPress__XB1.vb">
       <SubType>Form</SubType>
     </Compile>
