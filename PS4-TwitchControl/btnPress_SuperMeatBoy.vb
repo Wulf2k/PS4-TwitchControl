@@ -573,13 +573,13 @@ Partial Public Class frmPS4Twitch
 
             'Half halt
             Case "hh"
-                If duration = 0 Then duration = 15
+                If duration = 0 Then duration = 30
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
                 Return
 
             'Halt
             Case "h"
-                If duration = 0 Then duration = 30
+                If duration = 0 Then duration = 60
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
                 Return
 
@@ -699,7 +699,7 @@ Partial Public Class frmPS4Twitch
 
 
             Case "retry"
-                ProcessCMD(user, role, "nh,h-2,start,ddx2,a,hh,a,hx5,a,h-115,")
+                ProcessCMD(user, role, "nh,h-2,start,ddx2,a,h-15,a,h-150,a,h-115,")
                 Return
 
 
