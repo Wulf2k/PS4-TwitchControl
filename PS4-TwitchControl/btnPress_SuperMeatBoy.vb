@@ -692,6 +692,19 @@ Partial Public Class frmPS4Twitch
                 Controller(BTN_PSHOME, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 2, duration, cmd & "(-)")
                 Return
+
+
+
+
+
+
+            Case "retry"
+                ProcessCMD(user, role, "start,ddx2,a,hh,a,hx4,a,h-115,start")
+                Return
+
+
+
+
         End Select
 
 
