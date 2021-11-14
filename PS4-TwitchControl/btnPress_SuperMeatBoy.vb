@@ -975,6 +975,7 @@ Partial Public Class frmPS4Twitch
                         End If
                     Next
                 End SyncLock
+                execCMD(tmpuser, role, "h-1")
                 outputChat("All commands for " & tmpuser & " removed from queue.")
                 Return
 
