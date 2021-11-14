@@ -108,7 +108,7 @@ Partial Public Class frmPS4Twitch
                                  $"C:\Program Files (x86)\Steam\steamapps\common\Super Meat Boy\UserData\{DateTime.Now.Year}.{DateTime.Now.Month}.{DateTime.Now.Day}.{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.Savegame.dat")
                         outputChat("Save backup complete")
                     Catch ex As Exception
-                        outputChat("Saved failed?")
+                        outputChat("Save failed?")
                     End Try
 
 
