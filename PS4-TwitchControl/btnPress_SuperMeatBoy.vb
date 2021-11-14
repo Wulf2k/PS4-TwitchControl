@@ -70,7 +70,7 @@ Partial Public Class frmPS4Twitch
                     'Dim currDir = "C:\Emus\GBA"
                     'Dim exe = $"{currDir}\visualboyadvance-m.exe"
 
-                    Shell("start steam://rungameid/40800")
+                    Shell("cmd /c start steam://rungameid/40800")
 
                     'Dim ProcessProperties As New ProcessStartInfo
                     'ProcessProperties.FileName = exe
