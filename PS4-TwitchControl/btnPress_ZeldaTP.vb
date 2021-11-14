@@ -388,7 +388,33 @@ Partial Public Class frmPS4Twitch
         Try
             'WUInt32(hookmem + &H40C, buttons)
 
+            P1output(gcapiTitanOne.TitanOne.Xbox.B) = (buttons And BTN_O) >= 1
+            P1output(gcapiTitanOne.TitanOne.Xbox.A) = (buttons And BTN_X) >= 1
+            P1output(gcapiTitanOne.TitanOne.Xbox.X) = (buttons And BTN_SQUARE) >= 1
+            P1output(gcapiTitanOne.TitanOne.Xbox.Y) = (buttons And BTN_TRIANGLE) >= 1
 
+            P1output(gcapiTitanOne.TitanOne.Xbox.Back) = (buttons And BTN_SHARE) >= 1
+            P1output(gcapiTitanOne.TitanOne.Xbox.Start) = (buttons And BTN_OPTIONS) >= 1
+
+            P1output(gcapiTitanOne.TitanOne.Xbox.LeftShoulder) = (buttons And BTN_L1) >= 1
+            P1output(gcapiTitanOne.TitanOne.Xbox.LeftStick) = (buttons And BTN_L3) >= 1
+            P1output(gcapiTitanOne.TitanOne.Xbox.RightShoulder) = (buttons And BTN_R1) >= 1
+            P1output(gcapiTitanOne.TitanOne.Xbox.RightStick) = (buttons And BTN_R3) >= 1
+
+            P1output(gcapiTitanOne.TitanOne.Xbox.LeftX) = LStickLR * 100
+            P1output(gcapiTitanOne.TitanOne.Xbox.LeftY) = LStickUD * 100
+            P1output(gcapiTitanOne.TitanOne.Xbox.RightX) = RStickLR * 100
+            P1output(gcapiTitanOne.TitanOne.Xbox.RightY) = RStickUD * 100
+
+            P1output(gcapiTitanOne.TitanOne.Xbox.LeftTrigger) = LTrigger * 100
+            P1output(gcapiTitanOne.TitanOne.Xbox.RightTrigger) = RTrigger * 100
+
+            P1output(gcapiTitanOne.TitanOne.Xbox.Down) = (buttons And BTN_DPAD_DOWN) >= 1
+            P1output(gcapiTitanOne.TitanOne.Xbox.Right) = (buttons And BTN_DPAD_RIGHT) >= 1
+            P1output(gcapiTitanOne.TitanOne.Xbox.Left) = (buttons And BTN_DPAD_LEFT) >= 1
+            P1output(gcapiTitanOne.TitanOne.Xbox.Up) = (buttons And BTN_DPAD_UP) >= 1
+
+            tOne.Send(0, P1output)
 
 
             'DS4ctrl.SetButtonState(DualShock4Button.Circle, buttons And BTN_O)
@@ -414,32 +440,32 @@ Partial Public Class frmPS4Twitch
 
 
 
-            XBctrl.SetButtonState(Xbox360Button.B, buttons And BTN_O)
-            XBctrl.SetButtonState(Xbox360Button.A, buttons And BTN_X)
-            XBctrl.SetButtonState(Xbox360Button.X, buttons And BTN_SQUARE)
-            XBctrl.SetButtonState(Xbox360Button.Y, buttons And BTN_TRIANGLE)
-            XBctrl.SetButtonState(Xbox360Button.Back, buttons And BTN_SHARE)
-            XBctrl.SetButtonState(Xbox360Button.Start, buttons And BTN_OPTIONS)
-            XBctrl.SetButtonState(Xbox360Button.LeftShoulder, buttons And BTN_L1)
-            XBctrl.SetButtonState(Xbox360Button.LeftThumb, buttons And BTN_L3)
-            XBctrl.SetButtonState(Xbox360Button.RightShoulder, buttons And BTN_R1)
-            XBctrl.SetButtonState(Xbox360Button.RightThumb, buttons And BTN_R3)
+            'XBctrl.SetButtonState(Xbox360Button.B, buttons And BTN_O)
+            'XBctrl.SetButtonState(Xbox360Button.A, buttons And BTN_X)
+            'XBctrl.SetButtonState(Xbox360Button.X, buttons And BTN_SQUARE)
+            'XBctrl.SetButtonState(Xbox360Button.Y, buttons And BTN_TRIANGLE)
+            'XBctrl.SetButtonState(Xbox360Button.Back, buttons And BTN_SHARE)
+            'XBctrl.SetButtonState(Xbox360Button.Start, buttons And BTN_OPTIONS)
+            'XBctrl.SetButtonState(Xbox360Button.LeftShoulder, buttons And BTN_L1)
+            'XBctrl.SetButtonState(Xbox360Button.LeftThumb, buttons And BTN_L3)
+            'XBctrl.SetButtonState(Xbox360Button.RightShoulder, buttons And BTN_R1)
+            'XBctrl.SetButtonState(Xbox360Button.RightThumb, buttons And BTN_R3)
 
 
-            XBctrl.SetAxisValue(Xbox360Axis.LeftThumbX, LStickLR * &H7FFFUI)
-            XBctrl.SetAxisValue(Xbox360Axis.LeftThumbY, LStickUD * &H7FFFUI)
-            XBctrl.SetAxisValue(Xbox360Axis.RightThumbX, RStickLR * &H7FFFUI)
-            XBctrl.SetAxisValue(Xbox360Axis.RightThumbY, RStickUD * &H7FFFUI)
+            'XBctrl.SetAxisValue(Xbox360Axis.LeftThumbX, LStickLR * &H7FFFUI)
+            'XBctrl.SetAxisValue(Xbox360Axis.LeftThumbY, LStickUD * &H7FFFUI)
+            'XBctrl.SetAxisValue(Xbox360Axis.RightThumbX, RStickLR * &H7FFFUI)
+            'XBctrl.SetAxisValue(Xbox360Axis.RightThumbY, RStickUD * &H7FFFUI)
 
-            XBctrl.SetSliderValue(Xbox360Slider.LeftTrigger, &HFFUI * LTrigger)
-            XBctrl.SetSliderValue(Xbox360Slider.RightTrigger, &HFFUI * RTrigger)
+            'XBctrl.SetSliderValue(Xbox360Slider.LeftTrigger, &HFFUI * LTrigger)
+            'XBctrl.SetSliderValue(Xbox360Slider.RightTrigger, &HFFUI * RTrigger)
 
-            XBctrl.SetButtonState(Xbox360Button.Up, buttons And BTN_DPAD_UP)
-            XBctrl.SetButtonState(Xbox360Button.Right, buttons And BTN_DPAD_RIGHT)
-            XBctrl.SetButtonState(Xbox360Button.Down, buttons And BTN_DPAD_DOWN)
-            XBctrl.SetButtonState(Xbox360Button.Left, buttons And BTN_DPAD_LEFT)
+            'XBctrl.SetButtonState(Xbox360Button.Up, buttons And BTN_DPAD_UP)
+            'XBctrl.SetButtonState(Xbox360Button.Right, buttons And BTN_DPAD_RIGHT)
+            'XBctrl.SetButtonState(Xbox360Button.Down, buttons And BTN_DPAD_DOWN)
+            'XBctrl.SetButtonState(Xbox360Button.Left, buttons And BTN_DPAD_LEFT)
 
-            XBctrl.SubmitReport()
+            'XBctrl.SubmitReport()
 
 
             'Do DPad properly
@@ -619,7 +645,7 @@ Partial Public Class frmPS4Twitch
                 Return
             Case "l2", "l"
                 If duration = 0 Then duration = 5
-                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 2, user, cmd & "(!)")
+                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r1", "z"
@@ -628,7 +654,7 @@ Partial Public Class frmPS4Twitch
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r2", "r"
-                If duration = 0 Then duration = 2
+                If duration = 0 Then duration = 12
                 Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return

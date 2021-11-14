@@ -7,305 +7,249 @@ Imports System.Runtime.InteropServices
 Imports System.IO
 
 Namespace gcapiTitanOne
-    Public Class titanOne
+    Public Class TitanOne
+        Private Declare Function LoadLibraryA Lib "kernel32.dll" (ByVal dllToLoad As String) As IntPtr
+        Private Declare Function GetProcAddress Lib "kernel32.dll" (ByVal hModule As IntPtr, ByVal procedureName As String) As IntPtr
 
-        Public strAPI As String = "gcdapi.dll"
+        'Public Declare Function gcdapi_Load Lib "gcdapi.dll" () As Byte
 
-        Public Declare Function LoadLibrary Lib "kernel32.dll" (ByVal dllToLoad As String) As IntPtr
-        Public Declare Function GetProcAddress Lib "kernel32.dll" (ByVal hModule As IntPtr, procedureName As String) As IntPtr
-
-        Public Structure GCAPI_CONSTANTS
-            Public Const GCAPI_INPUT_TOTAL As Integer = 30
-            Public Const GCAPI_OUTPUT_TOTAL As Integer = 36
+        Public Structure GcmapiConstants
+            Public Const GcapiInputTotal As Integer = 30
+            Public Const GcapiOutputTotal As Integer = 36
         End Structure
-        Public Structure GCAPI_STATUS
-            Public value As Byte 'Current value - Range: [-100 ~ 100] %
-            Public prev_value As Byte 'Previous value - Range: [-100 ~ 100] %
-            Public press_tv As Integer 'Time marker For the button press Event
+
+        Public Structure GcmapiStatus
+            Public Value As Byte
+            Public PrevValue As Byte
+            Public PressTv As Integer
         End Structure
-        Public Structure GCAPI_REPORT_TITANONE
-            Public console As Byte
-            Public controller As Byte
+
+        Public Structure Report
+            Public Console As Byte
+            Public Controller As Byte
             <MarshalAs(UnmanagedType.ByValArray, SizeConst:=4)>
-            Public led As Byte()
+            Public Led As Byte()
             <MarshalAs(UnmanagedType.ByValArray, SizeConst:=4)>
-            Public rumble As Byte()
-            Public battery_level As Byte
-            <MarshalAs(UnmanagedType.ByValArray, SizeConst:=GCAPI_CONSTANTS.GCAPI_INPUT_TOTAL, ArraySubType:=UnmanagedType.Struct)>
-            Public input As GCAPI_STATUS()
+            Public Rumble As Byte()
+            Public BatteryLevel As Byte
+            <MarshalAs(UnmanagedType.ByValArray, SizeConst:=GcmapiConstants.GcapiInputTotal, ArraySubType:=UnmanagedType.Struct)>
+            Public Input As GcmapiStatus()
         End Structure
 
-        <UnmanagedFunctionPointer(CallingConvention.Cdecl)>
-        Private Delegate Function GCAPI_LOAD() As Byte
-        <UnmanagedFunctionPointer(CallingConvention.StdCall)>
-        Private Delegate Function GCAPI_LOADDEVICE(ByVal devPID As UShort) As Byte
-        <UnmanagedFunctionPointer(CallingConvention.StdCall)>
-        Private Delegate Function GCAPI_ISCONNECTED() As Byte
-        <UnmanagedFunctionPointer(CallingConvention.Cdecl)>
-        Private Delegate Function GCAPI_GETTIMEVAL() As UInteger
-        <UnmanagedFunctionPointer(CallingConvention.Cdecl)>
-        Private Delegate Function GCAPI_GETFWVER() As UInteger
-        <UnmanagedFunctionPointer(CallingConvention.StdCall)>
-        Private Delegate Function GCAPI_WRITE(ByVal output As Byte()) As Byte
-        <UnmanagedFunctionPointer(CallingConvention.StdCall)>
-        Private Delegate Function GCAPI_WRITE_EX(ByVal output As Byte()) As Byte
-        <UnmanagedFunctionPointer(CallingConvention.StdCall)>
-        Private Delegate Function GCAPI_WRITEREF(ByVal output As Byte()) As Byte
-        <UnmanagedFunctionPointer(CallingConvention.Cdecl)>
-        Private Delegate Function GCAPI_CALCPRESSTIME(ByVal time As Byte) As Integer
-        <UnmanagedFunctionPointer(CallingConvention.Cdecl)>
-        Private Delegate Sub GCAPI_UNLOAD()
-        <UnmanagedFunctionPointer(CallingConvention.StdCall)>
-        Private Delegate Function GCAPI_READ_TO(
-        <[In], Out> ByRef gcapi_report As GCAPI_REPORT_TITANONE) As IntPtr
-
-
-        Private _gcapi_Load As GCAPI_LOAD = Nothing
-        Private _gcapi_LoadDevice As GCAPI_LOADDEVICE = Nothing
-        Private _gcapi_IsConnected As GCAPI_ISCONNECTED = Nothing
-        Private _gcapi_GetTimeVal As GCAPI_GETTIMEVAL = Nothing
-        Private _gcapi_GetFwVer As GCAPI_GETFWVER = Nothing
-        Private _gcapi_Write As GCAPI_WRITE = Nothing
-        Private _gcapi_WriteEx As GCAPI_WRITE_EX = Nothing
-        Private _gcapi_WriteRef As GCAPI_WRITEREF = Nothing
-        Private _gcapi_Read_TO As GCAPI_READ_TO = Nothing
-        Private _gcapi_CalcPressTime As GCAPI_CALCPRESSTIME = Nothing
-        Private _gcapi_Unload As GCAPI_UNLOAD = Nothing
-
-
-        Public Enum DevPID
-            Any = &H0
-            ControllerMax = &H1
-            Cronus = &H2
-            TitanOne = &H3
+        Public Enum Xbox
+            Home = 0
+            Back = 1
+            Start = 2
+            RightShoulder = 3
+            RightTrigger = 4
+            RightStick = 5
+            LeftShoulder = 6
+            LeftTrigger = 7
+            LeftStick = 8
+            RightX = 9
+            RightY = 10
+            LeftX = 11
+            LeftY = 12
+            Up = 13
+            Down = 14
+            Left = 15
+            Right = 16
+            Y = 17
+            B = 18
+            A = 19
+            X = 20
+            AccX = 21      'rotate X. 90 = -25, 180 = 0, 270 = +25, 360 = 0 (ng)
+            AccY = 22      'shake vertically. +25 (top) to -25 (bottom) (ng)
+            AccZ = 23      'tilt up
+            GyroX = 24
+            GyroY = 25
+            GyroZ = 26
+            Touch = 27            'touchpad, 100 = on    (works)
+            TouchX = 28           '-100 to 100   (left to right)
+            TouchY = 29             '-100 to 100   (top to bottom)
         End Enum
 
+        <UnmanagedFunctionPointer(CallingConvention.StdCall)>
+        Public Delegate Function GcmapiLoad() As Byte
+        <UnmanagedFunctionPointer(CallingConvention.Cdecl)>
+        Public Delegate Sub GcmapiUnload()
+        <UnmanagedFunctionPointer(CallingConvention.StdCall)>
+        Public Delegate Function GcmapiConnect(ByVal devPid As UShort) As Integer
+        <UnmanagedFunctionPointer(CallingConvention.StdCall)>
+        Public Delegate Function GcmapiGetserialnumber(ByVal devId As Integer) As IntPtr
+        <UnmanagedFunctionPointer(CallingConvention.StdCall)>
+        Public Delegate Function GcmapiIsconnected(ByVal m As Integer) As Integer
+        <UnmanagedFunctionPointer(CallingConvention.StdCall)>
+        Public Delegate Function GcmapiWrite(ByVal device As Integer, ByVal output As Byte()) As Integer
+        <UnmanagedFunctionPointer(CallingConvention.StdCall)>
+        Public Delegate Function GcmapiRead(ByVal device As Integer,
+        <[In], Out> ByRef report As Report) As IntPtr
+        Public Shared Load As GcmapiLoad
+        Public Shared Unload As GcmapiUnload
+        Public Shared Connect As GcmapiConnect
+        Public Shared Serial As GcmapiGetserialnumber
+        Public Shared Connected As GcmapiIsconnected
+        Public Shared Write As GcmapiWrite
+        Public Shared Read As GcmapiRead
+        Private Shared _notConnected As List(Of Integer)
+        Private Shared _connected As List(Of Integer)
+        Public Shared DeviceList As List(Of TitanDevices)
 
-        Enum xbox
-            home
-            back
-            start
-            rightShoulder
-            rightTrigger
-            rightStick
-            leftShoulder
-            leftTrigger
-            leftStick
-            rightX
-            rightY
-            leftX
-            leftY
-            up
-            down
-            left
-            right
-            y
-            b
-            a
-            x
-            accX 'rotate X. 90 = -25, 180 = 0, 270 = +25, 360 = 0 
-            accY 'shake vertically. +25 (top) To -25 (bottom) 
-            accZ 'tilt up
-            gyroX
-            gyroY
-            gyroZ
-            touch 'touchpad, 100 = On    (works)
-            touchX '-100 To 100   (left To right)
-            touchY '-100 To 100   (top To bottom)
-        End Enum
+        Public Class TitanDevices
+            Public Id As Integer
+            Public SerialNo As String
+        End Class
 
-        Private _strTODevice As String
-        Private _boolGCAPILoaded As Boolean = False
-        Private _devId As DevPID = DevPID.Any
 
-        Public Sub setTOInterface(ByVal devID As DevPID)
-            _devId = devID
-        End Sub
+        Sub Open()
+            Dim file = "gcdapi.dll"
 
-        Public Sub initTitanOne()
-            Dim strDir = Directory.GetCurrentDirectory() & "\"
-            If File.Exists(strDir + strAPI) = False Then Return
-            Dim ptrDll = LoadLibrary(strDir + strAPI)
-            If ptrDll = IntPtr.Zero Then Return
-            Dim ptrLoad = loadExternalFunction(ptrDll, "gcdapi_Load")
-            If ptrLoad = IntPtr.Zero Then Return
-            Dim ptrLoadDevice = loadExternalFunction(ptrDll, "gcdapi_LoadDevice")
-            If ptrLoadDevice = IntPtr.Zero Then Return
-            Dim ptrIsConnected = loadExternalFunction(ptrDll, "gcapi_IsConnected")
-            If ptrIsConnected = IntPtr.Zero Then Return
-            Dim ptrUnload = loadExternalFunction(ptrDll, "gcdapi_Unload")
-            If ptrUnload = IntPtr.Zero Then Return
-            Dim ptrGetTimeVal = loadExternalFunction(ptrDll, "gcapi_GetTimeVal")
-            If ptrGetTimeVal = IntPtr.Zero Then Return
-            Dim ptrGetFwVer = loadExternalFunction(ptrDll, "gcapi_GetFWVer")
-            If ptrGetFwVer = IntPtr.Zero Then Return
-            Dim ptrWrite = loadExternalFunction(ptrDll, "gcapi_Write")
-            If ptrWrite = IntPtr.Zero Then Return
-            Dim ptrRead = loadExternalFunction(ptrDll, "gcapi_Read")
-            If ptrRead = IntPtr.Zero Then Return
-            Dim ptrWriteEx = loadExternalFunction(ptrDll, "gcapi_WriteEX")
-            If ptrWriteEx = IntPtr.Zero Then Return
-            Dim ptrReadEx = loadExternalFunction(ptrDll, "gcapi_ReadEX")
-            If ptrReadEx = IntPtr.Zero Then Return
-            Dim ptrCalcPressTime = loadExternalFunction(ptrDll, "gcapi_CalcPressTime")
-            If ptrCalcPressTime = IntPtr.Zero Then Return
+            If String.IsNullOrEmpty(file) Then
+                Console.WriteLine("Error loading TitanOne gcdapi.dll")
+                Return
+            End If
+
+            Dim dll = LoadLibraryA(file)
+
+            If dll = IntPtr.Zero Then
+                Console.WriteLine("[FAIL] Unable to allocate Device API")
+                Return
+            End If
+
+            Dim _load = LoadExternalFunction(dll, "gcmapi_Load")
+
+            If _load = IntPtr.Zero Then
+                Console.WriteLine("[FAIL] gcMapi_Load")
+                Return
+            End If
+
+            Dim _unload = LoadExternalFunction(dll, "gcmapi_Unload")
+
+            If _unload = IntPtr.Zero Then
+                Console.WriteLine("[FAIL] gcMapi_Unload")
+                Return
+            End If
+
+            Dim _connect = LoadExternalFunction(dll, "gcmapi_Connect")
+
+            If _connect = IntPtr.Zero Then
+                Console.WriteLine("[FAIL] gcmapi_Connect")
+                Return
+            End If
+
+            Dim _connected = LoadExternalFunction(dll, "gcmapi_IsConnected")
+
+            If _connected = IntPtr.Zero Then
+                Console.WriteLine("[FAIL] gcmapi_IsConnected")
+                Return
+            End If
+
+            Dim _serial = LoadExternalFunction(dll, "gcmapi_GetSerialNumber")
+
+            If _serial = IntPtr.Zero Then
+                Console.WriteLine("[FAIL] gcmapi_GetSerialNumber")
+                Return
+            End If
+
+            Dim _write = LoadExternalFunction(dll, "gcmapi_Write")
+
+            If _write = IntPtr.Zero Then
+                Console.WriteLine("[FAIL] gcmapi_Write")
+                Return
+            End If
+
+            Dim _read = LoadExternalFunction(dll, "gcmapi_Read")
+
+            If _read = IntPtr.Zero Then
+                Console.WriteLine("[FAIL] gcmapi_Read")
+                Return
+            End If
 
             Try
-                _gcapi_Load = CType(Marshal.GetDelegateForFunctionPointer(ptrLoad, GetType(GCAPI_LOAD)), GCAPI_LOAD)
-                _gcapi_LoadDevice = CType(Marshal.GetDelegateForFunctionPointer(ptrLoadDevice, GetType(GCAPI_LOADDEVICE)), GCAPI_LOADDEVICE)
-                _gcapi_IsConnected = CType(Marshal.GetDelegateForFunctionPointer(ptrIsConnected, GetType(GCAPI_ISCONNECTED)), GCAPI_ISCONNECTED)
-                _gcapi_Unload = CType(Marshal.GetDelegateForFunctionPointer(ptrUnload, GetType(GCAPI_UNLOAD)), GCAPI_UNLOAD)
-                _gcapi_GetTimeVal = CType(Marshal.GetDelegateForFunctionPointer(ptrGetTimeVal, GetType(GCAPI_GETTIMEVAL)), GCAPI_GETTIMEVAL)
-                _gcapi_GetFwVer = CType(Marshal.GetDelegateForFunctionPointer(ptrGetFwVer, GetType(GCAPI_GETFWVER)), GCAPI_GETFWVER)
-                _gcapi_Write = CType(Marshal.GetDelegateForFunctionPointer(ptrWrite, GetType(GCAPI_WRITE)), GCAPI_WRITE)
-                _gcapi_CalcPressTime = CType(Marshal.GetDelegateForFunctionPointer(ptrCalcPressTime, GetType(GCAPI_CALCPRESSTIME)), GCAPI_CALCPRESSTIME)
-                _gcapi_Write = CType(Marshal.GetDelegateForFunctionPointer(ptrWrite, GetType(GCAPI_WRITE)), GCAPI_WRITE)
-                _gcapi_WriteEx = CType(Marshal.GetDelegateForFunctionPointer(ptrWriteEx, GetType(GCAPI_WRITE_EX)), GCAPI_WRITE_EX)
-                _gcapi_Read_TO = CType(Marshal.GetDelegateForFunctionPointer(ptrReadEx, GetType(GCAPI_READ_TO)), GCAPI_READ_TO)
+                Load = CType(Marshal.GetDelegateForFunctionPointer(_load, GetType(GcmapiLoad)), GcmapiLoad)
+                Unload = CType(Marshal.GetDelegateForFunctionPointer(_unload, GetType(GcmapiUnload)), GcmapiUnload)
+                Connect = CType(Marshal.GetDelegateForFunctionPointer(_connect, GetType(GcmapiConnect)), GcmapiConnect)
+                Serial = CType(Marshal.GetDelegateForFunctionPointer(_serial, GetType(GcmapiGetserialnumber)), GcmapiGetserialnumber)
+                Write = CType(Marshal.GetDelegateForFunctionPointer(_write, GetType(GcmapiWrite)), GcmapiWrite)
+                Connected = CType(Marshal.GetDelegateForFunctionPointer(_connected, GetType(GcmapiIsconnected)), GcmapiIsconnected)
+                Read = CType(Marshal.GetDelegateForFunctionPointer(_read, GetType(GcmapiRead)), GcmapiRead)
             Catch ex As Exception
+                Console.WriteLine("Fail -> " & ex.Message)
+                Console.WriteLine("[ERR] Critical failure loading TitanOne API.")
                 Return
             End Try
 
-            If _gcapi_LoadDevice(CUShort(_devId)) <> 1 Then Return
+            Console.WriteLine("TitanOne API initialised ok")
         End Sub
 
-
-        Private Function loadExternalFunction(ByVal ptrDll As IntPtr, ByVal strFunction As String) As IntPtr
-            Dim ptrFunction As IntPtr = IntPtr.Zero
-            ptrFunction = GetProcAddress(ptrDll, strFunction)
-
-            If ptrFunction = IntPtr.Zero Then
-            Else
-            End If
-
-            Return ptrFunction
+        Private Function LoadExternalFunction(ByVal dll As IntPtr, ByVal [function] As String) As IntPtr
+            Dim ptr = GetProcAddress(dll, [function])
+            Console.WriteLine(If(ptr = IntPtr.Zero, $"[NG] {[function]} alloc fail", $"[OK] {[function]}"))
+            Return ptr
         End Function
 
-        Public Sub closeTitanOneInterface()
-            'RaiseEvent _gcapi_Unload()
-            _gcapi_Unload()
+        Public Sub FindDevices()
+            DeviceList = New List(Of TitanDevices)()
+            If Connect Is Nothing Then Return
+            Dim deviceCount = Load()
+            Console.WriteLine($"Number of devices found: {deviceCount}")
+            Connect(&H3)
 
+            Threading.Thread.Sleep(33)
 
-            _gcapi_LoadDevice = Nothing
-            _gcapi_Load = Nothing
-            _gcapi_IsConnected = Nothing
-            _gcapi_GetTimeVal = Nothing
-            _gcapi_GetFwVer = Nothing
-            _gcapi_Write = Nothing
-            _gcapi_WriteEx = Nothing
-            _gcapi_WriteRef = Nothing
-            _gcapi_Read_TO = Nothing
-            _gcapi_CalcPressTime = Nothing
-            _gcapi_Unload = Nothing
+            For count = 0 To deviceCount
+                If Connected(count) = 0 Then Continue For
+                Dim _serial = ReadSerial(count)
+                Console.WriteLine($"Device found: [ID]{count} [SERIAL]{_serial}")
+                DeviceList.Add(New TitanDevices() With {
+                    .Id = count,
+                    .SerialNo = _serial
+                })
+            Next
         End Sub
 
-        'Public Sub checkControllerInput()
-        '    If Not _boolGCAPILoaded Then Return
+        Public Function ReadSerial(ByVal devId As Integer) As String
+            Dim _serial = New Byte(19) {}
+            Dim ret = Serial(devId)
+            Marshal.Copy(ret, _serial, 0, 20)
+            Dim serialNo = ""
 
-        '    If _gcapi_IsConnected() = 1 Then
-        '        Dim output As Byte() = New Byte(35) {}
+            For Each item In _serial
+                serialNo += $"{item}"
+            Next
 
-        '        If _controls.DPad.Left Then
-        '            output(CInt(xbox.left)) = Convert.ToByte(100)
-        '        End If
+            Return serialNo
+        End Function
 
-        '        If _controls.DPad.Right Then
-        '            output(CInt(xbox.right)) = Convert.ToByte(100)
-        '        End If
+        Public Sub Send(pid As Integer, output As Object)
+            Write(pid, output)
+        End Sub
 
-        '        If _controls.DPad.Up Then
-        '            output(CInt(xbox.up)) = Convert.ToByte(100)
-        '        End If
+        'Function Send(ByVal player As Gamepad.GamepadOutput) As GcmapiStatus()
+        '    If _notConnected Is Nothing Then _notConnected = New List(Of Integer)()
+        '    If _connected Is Nothing Then _connected = New List(Of Integer)()
 
-        '        If _controls.DPad.Down Then
-        '            output(CInt(xbox.down)) = Convert.ToByte(100)
-        '        End If
-
-        '        If _controls.Buttons.A Then
-        '            output(CInt(xbox.a)) = Convert.ToByte(100)
-        '        End If
-
-        '        If _controls.Buttons.B Then
-        '            output(CInt(xbox.b)) = Convert.ToByte(100)
-        '        End If
-
-        '        If _controls.Buttons.X Then
-        '            output(CInt(xbox.x)) = Convert.ToByte(100)
-        '        End If
-
-        '        If _controls.Buttons.Y Then
-        '            output(CInt(xbox.y)) = Convert.ToByte(100)
-        '        End If
-
-        '        If _controls.Buttons.Start Then
-        '            output(CInt(xbox.start)) = Convert.ToByte(100)
-        '        End If
-
-        '        If _controls.Buttons.Guide Then
-        '            output(CInt(xbox.home)) = Convert.ToByte(100)
-        '        End If
-
-        '        If _controls.Buttons.Back Then
-        '            output(CInt(xbox.back)) = Convert.ToByte(100)
-        '        End If
-
-        '        If _controls.Buttons.LeftShoulder Then
-        '            output(CInt(xbox.leftShoulder)) = Convert.ToByte(100)
-        '        End If
-
-        '        If _controls.Buttons.RightShoulder Then
-        '            output(CInt(xbox.rightShoulder)) = Convert.ToByte(100)
-        '        End If
-
-        '        If _controls.Buttons.LeftStick Then
-        '            output(CInt(xbox.leftStick)) = Convert.ToByte(100)
-        '        End If
-
-        '        If _controls.Buttons.RightStick Then
-        '            output(CInt(xbox.rightStick)) = Convert.ToByte(100)
-        '        End If
-
-        '        If _controls.Triggers.Left > 0 Then
-        '            output(CInt(xbox.leftTrigger)) = Convert.ToByte(_controls.Triggers.Left * 100)
-        '        End If
-
-        '        If _controls.Triggers.Right > 0 Then
-        '            output(CInt(xbox.rightTrigger)) = Convert.ToByte(_controls.Triggers.Right * 100)
-        '        End If
-
-        '        Dim dblLX As Double = _controls.ThumbSticks.Left.X * 100
-        '        Dim dblLY As Double = _controls.ThumbSticks.Left.Y * -100
-        '        Dim dblRX As Double = _controls.ThumbSticks.Right.X * 100
-        '        Dim dblRY As Double = _controls.ThumbSticks.Right.Y * -100
-
-        '        If dblLX <> 0 Then
-        '            output(CInt(xbox.leftX)) = CByte(Convert.ToSByte(CInt((dblLX))))
-        '        End If
-
-        '        If dblLY <> 0 Then
-        '            output(CInt(xbox.leftY)) = CByte(Convert.ToSByte(CInt((dblLY))))
-        '        End If
-
-        '        If dblRX <> 0 Then
-        '            output(CInt(xbox.rightX)) = CByte(Convert.ToSByte(CInt((dblRX))))
-        '        End If
-
-        '        If dblRY <> 0 Then
-        '            output(CInt(xbox.rightY)) = CByte(Convert.ToSByte(CInt((dblRY))))
-        '        End If
-
-        '        If Ps4Touchpad = True Then output(CInt(xbox.touch)) = Convert.ToByte(100)
-        '        _gcapi_Write(output)
-
-        '        If System.UseRumble = True Then
-        '            Dim report As GCAPI_REPORT_TITANONE = New GCAPI_REPORT_TITANONE()
-
-        '            If _gcapi_Read_TO(report) <> IntPtr.Zero Then
-        '                GamePad.SetState(PlayerIndex.One, report.rumble(0), report.rumble(1))
-        '            End If
-        '        End If
+        '    If Connected(player.Index) <> 1 Then
+        '        If _notConnected.IndexOf(player.Index) > -1 Then Return Nothing
+        '        If _connected.IndexOf(player.Index) > -1 Then _connected.Remove(player.Index)
+        '        _notConnected.Add(player.Index)
+        '        Console.WriteLine($"TitanOne device {player.Index} not connected")
+        '        Return Nothing
         '    End If
-        'End Sub
 
+        '    If _connected.IndexOf(player.Index) = -1 Then
+        '        _connected.Add(player.Index)
+        '        If _notConnected.IndexOf(player.Index) > -1 Then _notConnected.Remove(player.Index)
+        '        Console.WriteLine($"TitanOne device {player.Index} connected")
+        '    End If
+
+        '    Write(player.Index, player.Output)
+        '    Dim report = New Report()
+        '    If Read(player.Index, report) = IntPtr.Zero Then Return Nothing
+        '    If AppSettings.AllowPassthrough Then Gamepad.ReturnOutput(player.Index - 1) = report.Input
+        '    If AppSettings.AllowRumble(player.Index) Then Gamepad.SetState(player.Index, report.Rumble(0), report.Rumble(1))
+        '    Return report.Input
+        'End Function
     End Class
+
 End Namespace

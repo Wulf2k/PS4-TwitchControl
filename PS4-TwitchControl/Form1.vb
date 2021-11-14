@@ -11,6 +11,10 @@ Partial Public Class frmPS4Twitch
     Dim rph As IntPtr = IntPtr.Zero
     Dim fcAddr As IntPtr = IntPtr.Zero
 
+    Dim ctrlStyle As String = ""
+    Dim ctrlType As String = ""
+
+
     Dim mmf As MemoryMappedFile
     Dim mmfa As MemoryMappedViewAccessor
 
@@ -18,6 +22,9 @@ Partial Public Class frmPS4Twitch
     Dim frametime = 33333 'in microseconds
 
     Dim microTimer As MicroLibrary.MicroTimer = New MicroLibrary.MicroTimer()
+
+
+
 
 
     Private Sub TimerPress()
@@ -29,51 +36,62 @@ Partial Public Class frmPS4Twitch
 
     End Sub
     Private Sub press()
+        'btnPress__Switch()
+        'btnPress__XB1()
         'btnPress_Standard()
         'btnPress_Celeste()
         'btnPress_DarkSoulsRemastered()
         'btnPress_PokemonFireRed()
         'btnPress_PokemonPlatinum()
         'btnPress_SilentHill2()
+        btnPress_SuperMeatBoy()
         'btnPress_ZeldaMM()
         'btnPress_ZeldaOOT()
-        btnPress_ZeldaTP()
+        'btnPress_ZeldaTP()
     End Sub
 
     Private Sub execCMD(user As String, role As String, cmd As String)
+        'execCMD__Switch(user, role, cmd)
+        'execCMD__XB1(user, role, cmd)
         'execCMD_Celeste(user, role, cmd)
         'execCMD_DarkSoulsRemastered(user, role, cmd)
         'execCMD_PokemonFireRed(user, role, cmd)
         'execCMD_PokemonPlatinum(user, role, cmd)
         'execCMD_SilentHill2(user, role, cmd)
+        execCMD_SuperMeatBoy(user, role, cmd)
         'execCMD_ZeldaMM(user, role, cmd)
         'execCMD_ZeldaOOT(user, role, cmd)
-        execCMD_ZeldaTP(user, role, cmd)
+        'execCMD_ZeldaTP(user, role, cmd)
     End Sub
 
     Private Sub ProcessCMD(user As String, role As String, cmd As String)
+        'ProcessCMD__Switch(user, role, cmd)
+        'ProcessCMD__XB1(user, role, cmd)
         'ProcessCMD_Celeste(user, role, cmd)
         'ProcessCMD_DarkSoulsRemastered(user, role, cmd)
         'ProcessCMD_PokemonFireRed(user, role, cmd)
         'ProcessCMD_PokemonPlatinum(user, role, cmd)
         'ProcessCMD_SilentHill2(user, role, cmd)
+        ProcessCMD_SuperMeatBoy(user, role, cmd)
         'ProcessCMD_ZeldaOOT(user, role, cmd)
-        ProcessCMD_ZeldaTP(user, role, cmd)
+        'ProcessCMD_ZeldaTP(user, role, cmd)
 
     End Sub
 
 
 
-    'TODO:  Add held-analog commands
+
 
     'TODO:  Change cmd portion of each entry to blank, then process every message's command
     'TODO:  This is to handle multiple new messages in a single check
 
     Dim client As New ViGEmClient()
-
-    Dim DS4ctrl As IDualShock4Controller
+    'Dim DS4ctrl As IDualShock4Controller
     Dim XBctrl As IXbox360Controller
 
+
+    Dim tOne As New gcapiTitanOne.TitanOne
+    Public P1output(36) As Byte
 
 
     Dim a As New asm
@@ -462,12 +480,17 @@ Partial Public Class frmPS4Twitch
 
     Private Sub TakeControl()
 
-        DS4ctrl = client.CreateDualShock4Controller()
-        XBctrl = client.CreateXbox360Controller()
+        'DS4ctrl = client.CreateDualShock4Controller()
 
         'DS4ctrl.Connect()
+
+
+        XBctrl = client.CreateXbox360Controller()
         XBctrl.Connect()
         XBctrl.AutoSubmitReport = False
+
+        tOne.Open()
+        tOne.FindDevices()
 
         pressthread = New Thread(AddressOf TimerPress)
         pressthread.IsBackground = True

@@ -3,11 +3,28 @@ Imports Nefarius.ViGEm.Client.Targets.DualShock4
 Imports Nefarius.ViGEm.Client.Targets.Xbox360
 
 Partial Public Class frmPS4Twitch
+    Private Sub btnPress__XB1()
 
 
-    Private Sub btnPress_PokemonFireRed()
+        'frametime = 33333  '30fps
+        frametime = 16667   '60fps
+
+        'ctrlStyle = "switch"
+        ctrlStyle = "xbox"
+
+        'ctrlType = "tt"
+        ctrlType = "vg"
+
+
+
+
+
+
+
 
         'Console.WriteLine(DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.ffffff"))
+
+        Dim winTitle As String = "PCSX2"
 
         Dim buttons = 0
         Dim LStickLR As Single = 0
@@ -46,6 +63,12 @@ Partial Public Class frmPS4Twitch
 
 
                 Case "reconnect1"
+                    Return
+
+
+
+
+
                     Shell("cmd.exe /c taskkill /f /im visualboyadvance-m.exe")
                     Thread.Sleep(1000)
                     Dim currDir = "C:\Emus\GBA"
@@ -61,60 +84,88 @@ Partial Public Class frmPS4Twitch
                     Thread.Sleep(1000)
 
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
+                    hwnd = FindWindowA(Nothing, winTitle)
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         ShowWindow(hwnd, 3)
                         outputChat("visualboyadvance-m.exe launched.")
                     Else
-                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
+                        outputChat($"Window not found.")
                     End If
 
 
-                Case "focus"
-                    Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
-                    If Not hwnd.Equals(IntPtr.Zero) Then
-                        ShowWindow(hwnd, 3)
-                        outputChat("Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4 focused.")
-                    Else
-                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
-                    End If
+                'Case "focus"
+                    'Return
+
+
+
+
+
+                    ''Dim hwnd As IntPtr
+                    ''hwnd = FindWindowA(Nothing, winTitle)
+                    ''If Not hwnd.Equals(IntPtr.Zero) Then
+                    ''ShowWindow(hwnd, 3)
+                    ''outputChat("Focused.")
+                    ''Else
+                    ''outputChat($"Window not found.")
+                    ''End If
 
 
                 Case "ss"
-                    Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
-                    If Not hwnd.Equals(IntPtr.Zero) Then
-                        SetForegroundWindow(hwnd)
-                        My.Computer.Keyboard.SendKeys("+{F1}", True)
-                        outputChat($"State saved.")
-                    Else
-                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
-                    End If
+                    Try
+                        FileCopy("C:\Program Files (x86)\Steam\steamapps\common\Super Meat Boy\UserData\Savegame.dat",
+                                 $"C:\Program Files (x86)\Steam\steamapps\common\Super Meat Boy\UserData\{DateTime.Now.Year}.{DateTime.Now.Month}.{DateTime.Now.Day}.{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.Savegame.dat")
+                        outputChat("Save backup complete")
+                    Catch ex As Exception
+                        outputChat("Saved failed?")
+                    End Try
+                    ''Return
+                    'Dim hwnd As IntPtr
+                    'hwnd = FindWindowA(Nothing, winTitle)
+                    'If Not hwnd.Equals(IntPtr.Zero) Then
+                    'SetForegroundWindow(hwnd)
+                    ''My.Computer.Keyboard.SendKeys("+{F1}", True)
+                    ''outputChat($"State saved.")
+                    'Else
+                    'outputChat($"Window not found.")
+                    'End If
 
 
-                Case "ls"
-                    Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
-                    If Not hwnd.Equals(IntPtr.Zero) Then
-                        SetForegroundWindow(hwnd)
-                        My.Computer.Keyboard.SendKeys("{F1}", True)
-                        outputChat($"State loaded.")
-                    Else
-                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
-                    End If
+                    'Case "ls"
+                    'Return
 
-                Case "rs"
-                    Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4")
-                    If Not hwnd.Equals(IntPtr.Zero) Then
-                        SetForegroundWindow(hwnd)
-                        My.Computer.Keyboard.SendKeys("^{R}", True)
-                        outputChat($"Game reset.")
-                    Else
-                        outputChat($"'Pokemon - Fire Red Version (U) (V1.1) - VisualBoyAdvance-M 2.1.4' window not found.")
-                    End If
+                    'Dim hwnd As IntPtr
+                    'hwnd = FindWindowA(Nothing, winTitle)
+                    'If Not hwnd.Equals(IntPtr.Zero) Then
+                    'SetForegroundWindow(hwnd)
+                    ''My.Computer.Keyboard.SendKeys("{F1}", True)
+                    ''outputChat($"State loaded.")
+                    'Else
+                    'outputChat($"Window not found.")
+                    'End If
 
+                    'Case "rs"
+                    'Dim hwnd As IntPtr
+                    'hwnd = FindWindowA(Nothing, winTitle)
+                    'If Not hwnd.Equals(IntPtr.Zero) Then
+                    '                    SetForegroundWindow(hwnd)
+                    'My.Computer.Keyboard.SendKeys("^{R}", True)
+                    '                    outputChat($"Game reset.")
+                    'Else
+                    '                    outputChat($"Window not found.")
+                    'End If
+
+                Case "invertlx"
+                    boolInvertLX = Not boolInvertLX
+                    outputChat("InvertLX = " + boolInvertLX.ToString)
+                Case "invertly"
+                    boolInvertLY = Not boolInvertLY
+                    outputChat("InvertLY = " + boolInvertLY.ToString)
+                Case "invertrx"
+                    boolInvertRX = Not boolInvertRX
+                    outputChat("InvertRX = " + boolInvertRX.ToString)
+                Case "invertry"
+                    boolInvertRY = Not boolInvertRY
+                    outputChat("InvertRY = " + boolInvertRY.ToString)
 
 
                 Case "hidecursor"
@@ -152,7 +203,7 @@ Partial Public Class frmPS4Twitch
                         boolHoldAxisVal(i) = 0
                     Next
 
-                Case "share", "hselect"
+                Case "hshare", "hselect"
                     boolHoldShare = True
                 Case "nhshare", "nhselect"
                     boolHoldShare = False
@@ -162,14 +213,14 @@ Partial Public Class frmPS4Twitch
                 Case "nhopt", "nhstart"
                     boolHoldOpt = False
 
-                Case "hl1", "hl"
+                Case "hl1", "hlb"
                     boolHoldL1 = True
-                Case "nhl1", "nhl"
+                Case "nhl1", "nhlb"
                     boolHoldL1 = False
 
-                Case "hl2"
+                Case "hl2", "hlt"
                     boolHoldL2 = True
-                Case "nhl2"
+                Case "nhl2", "nhlt"
                     boolHoldL2 = False
 
                 Case "hl3"
@@ -178,14 +229,14 @@ Partial Public Class frmPS4Twitch
                     boolHoldL3 = False
 
 
-                Case "hr1", "hr"
+                Case "hr1", "hrb"
                     boolHoldR1 = True
-                Case "nhr1", "nhr"
+                Case "nhr1", "nhrb"
                     boolHoldR1 = False
 
-                Case "hr2"
+                Case "hr2", "hrt"
                     boolHoldR2 = True
-                Case "nhr2"
+                Case "nhr2", "nhrt"
                     boolHoldR2 = False
 
                 Case "hr3"
@@ -194,24 +245,24 @@ Partial Public Class frmPS4Twitch
                     boolHoldR3 = False
 
 
-                Case "ho", "holdo", "ha"
+                Case "hb"
                     boolHoldO = True
-                Case "nho", "noholdo", "nha"
+                Case "nhb"
                     boolHoldO = False
 
-                Case "hsq", "hy"
+                Case "hx"
                     boolHoldSq = True
-                Case "nhsq", "nhy"
+                Case "nhx"
                     boolHoldSq = False
 
-                Case "htri", "hx"
+                Case "hy"
                     boolHoldTri = True
-                Case "nhtri", "nhx"
+                Case "nhy"
                     boolHoldTri = False
 
-                Case "hb"
+                Case "ha"
                     boolHoldX = True
-                Case "nhb"
+                Case "nha"
                     boolHoldX = False
 
                 Case "hdu"
@@ -248,6 +299,7 @@ Partial Public Class frmPS4Twitch
             If boolHoldL3 Then buttons = (buttons Or BTN_L3)
             If boolHoldR3 Then buttons = (buttons Or BTN_R3)
             If boolHoldOpt Then buttons = (buttons Or BTN_OPTIONS)
+            If boolHoldShare Then buttons = (buttons Or BTN_SHARE)
 
             If boolHoldDU Then buttons = (buttons Or BTN_DPAD_UP)
             If boolHoldDD Then buttons = (buttons Or BTN_DPAD_DOWN)
@@ -360,6 +412,84 @@ Partial Public Class frmPS4Twitch
         Try
             'WUInt32(hookmem + &H40C, buttons)
 
+            Select Case ctrlStyle
+                Case "switch"
+                    Select Case ctrlType
+                        Case "tt"
+                            P1output(gcapiTitanOne.TitanOne.Xbox.B) = IIf((buttons And BTN_O) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.A) = IIf((buttons And BTN_X) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.X) = IIf((buttons And BTN_SQUARE) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Y) = IIf((buttons And BTN_TRIANGLE) >= 1, 100, 0)
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Back) = IIf((buttons And BTN_SHARE) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Start) = IIf((buttons And BTN_OPTIONS) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Home) = IIf((buttons And BTN_PSHOME) >= 1, 100, 0)
+
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftShoulder) = IIf((buttons And BTN_L1) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftStick) = IIf((buttons And BTN_L3) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightShoulder) = IIf((buttons And BTN_R1) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightStick) = IIf((buttons And BTN_R3) >= 1, 100, 0)
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftX) = LStickLR * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftY) = LStickUD * -100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightX) = RStickLR * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightY) = RStickUD * 100
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftTrigger) = LTrigger * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightTrigger) = RTrigger * 100
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Down) = IIf((buttons And BTN_DPAD_DOWN) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Right) = IIf((buttons And BTN_DPAD_RIGHT) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Left) = IIf((buttons And BTN_DPAD_LEFT) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Up) = IIf((buttons And BTN_DPAD_UP) >= 1, 100, 0)
+
+                            tOne.Send(0, P1output)
+                            'end case switch tt
+                        Case "vg"
+
+                            'end case switch vg
+                    End Select
+                    'end case switch
+
+                Case "xbox"
+                    Select Case ctrlType
+                        Case "tt"
+
+
+                            'end case xbox tt
+                        Case "vg"
+                            XBctrl.SetButtonState(Xbox360Button.B, buttons And BTN_O)
+                            XBctrl.SetButtonState(Xbox360Button.A, buttons And BTN_X)
+                            XBctrl.SetButtonState(Xbox360Button.X, buttons And BTN_SQUARE)
+                            XBctrl.SetButtonState(Xbox360Button.Y, buttons And BTN_TRIANGLE)
+                            XBctrl.SetButtonState(Xbox360Button.Back, buttons And BTN_SHARE)
+                            XBctrl.SetButtonState(Xbox360Button.Start, buttons And BTN_OPTIONS)
+                            XBctrl.SetButtonState(Xbox360Button.LeftShoulder, buttons And BTN_L1)
+                            XBctrl.SetButtonState(Xbox360Button.LeftThumb, buttons And BTN_L3)
+                            XBctrl.SetButtonState(Xbox360Button.RightShoulder, buttons And BTN_R1)
+                            XBctrl.SetButtonState(Xbox360Button.RightThumb, buttons And BTN_R3)
+
+
+                            XBctrl.SetAxisValue(Xbox360Axis.LeftThumbX, LStickLR * &H7FFFUI)
+                            XBctrl.SetAxisValue(Xbox360Axis.LeftThumbY, LStickUD * &H7FFFUI)
+                            XBctrl.SetAxisValue(Xbox360Axis.RightThumbX, RStickLR * &H7FFFUI)
+                            XBctrl.SetAxisValue(Xbox360Axis.RightThumbY, RStickUD * &H7FFFUI)
+
+                            XBctrl.SetSliderValue(Xbox360Slider.LeftTrigger, &HFFUI * LTrigger)
+                            XBctrl.SetSliderValue(Xbox360Slider.RightTrigger, &HFFUI * RTrigger)
+
+                            XBctrl.SetButtonState(Xbox360Button.Up, buttons And BTN_DPAD_UP)
+                            XBctrl.SetButtonState(Xbox360Button.Right, buttons And BTN_DPAD_RIGHT)
+                            XBctrl.SetButtonState(Xbox360Button.Down, buttons And BTN_DPAD_DOWN)
+                            XBctrl.SetButtonState(Xbox360Button.Left, buttons And BTN_DPAD_LEFT)
+
+                            XBctrl.SubmitReport()
+                            'end case xbox vg
+                    End Select
+                    'end case xbox
+            End Select
+
 
 
 
@@ -386,32 +516,7 @@ Partial Public Class frmPS4Twitch
 
 
 
-            'XBctrl.SetButtonState(Xbox360Button.B, buttons And BTN_O)
-            'XBctrl.SetButtonState(Xbox360Button.A, buttons And BTN_X)
-            'XBctrl.SetButtonState(Xbox360Button.X, buttons And BTN_SQUARE)
-            'XBctrl.SetButtonState(Xbox360Button.Y, buttons And BTN_TRIANGLE)
-            'XBctrl.SetButtonState(Xbox360Button.Back, buttons And BTN_SHARE)
-            'XBctrl.SetButtonState(Xbox360Button.Start, buttons And BTN_OPTIONS)
-            'XBctrl.SetButtonState(Xbox360Button.LeftShoulder, buttons And BTN_L1)
-            'XBctrl.SetButtonState(Xbox360Button.LeftThumb, buttons And BTN_L3)
-            'XBctrl.SetButtonState(Xbox360Button.RightShoulder, buttons And BTN_R1)
-            'XBctrl.SetButtonState(Xbox360Button.RightThumb, buttons And BTN_R3)
 
-
-            'XBctrl.SetAxisValue(Xbox360Axis.LeftThumbX, LStickLR * &H7FFFUI)
-            'XBctrl.SetAxisValue(Xbox360Axis.LeftThumbY, LStickUD * &H7FFFUI)
-            'XBctrl.SetAxisValue(Xbox360Axis.RightThumbX, RStickLR * &H7FFFUI)
-            'XBctrl.SetAxisValue(Xbox360Axis.RightThumbY, RStickUD * &H7FFFUI)
-
-            'XBctrl.SetSliderValue(Xbox360Slider.LeftTrigger, &HFFUI * LTrigger)
-            'XBctrl.SetSliderValue(Xbox360Slider.RightTrigger, &HFFUI * RTrigger)
-
-            'XBctrl.SetButtonState(Xbox360Button.Up, buttons And BTN_DPAD_UP)
-            'XBctrl.SetButtonState(Xbox360Button.Right, buttons And BTN_DPAD_RIGHT)
-            'XBctrl.SetButtonState(Xbox360Button.Down, buttons And BTN_DPAD_DOWN)
-            'XBctrl.SetButtonState(Xbox360Button.Left, buttons And BTN_DPAD_LEFT)
-
-            'XBctrl.SubmitReport()
 
 
             'Do DPad properly
@@ -446,9 +551,7 @@ Partial Public Class frmPS4Twitch
         'Console.WriteLine("press exception")
         ' End Try
     End Sub
-
-    Private Sub execCMD_PokemonFireRed(user As String, role As String, cmd As String)
-
+    Private Sub execCMD__XB1(user As String, role As String, cmd As String)
         Dim buttons = 0
         Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}
         Dim halfhold As Boolean = False
@@ -475,27 +578,30 @@ Partial Public Class frmPS4Twitch
             'Hold toggles
             Case "nh",
                  "hw", "nhw",
-                 "holdo", "ho", "noholdo", "nho", "hb", "nhb",
+                 "ho", "nho",
                  "hopt", "nhopt", "hstart", "nhstart",
-                 "hselect", "nhselect",
-                 "hl1", "nhl1", "hl", "nhl",
-                 "hl2", "nhl2",
+                 "hshare", "nhshare", "hselect", "nhselect",
+                 "hl1", "nhl1", "hlb", "nhlb",
+                 "hl2", "nhl2", "hlt", "nhlt",
                  "hl3", "nhl3",
-                 "hr1", "nhr1", "hr", "nhr",
-                 "hr2", "nhr2",
+                 "hr1", "nhr1", "hrb", "nhrb",
+                 "hr2", "nhr2", "hrt", "nhrt",
                  "hr3", "nhr3",
                  "hsq", "nhsq",
+                 "ho", "nho", "hb", "nhb",
                  "htri", "nhtri", "hy", "nhy",
                  "hx", "nhx", "ha", "nha",
                  "hdu", "nhdu",
                  "hdd", "nhdd",
                  "hdl", "nhdl",
                  "hdr", "nhdr",
+                 "ss",
                  "reconnect1", "reconnect2",
-                 "ss", "ls", "rs",
                  "focus",
-                 "hidecursor"
+                 "hidecursor",
+                 "invertlx", "invertly", "invertrx", "invertry"
 
+                '"ss", "ls", "rs",
 
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
 
@@ -526,96 +632,82 @@ Partial Public Class frmPS4Twitch
 
 
             Case "du"
-                If duration = 0 Then duration = 4
-                Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 6, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dd"
-                If duration = 0 Then duration = 4
-                Controller(BTN_DPAD_DOWN, 0, 0, 0, 0, 0, 0, 6, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_DPAD_DOWN, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dl"
-                If duration = 0 Then duration = 4
-                Controller(BTN_DPAD_LEFT, 0, 0, 0, 0, 0, 0, 6, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_DPAD_LEFT, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dr"
-                If duration = 0 Then duration = 4
-                Controller(BTN_DPAD_RIGHT, 0, 0, 0, 0, 0, 0, 6, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_DPAD_RIGHT, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
-                Return
-
-
-            Case "wu"
-                Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 10, user, cmd)
-                Return
-            Case "wd"
-                Controller(BTN_DPAD_DOWN, 0, 0, 0, 0, 0, 0, 10, user, cmd)
-                Return
-            Case "wl"
-                Controller(BTN_DPAD_LEFT, 0, 0, 0, 0, 0, 0, 10, user, cmd)
-                Return
-            Case "wr"
-                Controller(BTN_DPAD_RIGHT, 0, 0, 0, 0, 0, 0, 10, user, cmd)
                 Return
 
 
 
             Case "share", "select"
-                If duration = 0 Then duration = 10
-                Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
+                If duration = 0 Then duration = 2
+                Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "options", "opt", "start"
-                If duration = 0 Then duration = 10
-                Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
-                Return
-
-            Case "o", "a"
-                If duration = 0 Then duration = 10
-                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
+            Case "opt", "start"
+                If duration = 0 Then duration = 2
+                Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "b"
                 If duration = 0 Then duration = 10
-                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
+                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "sq", "y"
-                If duration = 0 Then duration = 2
+            Case "a"
+                If duration = 0 Then duration = 10
+                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
+                Return
+
+            Case "x"
+                If duration = 0 Then duration = 10
                 Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "tri", "x"
-                If duration = 0 Then duration = 2
+            Case "y"
+                If duration = 0 Then duration = 15
                 Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
-            Case "l1", "l"
-                If duration = 0 Then duration = 10
-                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
+            Case "l1", "lb"
+                If duration = 0 Then duration = 20
+                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
-            Case "l2"
-                If duration = 0 Then duration = 2
-                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 2, user, cmd & "(!)")
+            Case "l2", "lt"
+                If duration = 0 Then duration = 5
+                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
-            Case "r1", "r"
-                If duration = 0 Then duration = 10
-                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 10, user, cmd & "(!)")
+            Case "r1", "rb"
+                If duration = 0 Then duration = 20
+                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
-            Case "r2"
-                If duration = 0 Then duration = 2
+            Case "r2", "rt"
+                If duration = 0 Then duration = 12
                 Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
@@ -636,9 +728,10 @@ Partial Public Class frmPS4Twitch
 
 
 
-            Case "pshome"
+            Case "home"
+                If duration = 0 Then duration = 2
                 Controller(BTN_PSHOME, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 2, duration, cmd & "(-)")
                 Return
         End Select
 
@@ -659,7 +752,7 @@ Partial Public Class frmPS4Twitch
 
         'parse out half-hold
         If cmd(0) = "h" Then
-            If duration > 0 Then analoghold = True
+            If duration = 0 Then analoghold = True
             cmd = Strings.Right(cmd, cmd.Length - 1)
         End If
 
@@ -672,7 +765,7 @@ Partial Public Class frmPS4Twitch
 
 
         'parse 'walks', 'looks', 'analog's, and 'rolls'
-        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
+        If ((cmd(0) = "w") Or (cmd(0) = "l")) Or    'If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
             (Strings.Left(cmd, 2) = "ro") Then
 
             Dim axispad = 0
@@ -693,10 +786,10 @@ Partial Public Class frmPS4Twitch
             End If
 
 
-            'If 'roll', then roll params will be offset 1 character
+            'If 'roll', then roll params will be offset 1 character and modify right stick's axises
             If Strings.Left(cmd, 2) = "ro" Then
                 cmdpad = 1
-                If duration = 0 Then duration = 10
+                If duration = 0 Then duration = 18
                 roll = True
             End If
 
@@ -751,6 +844,10 @@ Partial Public Class frmPS4Twitch
                 End If
             Next
 
+            If boolInvertLX Then axis(0) *= -1.0
+            If boolInvertLY Then axis(1) *= -1.0
+            If boolInvertRX Then axis(2) *= -1.0
+            If boolInvertRY Then axis(3) *= -1.0
 
 
             If halfhold Then cmd = "s" & cmd
@@ -761,8 +858,7 @@ Partial Public Class frmPS4Twitch
             cmd = cmd.Replace(".", "")
 
             If roll Then
-                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(-)")
-                Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, 1, user, cmd & "(!)")
+                Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(-)")
             Else
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
@@ -771,8 +867,7 @@ Partial Public Class frmPS4Twitch
 
         End If
     End Sub
-
-    Private Sub ProcessCMD_PokemonFireRed(user As String, role As String, cmd As String)
+    Private Sub ProcessCMD__XB1(user As String, role As String, cmd As String)
         Dim tmpuser = user
         Dim tmpcmd = cmd
         Dim CMDmulti As Integer = 1
@@ -836,7 +931,8 @@ Partial Public Class frmPS4Twitch
 
         'Handle command multipliers
         If tmpcmd.Length > 2 Then
-            If IsNumeric(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x"))) Then
+            If IsNumeric(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x"))) And (tmpcmd.LastIndexOf("x") > tmpcmd.LastIndexOf("-")) Then
+
                 CMDmulti = Val(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x")))
                 If CMDmulti > 999 Then CMDmulti = 999
                 If CMDmulti < 1 Then CMDmulti = 1
@@ -866,7 +962,7 @@ Partial Public Class frmPS4Twitch
                 outputChat("Hello.")
 
 
-            Case "reconnect1", "ss", "ls", "rs"
+            Case "reconnect1", "ss", "ls", "rs", "l3", "r3", "l1"
                 If Not modlist.Contains(user) Then
                     outputChat("Command restricted.")
                     Return
@@ -876,7 +972,7 @@ Partial Public Class frmPS4Twitch
 
 
                 End If
-            Case "pshome"
+            Case "home"
                 If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb" Or tmpuser = "tompiet1") Then
                     outputChat("Uhh....  No.")
                     Return
@@ -922,6 +1018,4 @@ Partial Public Class frmPS4Twitch
             execCMD(tmpuser, role, tmpcmd)
         Next
     End Sub
-
-
 End Class
