@@ -63,13 +63,9 @@ Partial Public Class frmPS4Twitch
 
 
                 Case "reconnect1"
-                    Return
 
 
-
-
-
-                    Shell("cmd.exe /c taskkill /f /im visualboyadvance-m.exe")
+                    Shell("cmd.exe /c taskkill /f /im SuperMeatBoy.exe")
                     Thread.Sleep(1000)
                     'Dim currDir = "C:\Emus\GBA"
                     'Dim exe = $"{currDir}\visualboyadvance-m.exe"
