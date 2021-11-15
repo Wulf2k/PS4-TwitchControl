@@ -699,8 +699,8 @@ Partial Public Class frmPS4Twitch
 
 
             Case "retry"
-                If duration = 0 Then duration = 120
-                ProcessCMD(user, role, $"nh,h-2,start,ddx2,a,h-15,a,h-150,a,h-{duration},")
+                If duration = 0 Then duration = 100
+                ProcessCMD(user, role, $"nh,h-2,start,ddx2,a,h-15,a,h-110,a,h-100,a,h-{duration},")
                 Return
 
 
