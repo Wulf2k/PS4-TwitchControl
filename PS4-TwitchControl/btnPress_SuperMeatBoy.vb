@@ -12,8 +12,8 @@ Partial Public Class frmPS4Twitch
         'ctrlStyle = "switch"
         ctrlStyle = "xbox"
 
-        'ctrlType = "tt"
-        ctrlType = "vg"
+        ctrlType = "tt"
+        'ctrlType = "vg"
 
 
 
@@ -414,36 +414,64 @@ Partial Public Class frmPS4Twitch
                 Case "xbox"
                     Select Case ctrlType
                         Case "tt"
+                            P1output(gcapiTitanOne.TitanOne.Xbox.B) = IIf((buttons And BTN_O) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.A) = IIf((buttons And BTN_X) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.X) = IIf((buttons And BTN_SQUARE) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Y) = IIf((buttons And BTN_TRIANGLE) >= 1, 100, 0)
 
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Back) = IIf((buttons And BTN_SHARE) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Start) = IIf((buttons And BTN_OPTIONS) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Home) = IIf((buttons And BTN_PSHOME) >= 1, 100, 0)
+
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftShoulder) = IIf((buttons And BTN_L1) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftStick) = IIf((buttons And BTN_L3) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightShoulder) = IIf((buttons And BTN_R1) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightStick) = IIf((buttons And BTN_R3) >= 1, 100, 0)
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftX) = LStickLR * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftY) = LStickUD * -100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightX) = RStickLR * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightY) = RStickUD * 100
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftTrigger) = LTrigger * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightTrigger) = RTrigger * 100
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Down) = IIf((buttons And BTN_DPAD_DOWN) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Right) = IIf((buttons And BTN_DPAD_RIGHT) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Left) = IIf((buttons And BTN_DPAD_LEFT) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Up) = IIf((buttons And BTN_DPAD_UP) >= 1, 100, 0)
+
+                            tOne.Send(0, P1output)
 
                             'end case xbox tt
                         Case "vg"
-                            XBctrl.SetButtonState(Xbox360Button.B, buttons And BTN_O)
-                            XBctrl.SetButtonState(Xbox360Button.A, buttons And BTN_X)
-                            XBctrl.SetButtonState(Xbox360Button.X, buttons And BTN_SQUARE)
-                            XBctrl.SetButtonState(Xbox360Button.Y, buttons And BTN_TRIANGLE)
-                            XBctrl.SetButtonState(Xbox360Button.Back, buttons And BTN_SHARE)
-                            XBctrl.SetButtonState(Xbox360Button.Start, buttons And BTN_OPTIONS)
-                            XBctrl.SetButtonState(Xbox360Button.LeftShoulder, buttons And BTN_L1)
-                            XBctrl.SetButtonState(Xbox360Button.LeftThumb, buttons And BTN_L3)
-                            XBctrl.SetButtonState(Xbox360Button.RightShoulder, buttons And BTN_R1)
-                            XBctrl.SetButtonState(Xbox360Button.RightThumb, buttons And BTN_R3)
+                            'XBctrl.SetButtonState(Xbox360Button.B, buttons And BTN_O)
+                            'XBctrl.SetButtonState(Xbox360Button.A, buttons And BTN_X)
+                            'XBctrl.SetButtonState(Xbox360Button.X, buttons And BTN_SQUARE)
+                            'XBctrl.SetButtonState(Xbox360Button.Y, buttons And BTN_TRIANGLE)
+                            'XBctrl.SetButtonState(Xbox360Button.Back, buttons And BTN_SHARE)
+                            'XBctrl.SetButtonState(Xbox360Button.Start, buttons And BTN_OPTIONS)
+                            'XBctrl.SetButtonState(Xbox360Button.LeftShoulder, buttons And BTN_L1)
+                            'XBctrl.SetButtonState(Xbox360Button.LeftThumb, buttons And BTN_L3)
+                            'XBctrl.SetButtonState(Xbox360Button.RightShoulder, buttons And BTN_R1)
+                            'XBctrl.SetButtonState(Xbox360Button.RightThumb, buttons And BTN_R3)
 
 
-                            XBctrl.SetAxisValue(Xbox360Axis.LeftThumbX, LStickLR * &H7FFFUI)
-                            XBctrl.SetAxisValue(Xbox360Axis.LeftThumbY, LStickUD * &H7FFFUI)
-                            XBctrl.SetAxisValue(Xbox360Axis.RightThumbX, RStickLR * &H7FFFUI)
-                            XBctrl.SetAxisValue(Xbox360Axis.RightThumbY, RStickUD * &H7FFFUI)
+                            'XBctrl.SetAxisValue(Xbox360Axis.LeftThumbX, LStickLR * &H7FFFUI)
+                            'XBctrl.SetAxisValue(Xbox360Axis.LeftThumbY, LStickUD * &H7FFFUI)
+                            'XBctrl.SetAxisValue(Xbox360Axis.RightThumbX, RStickLR * &H7FFFUI)
+                            'XBctrl.SetAxisValue(Xbox360Axis.RightThumbY, RStickUD * &H7FFFUI)
 
-                            XBctrl.SetSliderValue(Xbox360Slider.LeftTrigger, &HFFUI * LTrigger)
-                            XBctrl.SetSliderValue(Xbox360Slider.RightTrigger, &HFFUI * RTrigger)
+                            'XBctrl.SetSliderValue(Xbox360Slider.LeftTrigger, &HFFUI * LTrigger)
+                            'XBctrl.SetSliderValue(Xbox360Slider.RightTrigger, &HFFUI * RTrigger)
 
-                            XBctrl.SetButtonState(Xbox360Button.Up, buttons And BTN_DPAD_UP)
-                            XBctrl.SetButtonState(Xbox360Button.Right, buttons And BTN_DPAD_RIGHT)
-                            XBctrl.SetButtonState(Xbox360Button.Down, buttons And BTN_DPAD_DOWN)
-                            XBctrl.SetButtonState(Xbox360Button.Left, buttons And BTN_DPAD_LEFT)
+                            'XBctrl.SetButtonState(Xbox360Button.Up, buttons And BTN_DPAD_UP)
+                            'XBctrl.SetButtonState(Xbox360Button.Right, buttons And BTN_DPAD_RIGHT)
+                            'XBctrl.SetButtonState(Xbox360Button.Down, buttons And BTN_DPAD_DOWN)
+                            'XBctrl.SetButtonState(Xbox360Button.Left, buttons And BTN_DPAD_LEFT)
 
-                            XBctrl.SubmitReport()
+                            'XBctrl.SubmitReport()
                             'end case xbox vg
                     End Select
                     'end case xbox
@@ -697,7 +725,10 @@ Partial Public Class frmPS4Twitch
 
 
 
-
+            Case "ogmo"
+                If duration = 0 Then duration = 100
+                ProcessCMD(user, role, $"nh,h-2,start,ddx2,a,h-15,a,h-150,a-110,dr,a-{duration},")
+                Return
             Case "retry"
                 If duration = 0 Then duration = 100
                 ProcessCMD(user, role, $"nh,h-2,start,ddx2,a,h-15,a,h-110,a,h-110,a,h-{duration},")

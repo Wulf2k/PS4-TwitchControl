@@ -85,9 +85,9 @@ Partial Public Class frmPS4Twitch
     'TODO:  Change cmd portion of each entry to blank, then process every message's command
     'TODO:  This is to handle multiple new messages in a single check
 
-    Dim client As New ViGEmClient()
+    'Dim client As New ViGEmClient()
     'Dim DS4ctrl As IDualShock4Controller
-    Dim XBctrl As IXbox360Controller
+    'Dim XBctrl As IXbox360Controller
 
 
     Dim tOne As New gcapiTitanOne.TitanOne
@@ -485,9 +485,9 @@ Partial Public Class frmPS4Twitch
         'DS4ctrl.Connect()
 
 
-        XBctrl = client.CreateXbox360Controller()
-        XBctrl.Connect()
-        XBctrl.AutoSubmitReport = False
+        'XBctrl = client.CreateXbox360Controller()
+        'XBctrl.Connect()
+        'XBctrl.AutoSubmitReport = False
 
         tOne.Open()
         tOne.FindDevices()

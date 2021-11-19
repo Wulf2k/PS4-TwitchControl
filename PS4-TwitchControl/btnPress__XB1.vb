@@ -459,32 +459,32 @@ Partial Public Class frmPS4Twitch
 
                             'end case xbox tt
                         Case "vg"
-                            XBctrl.SetButtonState(Xbox360Button.B, buttons And BTN_O)
-                            XBctrl.SetButtonState(Xbox360Button.A, buttons And BTN_X)
-                            XBctrl.SetButtonState(Xbox360Button.X, buttons And BTN_SQUARE)
-                            XBctrl.SetButtonState(Xbox360Button.Y, buttons And BTN_TRIANGLE)
-                            XBctrl.SetButtonState(Xbox360Button.Back, buttons And BTN_SHARE)
-                            XBctrl.SetButtonState(Xbox360Button.Start, buttons And BTN_OPTIONS)
-                            XBctrl.SetButtonState(Xbox360Button.LeftShoulder, buttons And BTN_L1)
-                            XBctrl.SetButtonState(Xbox360Button.LeftThumb, buttons And BTN_L3)
-                            XBctrl.SetButtonState(Xbox360Button.RightShoulder, buttons And BTN_R1)
-                            XBctrl.SetButtonState(Xbox360Button.RightThumb, buttons And BTN_R3)
+                            'XBctrl.SetButtonState(Xbox360Button.B, buttons And BTN_O)
+                            'XBctrl.SetButtonState(Xbox360Button.A, buttons And BTN_X)
+                            'XBctrl.SetButtonState(Xbox360Button.X, buttons And BTN_SQUARE)
+                            'XBctrl.SetButtonState(Xbox360Button.Y, buttons And BTN_TRIANGLE)
+                            'XBctrl.SetButtonState(Xbox360Button.Back, buttons And BTN_SHARE)
+                            'XBctrl.SetButtonState(Xbox360Button.Start, buttons And BTN_OPTIONS)
+                            'XBctrl.SetButtonState(Xbox360Button.LeftShoulder, buttons And BTN_L1)
+                            'XBctrl.SetButtonState(Xbox360Button.LeftThumb, buttons And BTN_L3)
+                            'XBctrl.SetButtonState(Xbox360Button.RightShoulder, buttons And BTN_R1)
+                            'XBctrl.SetButtonState(Xbox360Button.RightThumb, buttons And BTN_R3)
 
 
-                            XBctrl.SetAxisValue(Xbox360Axis.LeftThumbX, LStickLR * &H7FFFUI)
-                            XBctrl.SetAxisValue(Xbox360Axis.LeftThumbY, LStickUD * &H7FFFUI)
-                            XBctrl.SetAxisValue(Xbox360Axis.RightThumbX, RStickLR * &H7FFFUI)
-                            XBctrl.SetAxisValue(Xbox360Axis.RightThumbY, RStickUD * &H7FFFUI)
+                            'XBctrl.SetAxisValue(Xbox360Axis.LeftThumbX, LStickLR * &H7FFFUI)
+                            'XBctrl.SetAxisValue(Xbox360Axis.LeftThumbY, LStickUD * &H7FFFUI)
+                            'XBctrl.SetAxisValue(Xbox360Axis.RightThumbX, RStickLR * &H7FFFUI)
+                            'XBctrl.SetAxisValue(Xbox360Axis.RightThumbY, RStickUD * &H7FFFUI)
 
-                            XBctrl.SetSliderValue(Xbox360Slider.LeftTrigger, &HFFUI * LTrigger)
-                            XBctrl.SetSliderValue(Xbox360Slider.RightTrigger, &HFFUI * RTrigger)
+                            'XBctrl.SetSliderValue(Xbox360Slider.LeftTrigger, &HFFUI * LTrigger)
+                            'XBctrl.SetSliderValue(Xbox360Slider.RightTrigger, &HFFUI * RTrigger)
 
-                            XBctrl.SetButtonState(Xbox360Button.Up, buttons And BTN_DPAD_UP)
-                            XBctrl.SetButtonState(Xbox360Button.Right, buttons And BTN_DPAD_RIGHT)
-                            XBctrl.SetButtonState(Xbox360Button.Down, buttons And BTN_DPAD_DOWN)
-                            XBctrl.SetButtonState(Xbox360Button.Left, buttons And BTN_DPAD_LEFT)
+                            'XBctrl.SetButtonState(Xbox360Button.Up, buttons And BTN_DPAD_UP)
+                            'XBctrl.SetButtonState(Xbox360Button.Right, buttons And BTN_DPAD_RIGHT)
+                            'XBctrl.SetButtonState(Xbox360Button.Down, buttons And BTN_DPAD_DOWN)
+                            'XBctrl.SetButtonState(Xbox360Button.Left, buttons And BTN_DPAD_LEFT)
 
-                            XBctrl.SubmitReport()
+                            'XBctrl.SubmitReport()
                             'end case xbox vg
                     End Select
                     'end case xbox
