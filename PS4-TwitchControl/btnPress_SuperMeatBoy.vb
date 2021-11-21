@@ -727,11 +727,11 @@ Partial Public Class frmPS4Twitch
 
             Case "ogmo"
                 If duration = 0 Then duration = 100
-                ProcessCMD(user, role, $"nh,h-2,a-2,h-10,start,ddx2,a,h-30,a,h-150,a-110,drx2,a-{duration},")
+                ProcessCMD(user, role, $"nh,h-2,hb-2,h-10,start,ddx2,h-15,a,h-45,a,h-150,a-130,drx2,a-{duration},")
                 Return
             Case "retry"
                 If duration = 0 Then duration = 100
-                ProcessCMD(user, role, $"nh,h-2,a-2,h-10,start,ddx2,a,h-30,a,h-110,a,h-110,a,h-{duration},")
+                ProcessCMD(user, role, $"nh,h-2,hb-2,h-10,start,ddx2,h-15,a,h-45,a,h-150,a,h-130,a,h-{duration},")
                 Return
 
 
