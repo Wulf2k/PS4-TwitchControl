@@ -725,6 +725,10 @@ Partial Public Class frmPS4Twitch
 
 
 
+            Case "naija"
+                If duration = 0 Then duration = 100
+                ProcessCMD(user, role, $"nh,h-2,hb-2,h-10,start,ddx2,h-15,a,h-45,a,h-150,a-130,dlx4,a-{duration},")
+                Return
             Case "ogmo"
                 If duration = 0 Then duration = 100
                 ProcessCMD(user, role, $"nh,h-2,hb-2,h-10,start,ddx2,h-15,a,h-45,a,h-150,a-130,drx2,a-{duration},")
