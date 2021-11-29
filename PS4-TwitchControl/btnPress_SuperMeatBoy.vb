@@ -741,6 +741,9 @@ Partial Public Class frmPS4Twitch
                 ProcessCMD(user, role, $"nh,h-2,hb-2,h-10,start,ddx2,h-15,a,h-45,a,h-150,a,h-130,a,h-{duration},")
                 Return
 
+            Case "zap"
+                ProcessCMD(user, role, $"ha,hx-1,nh-{duration},")
+                Return
 
 
 
