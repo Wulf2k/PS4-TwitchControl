@@ -723,6 +723,11 @@ Partial Public Class frmPS4Twitch
 
 
 
+                'nh,h-2,hb-2,h-10,start,ddx2,h-15,a,h-45,a,h-150,a,h-130\
+            Case "ncr"
+                If duration = 0 Then duration = 130
+                ProcessCMD(user, role, $"nh,h-2,hb-2,h-10,start,ddx2,h-15,a,h-45,a,h-150,a,h-{duration},")
+                Return
 
             Case "flywrench"
                 If duration = 0 Then duration = 100
