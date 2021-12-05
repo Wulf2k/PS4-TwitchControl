@@ -88,32 +88,6 @@ Partial Public Class frmPS4Twitch
                     Else
                         outputChat($"Window not found.")
                     End If
-                Case "reconnectog"
-
-
-                    Shell("cmd.exe /c taskkill /f /im SuperMeatBoy.exe")
-                    Thread.Sleep(1000)
-                    'Dim currDir = "C:\Emus\GBA"
-                    'Dim exe = $"{currDir}\visualboyadvance-m.exe"
-
-                    Shell("C:\Program Files (x86)\Steam\steamapps\common\Super Meat Boy OG\SuperMeatBoy.exe -windowed")
-
-                    'Dim ProcessProperties As New ProcessStartInfo
-                    'ProcessProperties.FileName = exe
-                    'ProcessProperties.WorkingDirectory = currDir
-                    'ProcessProperties.Arguments = $"""c:\emus\GBA\Roms\Pokemon - Fire Red Version (U) (V1.1).gba"""
-                    'Dim myProcess As Process = Process.Start(ProcessProperties)
-
-                    Thread.Sleep(1000)
-
-                    Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, winTitle)
-                    If Not hwnd.Equals(IntPtr.Zero) Then
-                        ShowWindow(hwnd, 3)
-                        outputChat($"{winTitle} launched.")
-                    Else
-                        outputChat($"Window not found.")
-                    End If
 
 
                 Case "focus"
