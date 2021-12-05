@@ -88,6 +88,32 @@ Partial Public Class frmPS4Twitch
                     Else
                         outputChat($"Window not found.")
                     End If
+                Case "reconnectog"
+
+
+                    Shell("cmd.exe /c taskkill /f /im SuperMeatBoy.exe")
+                    Thread.Sleep(1000)
+                    'Dim currDir = "C:\Emus\GBA"
+                    'Dim exe = $"{currDir}\visualboyadvance-m.exe"
+
+                    Shell("C:\Program Files (x86)\Steam\steamapps\common\Super Meat Boy OG\SuperMeatBoy.exe -windowed")
+
+                    'Dim ProcessProperties As New ProcessStartInfo
+                    'ProcessProperties.FileName = exe
+                    'ProcessProperties.WorkingDirectory = currDir
+                    'ProcessProperties.Arguments = $"""c:\emus\GBA\Roms\Pokemon - Fire Red Version (U) (V1.1).gba"""
+                    'Dim myProcess As Process = Process.Start(ProcessProperties)
+
+                    Thread.Sleep(1000)
+
+                    Dim hwnd As IntPtr
+                    hwnd = FindWindowA(Nothing, winTitle)
+                    If Not hwnd.Equals(IntPtr.Zero) Then
+                        ShowWindow(hwnd, 3)
+                        outputChat($"{winTitle} launched.")
+                    Else
+                        outputChat($"Window not found.")
+                    End If
 
 
                 Case "focus"
@@ -583,7 +609,7 @@ Partial Public Class frmPS4Twitch
                  "hdl", "nhdl",
                  "hdr", "nhdr",
                  "ss",
-                 "reconnect1", "reconnect2",
+                 "reconnect1", "reconnect2", "reconnectog",
                  "focus",
                  "hidecursor",
                  "invertlx", "invertly", "invertrx", "invertry"
@@ -724,6 +750,8 @@ Partial Public Class frmPS4Twitch
 
 
                 'nh,h-2,hb-2,h-10,start,ddx2,h-15,a,h-45,a,h-150,a,h-130\
+
+
             Case "ncr"
                 If duration = 0 Then duration = 130
                 ProcessCMD(user, role, $"nh,h-2,hb-2,h-10,start,ddx2,h-15,a,h-45,a,h-150,a,h-{duration},")
