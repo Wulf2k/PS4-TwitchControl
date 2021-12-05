@@ -24,7 +24,8 @@ Partial Public Class frmPS4Twitch
 
         'Console.WriteLine(DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.ffffff"))
 
-        Dim winTitle As String = "Super Meat Boy v1.2.5"
+        'Dim winTitle As String = "Super Meat Boy v1.2.5"
+        Dim winTitle As String = "Super Meat Boy"
 
         Dim buttons = 0
         Dim LStickLR As Single = 0
