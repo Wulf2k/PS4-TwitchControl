@@ -6,6 +6,16 @@ Partial Public Class frmPS4Twitch
     Dim which = "ms"
 
     Private Sub btnPress_Celeste()
+        'frametime = 33333  '30fps
+        frametime = 16667   '60fps
+
+        'ctrlStyle = "switch"
+        ctrlStyle = "xbox"
+
+        ctrlType = "tt"
+        'ctrlType = "vg"
+
+
 
 
 
@@ -62,6 +72,7 @@ Partial Public Class frmPS4Twitch
                     hwnd = FindWindowA(Nothing, "Celeste")
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         ShowWindow(hwnd, 3)
+                        SetForegroundWindow(hwnd)
                         outputChat("Celeste focused.")
                     Else
                         outputChat($"'Celeste' window not found.")
@@ -321,84 +332,115 @@ Partial Public Class frmPS4Twitch
         End Select
 
         Try
-            'WUInt32(hookmem + &H40C, buttons)
+            Select Case ctrlStyle
+                Case "switch"
+                    Select Case ctrlType
+                        Case "tt"
+                            P1output(gcapiTitanOne.TitanOne.Xbox.B) = IIf((buttons And BTN_O) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.A) = IIf((buttons And BTN_X) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.X) = IIf((buttons And BTN_SQUARE) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Y) = IIf((buttons And BTN_TRIANGLE) >= 1, 100, 0)
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Back) = IIf((buttons And BTN_SHARE) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Start) = IIf((buttons And BTN_OPTIONS) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Home) = IIf((buttons And BTN_PSHOME) >= 1, 100, 0)
+
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftShoulder) = IIf((buttons And BTN_L1) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftStick) = IIf((buttons And BTN_L3) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightShoulder) = IIf((buttons And BTN_R1) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightStick) = IIf((buttons And BTN_R3) >= 1, 100, 0)
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftX) = LStickLR * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftY) = LStickUD * -100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightX) = RStickLR * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightY) = RStickUD * 100
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftTrigger) = LTrigger * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightTrigger) = RTrigger * 100
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Down) = IIf((buttons And BTN_DPAD_DOWN) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Right) = IIf((buttons And BTN_DPAD_RIGHT) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Left) = IIf((buttons And BTN_DPAD_LEFT) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Up) = IIf((buttons And BTN_DPAD_UP) >= 1, 100, 0)
+
+                            tOne.Send(0, P1output)
+                            'end case switch tt
+                        Case "vg"
+
+                            'end case switch vg
+                    End Select
+                    'end case switch
+
+                Case "xbox"
+                    Select Case ctrlType
+                        Case "tt"
+                            P1output(gcapiTitanOne.TitanOne.Xbox.B) = IIf((buttons And BTN_O) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.A) = IIf((buttons And BTN_X) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.X) = IIf((buttons And BTN_SQUARE) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Y) = IIf((buttons And BTN_TRIANGLE) >= 1, 100, 0)
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Back) = IIf((buttons And BTN_SHARE) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Start) = IIf((buttons And BTN_OPTIONS) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Home) = IIf((buttons And BTN_PSHOME) >= 1, 100, 0)
+
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftShoulder) = IIf((buttons And BTN_L1) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftStick) = IIf((buttons And BTN_L3) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightShoulder) = IIf((buttons And BTN_R1) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightStick) = IIf((buttons And BTN_R3) >= 1, 100, 0)
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftX) = LStickLR * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftY) = LStickUD * -100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightX) = RStickLR * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightY) = RStickUD * 100
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftTrigger) = LTrigger * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightTrigger) = RTrigger * 100
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Down) = IIf((buttons And BTN_DPAD_DOWN) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Right) = IIf((buttons And BTN_DPAD_RIGHT) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Left) = IIf((buttons And BTN_DPAD_LEFT) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Up) = IIf((buttons And BTN_DPAD_UP) >= 1, 100, 0)
+
+                            tOne.Send(0, P1output)
+
+                            'end case xbox tt
+                        Case "vg"
+                            'XBctrl.SetButtonState(Xbox360Button.B, buttons And BTN_O)
+                            'XBctrl.SetButtonState(Xbox360Button.A, buttons And BTN_X)
+                            'XBctrl.SetButtonState(Xbox360Button.X, buttons And BTN_SQUARE)
+                            'XBctrl.SetButtonState(Xbox360Button.Y, buttons And BTN_TRIANGLE)
+                            'XBctrl.SetButtonState(Xbox360Button.Back, buttons And BTN_SHARE)
+                            'XBctrl.SetButtonState(Xbox360Button.Start, buttons And BTN_OPTIONS)
+                            'XBctrl.SetButtonState(Xbox360Button.LeftShoulder, buttons And BTN_L1)
+                            'XBctrl.SetButtonState(Xbox360Button.LeftThumb, buttons And BTN_L3)
+                            'XBctrl.SetButtonState(Xbox360Button.RightShoulder, buttons And BTN_R1)
+                            'XBctrl.SetButtonState(Xbox360Button.RightThumb, buttons And BTN_R3)
+
+
+                            'XBctrl.SetAxisValue(Xbox360Axis.LeftThumbX, LStickLR * &H7FFFUI)
+                            'XBctrl.SetAxisValue(Xbox360Axis.LeftThumbY, LStickUD * &H7FFFUI)
+                            'XBctrl.SetAxisValue(Xbox360Axis.RightThumbX, RStickLR * &H7FFFUI)
+                            'XBctrl.SetAxisValue(Xbox360Axis.RightThumbY, RStickUD * &H7FFFUI)
+
+                            'XBctrl.SetSliderValue(Xbox360Slider.LeftTrigger, &HFFUI * LTrigger)
+                            'XBctrl.SetSliderValue(Xbox360Slider.RightTrigger, &HFFUI * RTrigger)
+
+                            'XBctrl.SetButtonState(Xbox360Button.Up, buttons And BTN_DPAD_UP)
+                            'XBctrl.SetButtonState(Xbox360Button.Right, buttons And BTN_DPAD_RIGHT)
+                            'XBctrl.SetButtonState(Xbox360Button.Down, buttons And BTN_DPAD_DOWN)
+                            'XBctrl.SetButtonState(Xbox360Button.Left, buttons And BTN_DPAD_LEFT)
+
+                            'XBctrl.SubmitReport()
+                            'end case xbox vg
+                    End Select
+                    'end case xbox
+            End Select
 
 
 
 
-            'DS4ctrl.SetButtonState(DualShock4Button.Circle, buttons And BTN_O)
-            'DS4ctrl.SetButtonState(DualShock4Button.Cross, buttons And BTN_X)
-            'DS4ctrl.SetButtonState(DualShock4Button.Square, buttons And BTN_SQUARE)
-            'DS4ctrl.SetButtonState(DualShock4Button.Triangle, buttons And BTN_TRIANGLE)
-            'DS4ctrl.SetButtonState(DualShock4Button.Share, buttons And BTN_SHARE)
-            'DS4ctrl.SetButtonState(DualShock4Button.Options, buttons And BTN_OPTIONS)
-            'DS4ctrl.SetButtonState(DualShock4Button.ShoulderLeft, buttons And BTN_L1)
-            'DS4ctrl.SetButtonState(DualShock4Button.TriggerLeft, buttons And BTN_L2)
-            'DS4ctrl.SetButtonState(DualShock4Button.ThumbLeft, buttons And BTN_L3)
-            'DS4ctrl.SetButtonState(DualShock4Button.ShoulderRight, buttons And BTN_R1)
-            'DS4ctrl.SetButtonState(DualShock4Button.TriggerRight, buttons And BTN_R2)
-            'DS4ctrl.SetButtonState(DualShock4Button.ThumbRight, buttons And BTN_R3)
-
-            'DS4ctrl.SetAxisValue(DualShock4Axis.LeftThumbX, &H7FUI + LStickLR * &H7FUI)
-            'DS4ctrl.SetAxisValue(DualShock4Axis.LeftThumbY, &H7FUI + LStickUD * &H7FUI)
-            'DS4ctrl.SetAxisValue(DualShock4Axis.RightThumbX, &H7FUI + RStickLR * &H7FUI)
-            'DS4ctrl.SetAxisValue(DualShock4Axis.RightThumbY, &H7FUI + RStickUD * &H7FUI)
-
-            'DS4ctrl.SetSliderValue(DualShock4Slider.LeftTrigger, &HFFUI * LTrigger)
-            'DS4ctrl.SetSliderValue(DualShock4Slider.RightTrigger, &HFFUI * RTrigger)
-
-
-            'XBctrl.SetButtonState(Xbox360Button.B, buttons And BTN_O)
-            'XBctrl.SetButtonState(Xbox360Button.A, buttons And BTN_X)
-            'XBctrl.SetButtonState(Xbox360Button.X, buttons And BTN_SQUARE)
-            'XBctrl.SetButtonState(Xbox360Button.Y, buttons And BTN_TRIANGLE)
-            'XBctrl.SetButtonState(Xbox360Button.Back, buttons And BTN_SHARE)
-            'XBctrl.SetButtonState(Xbox360Button.Start, buttons And BTN_OPTIONS)
-            'XBctrl.SetButtonState(Xbox360Button.LeftShoulder, buttons And BTN_L1)
-            'XBctrl.SetButtonState(Xbox360Button.LeftThumb, buttons And BTN_L3)
-            'XBctrl.SetButtonState(Xbox360Button.RightShoulder, buttons And BTN_R1)
-            'XBctrl.SetButtonState(Xbox360Button.RightThumb, buttons And BTN_R3)
-
-
-            'XBctrl.SetAxisValue(Xbox360Axis.LeftThumbX, LStickLR * &H7FFFUI)
-            'XBctrl.SetAxisValue(Xbox360Axis.LeftThumbY, LStickUD * &H7FFFUI)
-            'XBctrl.SetAxisValue(Xbox360Axis.RightThumbX, RStickLR * &H7FFFUI)
-            'XBctrl.SetAxisValue(Xbox360Axis.RightThumbY, RStickUD * &H7FFFUI)
-
-            'XBctrl.SetSliderValue(Xbox360Slider.LeftTrigger, &HFFUI * LTrigger)
-            'XBctrl.SetSliderValue(Xbox360Slider.RightTrigger, &HFFUI * RTrigger)
-
-            'XBctrl.SetButtonState(Xbox360Button.Up, buttons And BTN_DPAD_UP)
-            'XBctrl.SetButtonState(Xbox360Button.Right, buttons And BTN_DPAD_RIGHT)
-            'XBctrl.SetButtonState(Xbox360Button.Down, buttons And BTN_DPAD_DOWN)
-            'XBctrl.SetButtonState(Xbox360Button.Left, buttons And BTN_DPAD_LEFT)
-
-            'XBctrl.SubmitReport()
-
-
-            'Do DPad properly
-            'Someday
-            'Fuck you, Future-Wulf, you deal with this shit
-
-            'If (buttons And BTN_DPAD_UP) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.North)
-            'If (buttons And BTN_DPAD_RIGHT) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.East)
-            'If (buttons And BTN_DPAD_DOWN) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.South)
-            'If (buttons And BTN_DPAD_LEFT) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.West)
-            'If (buttons And (BTN_DPAD_UP + BTN_DPAD_LEFT)) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.Northwest)
-            'If (buttons And (BTN_DPAD_UP + BTN_DPAD_RIGHT)) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.Northeast)
-            'If (buttons And (BTN_DPAD_DOWN + BTN_DPAD_LEFT)) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.Southwest)
-            'If (buttons And (BTN_DPAD_DOWN + BTN_DPAD_RIGHT)) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.Southeast)
-
-
-
-
-            'WUInt8(hookmem + &H410, &H7FUI + LStickLR * &H7FUI)
-            'WUInt8(hookmem + &H411, &H7FUI - LStickUD * &H7FUI)
-            'WUInt8(hookmem + &H412, &H7FUI + RStickLR * &H7FUI)
-            'WUInt8(hookmem + &H413, &H7FUI - RStickUD * &H7FUI)
-
-            'WUInt8(hookmem + &H414, &HFFUI * LTrigger)
-            'WUInt8(hookmem + &H415, &HFFUI * RTrigger)
         Catch ex As Exception
             Console.WriteLine("WUInt8 stick value overflow? " & ex.Message)
         End Try

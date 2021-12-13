@@ -79,13 +79,28 @@ Partial Public Class frmPS4Twitch
                     'ProcessProperties.Arguments = $"""c:\emus\GBA\Roms\Pokemon - Fire Red Version (U) (V1.1).gba"""
                     'Dim myProcess As Process = Process.Start(ProcessProperties)
 
-                    Thread.Sleep(1000)
+                    Thread.Sleep(3000)
 
                     Dim hwnd As IntPtr
                     hwnd = FindWindowA(Nothing, winTitle)
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         ShowWindow(hwnd, 3)
                         outputChat($"{winTitle} launched.")
+
+                        Dim psList() As Process
+                        If Process.GetProcessesByName("supermeatboy").Length = 0 Then
+                            Me.Text = "Waiting for supermeatboy.exe"
+                        Else
+                            Try
+                                psList = Process.GetProcesses()
+                                For Each p As Process In psList
+                                    If p.ProcessName = "supermeatboy.exe" Then
+                                        p.PriorityClass = ProcessPriorityClass.High
+                                    End If
+                                Next p
+                            Catch
+                            End Try
+                        End If
                     Else
                         outputChat($"Window not found.")
                     End If
