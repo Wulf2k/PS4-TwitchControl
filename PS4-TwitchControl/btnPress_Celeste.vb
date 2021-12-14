@@ -626,7 +626,17 @@ Partial Public Class frmPS4Twitch
                 Controller(BTN_PSHOME, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
                 Return
+
+
+
+            Case "retry"
+                If duration = 0 Then duration = 110
+                ProcessCMD(user, role, $"opt-2,dd-2,x-{duration},")
+                Return
         End Select
+
+
+
 
 
 
