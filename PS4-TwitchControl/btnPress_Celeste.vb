@@ -272,7 +272,6 @@ Partial Public Class frmPS4Twitch
             If presstimer = 0 Then PopQ()
 
 
-
             Dim b(&H20) As Byte
 
 

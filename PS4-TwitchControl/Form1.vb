@@ -17,7 +17,8 @@ Partial Public Class frmPS4Twitch
     Dim mmfa As MemoryMappedViewAccessor
 
     Dim timerfixer = 1
-    Dim frametime = 33333 'in microseconds
+    'Dim frametime = 33333 'in microseconds
+    Dim frametime = 16667
 
     Dim microTimer As MicroLibrary.MicroTimer = New MicroLibrary.MicroTimer()
 
