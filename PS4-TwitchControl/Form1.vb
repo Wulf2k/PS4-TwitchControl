@@ -1,9 +1,7 @@
 ﻿Imports System
 Imports System.IO.MemoryMappedFiles
 Imports System.Threading
-Imports Nefarius.ViGEm.Client
-Imports Nefarius.ViGEm.Client.Targets
-Imports Nefarius.ViGEm.Client.Targets.DualShock4
+
 
 Partial Public Class frmPS4Twitch
 
@@ -32,7 +30,7 @@ Partial Public Class frmPS4Twitch
         AddHandler microTimer.MicroTimerElapsed, AddressOf press
         microTimer.Interval = frametime
         microTimer.Enabled = True
-        'microTimer.Start()
+
 
     End Sub
     Private Sub press()
@@ -85,9 +83,6 @@ Partial Public Class frmPS4Twitch
     'TODO:  Change cmd portion of each entry to blank, then process every message's command
     'TODO:  This is to handle multiple new messages in a single check
 
-    'Dim client As New ViGEmClient()
-    'Dim DS4ctrl As IDualShock4Controller
-    'Dim XBctrl As IXbox360Controller
 
 
     Dim tOne As New gcapiTitanOne.TitanOne
@@ -334,22 +329,6 @@ Partial Public Class frmPS4Twitch
 
 
 
-
-        'SyncLock wblock
-        'wb.Navigate(txtTwitchChat.Text)
-        'End SyncLock
-
-        'Below reg setting must be set for webbrowser control to properly load chat
-        'Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION
-        'PS4-TwitchControl.exe = 11000
-
-        'Timer to press buttons at
-        'Initial value fairly irrelevant
-        'refTimerPress.Interval = 33
-        'refTimerPress.Enabled = True
-        'refTimerPress.Start()
-
-
         'Timer to check chat messages
         Threading.Thread.Sleep(5000)
         updTimer.Interval = 25
@@ -402,10 +381,10 @@ Partial Public Class frmPS4Twitch
         SyncLock queuelock
             If QueuedInput.Count > 0 Then
                 microTimer.Enabled = True
-                microTimer.Start()
+                'microTimer.Start()
             Else
                 microTimer.Enabled = False
-                microTimer.Stop()
+                'microTimer.Stop()
             End If
         End SyncLock
 
@@ -480,14 +459,6 @@ Partial Public Class frmPS4Twitch
 
     Private Sub TakeControl()
 
-        'DS4ctrl = client.CreateDualShock4Controller()
-
-        'DS4ctrl.Connect()
-
-
-        'XBctrl = client.CreateXbox360Controller()
-        'XBctrl.Connect()
-        'XBctrl.AutoSubmitReport = False
 
         tOne.Open()
         tOne.FindDevices()

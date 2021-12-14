@@ -1,6 +1,5 @@
 ﻿Imports System.Threading
-Imports Nefarius.ViGEm.Client.Targets.DualShock4
-Imports Nefarius.ViGEm.Client.Targets.Xbox360
+
 
 Partial Public Class frmPS4Twitch
     Dim which = "ms"
@@ -51,7 +50,7 @@ Partial Public Class frmPS4Twitch
             Select Case QueuedInput(0).cmd
                 Case "idle"
                     microTimer.Enabled = False
-                    microTimer.Stop()
+                    'microTimer.Stop()
                     QueuedInput(0).cmd = ""
 
 
@@ -265,11 +264,12 @@ Partial Public Class frmPS4Twitch
 
 
             SyncLock presslock
+                QueuedInput(0).time -= 1
                 presstimer = QueuedInput(0).time
-                microTimer.Interval = Math.Ceiling(QueuedInput(0).time * frametime)
+                'microTimer.Interval = Math.Ceiling(QueuedInput(0).time * frametime)
             End SyncLock
 
-            PopQ()
+            If presstimer = 0 Then PopQ()
 
 
 
@@ -293,7 +293,7 @@ Partial Public Class frmPS4Twitch
             b = System.Text.Encoding.ASCII.GetBytes(tmpcmd & Chr(0))
             mmfa.WriteArray(&H310, b, 0, b.Length)
 
-            For i = 0 To 9
+            For i = 1 To 9
                 If (QueuedInput.Count) > i Then
                     Dim str As String
                     str = QueuedInput(i).cmd & "-" & QueuedInput(i).time
@@ -903,6 +903,7 @@ Partial Public Class frmPS4Twitch
                         End If
                     Next
                 End SyncLock
+                execCMD(tmpuser, role, "h-1")
                 outputChat("All commands for " & tmpuser & " removed from queue.")
                 Return
 

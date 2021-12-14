@@ -1,6 +1,4 @@
 ﻿Imports System.Threading
-Imports Nefarius.ViGEm.Client.Targets.DualShock4
-Imports Nefarius.ViGEm.Client.Targets.Xbox360
 
 Partial Public Class frmPS4Twitch
     Private Sub btnPress__XB1()
