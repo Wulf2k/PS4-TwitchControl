@@ -50,7 +50,6 @@ Partial Public Class frmPS4Twitch
             Select Case QueuedInput(0).cmd
                 Case "idle"
                     microTimer.Enabled = False
-                    'microTimer.Stop()
                     QueuedInput(0).cmd = ""
 
 
@@ -266,7 +265,6 @@ Partial Public Class frmPS4Twitch
             SyncLock presslock
                 QueuedInput(0).time -= 1
                 presstimer = QueuedInput(0).time
-                'microTimer.Interval = Math.Ceiling(QueuedInput(0).time * frametime)
             End SyncLock
 
             If presstimer = 0 Then PopQ()
@@ -867,7 +865,9 @@ Partial Public Class frmPS4Twitch
             '       Return
             'End If
             Case "hello"
-                outputChat("Hello.")
+                If QueuedInput.Count < 2 Then
+                    outputChat("Hello.")
+                End If
 
 
             Case "reconnect1"

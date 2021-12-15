@@ -56,7 +56,6 @@ Partial Public Class frmPS4Twitch
             Select Case QueuedInput(0).cmd
                 Case "idle"
                     microTimer.Enabled = False
-                    microTimer.Stop()
                     QueuedInput(0).cmd = ""
 
 
@@ -108,14 +107,14 @@ Partial Public Class frmPS4Twitch
                     ''End If
 
 
-                Case "ss"
-                    Try
-                        FileCopy("C:\Program Files (x86)\Steam\steamapps\common\Super Meat Boy\UserData\Savegame.dat",
-                                 $"C:\Program Files (x86)\Steam\steamapps\common\Super Meat Boy\UserData\{DateTime.Now.Year}.{DateTime.Now.Month}.{DateTime.Now.Day}.{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.Savegame.dat")
-                        outputChat("Save backup complete")
-                    Catch ex As Exception
-                        outputChat("Saved failed?")
-                    End Try
+                'Case "ss"
+                '    Try
+                '        FileCopy("c:\program files (x86)\steam\steamapps\common\super meat boy\userdata\savegame.dat",
+                '                 $"c:\program files (x86)\steam\steamapps\common\super meat boy\userdata\{DateTime.Now.Year}.{DateTime.Now.Month}.{DateTime.Now.Day}.{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.savegame.dat")
+                '        outputChat("save backup complete")
+                '    Catch ex As Exception
+                '        outputChat("saved failed?")
+                '    End Try
                     ''Return
                     'Dim hwnd As IntPtr
                     'hwnd = FindWindowA(Nothing, winTitle)
@@ -341,11 +340,11 @@ Partial Public Class frmPS4Twitch
 
 
             SyncLock presslock
+                QueuedInput(0).time -= 1
                 presstimer = QueuedInput(0).time
-                microTimer.Interval = Math.Ceiling(QueuedInput(0).time * frametime)
             End SyncLock
 
-            PopQ()
+            If presstimer = 0 Then PopQ()
 
 
 
@@ -369,7 +368,7 @@ Partial Public Class frmPS4Twitch
             b = System.Text.Encoding.ASCII.GetBytes(tmpcmd & Chr(0))
             mmfa.WriteArray(&H310, b, 0, b.Length)
 
-            For i = 0 To 9
+            For i = 1 To 9
                 If (QueuedInput.Count) > i Then
                     Dim str As String
                     str = QueuedInput(i).cmd & "-" & QueuedInput(i).time
@@ -453,7 +452,35 @@ Partial Public Class frmPS4Twitch
                 Case "xbox"
                     Select Case ctrlType
                         Case "tt"
+                            P1output(gcapiTitanOne.TitanOne.Xbox.B) = IIf((buttons And BTN_O) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.A) = IIf((buttons And BTN_X) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.X) = IIf((buttons And BTN_SQUARE) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Y) = IIf((buttons And BTN_TRIANGLE) >= 1, 100, 0)
 
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Back) = IIf((buttons And BTN_SHARE) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Start) = IIf((buttons And BTN_OPTIONS) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Home) = IIf((buttons And BTN_PSHOME) >= 1, 100, 0)
+
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftShoulder) = IIf((buttons And BTN_L1) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftStick) = IIf((buttons And BTN_L3) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightShoulder) = IIf((buttons And BTN_R1) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightStick) = IIf((buttons And BTN_R3) >= 1, 100, 0)
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftX) = LStickLR * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftY) = LStickUD * -100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightX) = RStickLR * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightY) = RStickUD * 100
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.LeftTrigger) = LTrigger * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightTrigger) = RTrigger * 100
+
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Down) = IIf((buttons And BTN_DPAD_DOWN) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Right) = IIf((buttons And BTN_DPAD_RIGHT) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Left) = IIf((buttons And BTN_DPAD_LEFT) >= 1, 100, 0)
+                            P1output(gcapiTitanOne.TitanOne.Xbox.Up) = IIf((buttons And BTN_DPAD_UP) >= 1, 100, 0)
+
+                            tOne.Send(0, P1output)
 
                             'end case xbox tt
                         Case "vg"
@@ -957,7 +984,9 @@ Partial Public Class frmPS4Twitch
             '       Return
             'End If
             Case "hello"
-                outputChat("Hello.")
+                If QueuedInput.Count < 2 Then
+                    outputChat("Hello.")
+                End If
 
 
             Case "reconnect1", "ss", "ls", "rs", "l3", "r3", "l1"
@@ -1003,6 +1032,7 @@ Partial Public Class frmPS4Twitch
                         End If
                     Next
                 End SyncLock
+                execCMD(tmpuser, role, "h-1")
                 outputChat("All commands for " & tmpuser & " removed from queue.")
                 Return
 
