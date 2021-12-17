@@ -297,6 +297,7 @@ Partial Public Class frmPS4Twitch
         'Control which chat users can execute mod commands
         modlist.Add("7kmarkus")
         modlist.Add("emonkreg")
+        modlist.Add("knoll24")
         modlist.Add("nick666101")
         modlist.Add("nightbot")
         modlist.Add("seannyb")
