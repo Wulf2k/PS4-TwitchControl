@@ -785,11 +785,11 @@ Partial Public Class frmPS4Twitch
             '       Return
             'End If
             Case "reconnect1", "savebackup", "saverestore"
-                If Not modlist.Contains(user) Then
+                If Not authlist.Contains(user) Then
                     Return
                 End If
             Case "options", "opt", "hopt"
-                If Not modlist.Contains(user) Then
+                If Not authlist.Contains(user) Then
                     outputChat("Options menu restricted to pre-approved users.")
                     Return
                 End If
@@ -799,7 +799,7 @@ Partial Public Class frmPS4Twitch
                     Return
                 End If
             Case "tri", "htri"
-                If Not modlist.Contains(user) Then
+                If Not authlist.Contains(user) Then
                     'outputChat("Consumable use restricted to pre-approved users.")
                     'Return
                 End If

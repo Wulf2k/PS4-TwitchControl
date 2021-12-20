@@ -768,11 +768,11 @@ Partial Public Class frmPS4Twitch
             '       Return
             'End If
             Case "reconnect1"
-                If Not modlist.Contains(role) Then
+                If Not authlist.Contains(role) Then
                     Return
                 End If
             Case "options", "opt", "hopt"
-                If Not modlist.Contains(role) Then
+                If Not authlist.Contains(role) Then
                     'DS2 doesn't matter for options
                     outputChat("Options menu restricted to pre-approved users.")
                     Return
@@ -783,7 +783,7 @@ Partial Public Class frmPS4Twitch
                     Return
                 End If
             Case "tri", "htri"
-                If Not modlist.Contains(role) Then
+                If Not authlist.Contains(role) Then
                     'outputChat("Consumable use restricted to pre-approved users.")
                     'Return
                 End If

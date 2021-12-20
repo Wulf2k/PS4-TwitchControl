@@ -990,12 +990,12 @@ Partial Public Class frmPS4Twitch
 
 
             Case "reconnect1", "ss", "ls", "rs", "l3", "r3", "l1"
-                If Not modlist.Contains(user) Then
+                If Not authlist.Contains(user) Then
                     outputChat("Command restricted.")
                     Return
                 End If
             Case "options", "opt", "hopt"
-                If Not modlist.Contains(user) Then
+                If Not authlist.Contains(user) Then
 
 
                 End If
@@ -1005,7 +1005,7 @@ Partial Public Class frmPS4Twitch
                     Return
                 End If
             Case "tri", "htri"
-                If Not modlist.Contains(user) Then
+                If Not authlist.Contains(user) Then
 
                 End If
             Case "clearallcmds", "ca"

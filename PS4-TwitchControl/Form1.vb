@@ -83,8 +83,6 @@ Partial Public Class frmPS4Twitch
             Return
         End If
 
-
-
         If tmpcmd = "hello" Then
             outputChat("Hello.")
             Return
@@ -92,15 +90,65 @@ Partial Public Class frmPS4Twitch
 
 
 
+
+
+
+        'authlist
         If tmpcmd = "#authlist" Then
             Dim txt As String = ""
-            For Each usr In modlist
+            For Each usr In authlist
                 txt += usr + ", "
             Next
             outputChat(txt)
             Return
         End If
 
+        'authadd
+        If tmpcmd.IndexOf("#authadd") = 0 Then
+            'Is user issuing the command authed already?
+            If Not authlist.Contains(tmpuser) Or tmpuser = "nightbot" Then
+                outputChat("Only authed users can auth users.")
+                Return
+            End If
+
+            'Was a user specified?
+            Dim usr As String
+            If tmpcmd.Contains(" ") Then
+                usr = tmpcmd.Split(" ")(1)
+            Else
+                Return
+            End If
+
+            'Is the usr alphanumeric?
+            For Each c In usr
+                If Not ((Asc(c) >= 48 And Asc(c) <= 57) Or (Asc(c) >= 97 And Asc(c) <= 122)) Then
+                    outputChat("Invalid char in #authadd.")
+                    Return
+                End If
+            Next
+
+            'Does the usr already exist?
+            If authlist.Contains(usr) Then
+                outputChat("User already authed.")
+                Return
+            End If
+
+            authlist.Add(usr)
+            IO.File.WriteAllLines("authlist.txt", authlist.ToArray())
+            outputChat($"{usr} added to authlist.")
+
+            Return
+        End If
+
+
+
+
+
+
+
+
+
+        'macrolist
         If tmpcmd = "#macrolist" Then
             Dim txt As String = ""
             For Each pair As KeyValuePair(Of String, String) In macros
@@ -110,6 +158,7 @@ Partial Public Class frmPS4Twitch
             Return
         End If
 
+        'macroshow
         If tmpcmd.IndexOf("#macroshow") = 0 Then
             For Each pair As KeyValuePair(Of String, String) In macros
                 If tmpcmd.Contains(" ") AndAlso pair.Key = tmpcmd.Split(" ")(1) Then
@@ -121,9 +170,6 @@ Partial Public Class frmPS4Twitch
             Next
         End If
 
-        'If tmpcmd.IndexOf("#authadd") = 0 Then
-        'outputChat("Authadd triggered.")
-        'End If
 
 
 
@@ -205,12 +251,12 @@ Partial Public Class frmPS4Twitch
 
         Select Case shorttmpcmd
             Case "reconnect1"
-                If Not modlist.Contains(user) Then
+                If Not authlist.Contains(user) Then
                     outputChat("Command restricted.")
                     Return
                 End If
             Case "options", "opt", "hopt"
-                If Not modlist.Contains(user) Then
+                If Not authlist.Contains(user) Then
                     'outputChat("Options menu restricted to pre-approved users.")
                     'Return
                 End If
@@ -220,7 +266,7 @@ Partial Public Class frmPS4Twitch
                     Return
                 End If
             Case "tri", "htri"
-                If Not modlist.Contains(user) Then
+                If Not authlist.Contains(user) Then
 
                 End If
             Case "ca"
@@ -306,7 +352,7 @@ Partial Public Class frmPS4Twitch
 
 
 
-    Dim modlist As New List(Of String)
+    Dim authlist As New List(Of String)
     Dim trilist As New List(Of String)
     Dim ignorelist As New List(Of String)
 
@@ -382,23 +428,32 @@ Partial Public Class frmPS4Twitch
 
     Private Sub frmPS4Twitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        'Control which chat users can execute mod commands
-        modlist.Add("7kmarkus")
-        modlist.Add("emonkreg")
-        modlist.Add("knoll24")
-        modlist.Add("nick666101")
-        modlist.Add("nightbot")
-        modlist.Add("seannyb")
-        modlist.Add("schattentod")
-        modlist.Add("tompiet1")
-        modlist.Add("wea000")
-        modlist.Add("wulf2k")
-        modlist.Add("yuidesu")
+        'Control which chat users can execute privileged commands
+        Dim lines
+        Try
+            lines = IO.File.ReadLines("authlist.txt")
+            For Each line In lines
+                authlist.Add(line)
+            Next
+        Catch ex As Exception
+
+        End Try
 
 
 
-        macros.Add(New KeyValuePair(Of String, String)("#test1", "hx10,wb,wr,hx10"))
-        macros.Add(New KeyValuePair(Of String, String)("#test2", "hx5,wf,wl,hx5"))
+        'Load macros
+        Try
+            lines = IO.File.ReadLines("macros.txt")
+            For Each line In lines
+                macros.Add(New KeyValuePair(Of String, String)(line.Split("~")(0), line.Split("~")(1)))
+            Next
+        Catch ex As Exception
+
+        End Try
+
+
+        'macros.Add(New KeyValuePair(Of String, String)("#test1", "hx10,wb,wr,hx10"))
+        'macros.Add(New KeyValuePair(Of String, String)("#test2", "hx5,wf,wl,hx5"))
 
 
     End Sub
