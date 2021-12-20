@@ -134,6 +134,7 @@ Partial Public Class frmPS4Twitch
             End If
 
             authlist.Add(usr)
+            authlist.Sort()
             IO.File.WriteAllLines("authlist.txt", authlist.ToArray())
             outputChat($"{usr} added to authlist.")
 
@@ -261,6 +262,8 @@ Partial Public Class frmPS4Twitch
                     For Each pair As KeyValuePair(Of String, String) In macros
                         lines.Add($"{pair.Key}~{pair.Value}")
                     Next
+                    lines.Sort()
+                    macros.Sort()
                     IO.File.WriteAllLines("macros.txt", lines)
 
                     outputChat($"{macro} added.")
@@ -298,6 +301,7 @@ Partial Public Class frmPS4Twitch
                             For Each subpair As KeyValuePair(Of String, String) In macros
                                 lines.Add($"{subpair.Key}~{subpair.Value}")
                             Next
+                            lines.Sort()
                             IO.File.WriteAllLines("macros.txt", lines)
 
                             outputChat($"{macro} updated.")
@@ -330,6 +334,7 @@ Partial Public Class frmPS4Twitch
                             For Each subpair As KeyValuePair(Of String, String) In macros
                                 lines.Add($"{subpair.Key}~{subpair.Value}")
                             Next
+                            lines.Sort()
                             IO.File.WriteAllLines("macros.txt", lines)
 
                             outputChat($"{macro} removed.")
