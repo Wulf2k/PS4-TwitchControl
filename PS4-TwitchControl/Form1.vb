@@ -24,8 +24,8 @@ Partial Public Class frmPS4Twitch
 
     Dim microTimer As MicroLibrary.MicroTimer = New MicroLibrary.MicroTimer()
 
-
-
+    Dim recurse = 0
+    Dim outspamcheck = 0
 
 
     Private Sub TimerPress()
@@ -140,36 +140,212 @@ Partial Public Class frmPS4Twitch
             Return
         End If
 
+        'authdel
+        If tmpcmd.IndexOf("#authdel") = 0 Then
+            'Is user issuing the command authed already?
+            If Not authlist.Contains(tmpuser) Or tmpuser = "nightbot" Then
+                outputChat("Only authed users can deauth users.")
+                Return
+            End If
 
+            'Was a user specified?
+            Dim usr As String
+            If tmpcmd.Contains(" ") Then
+                usr = tmpcmd.Split(" ")(1)
+            Else
+                Return
+            End If
 
-
-
-
-
-
-
-        'macrolist
-        If tmpcmd = "#macrolist" Then
-            Dim txt As String = ""
-            For Each pair As KeyValuePair(Of String, String) In macros
-                txt += pair.Key + ", "
+            'Is the usr alphanumeric?
+            For Each c In usr
+                If Not ((Asc(c) >= 48 And Asc(c) <= 57) Or (Asc(c) >= 97 And Asc(c) <= 122)) Then
+                    outputChat("Invalid char in #authdel.")
+                    Return
+                End If
             Next
-            outputChat(txt)
+
+            'Does the usr already exist?
+            If Not authlist.Contains(usr) Then
+                outputChat("User is already deauthed.")
+                Return
+            End If
+
+            authlist.Remove(usr)
+            IO.File.WriteAllLines("authlist.txt", authlist.ToArray())
+            outputChat($"{usr} removed from authlist.")
+
             Return
         End If
 
-        'macroshow
-        If tmpcmd.IndexOf("#macroshow") = 0 Then
-            For Each pair As KeyValuePair(Of String, String) In macros
-                If tmpcmd.Contains(" ") AndAlso pair.Key = tmpcmd.Split(" ")(1) Then
-                    outputChat(pair.Value)
-                    Return
-                End If
+
+
+
+
+
+
+        Try
+            Dim restricted As New List(Of String) From
+                {"#authlist", "#authadd", "#authdel", "#macrolist", "#macroshow", "#macroadd", "#macrodel", "#macroedit"}
+
+
+            'macrolist
+            If tmpcmd = "#macrolist" Then
+                Dim txt As String = ""
+                For Each pair As KeyValuePair(Of String, String) In macros
+                    txt += pair.Key + ", "
+                Next
+                outputChat(txt)
+                Return
+            End If
+
+            'macroshow
+            If tmpcmd.IndexOf("#macroshow") = 0 Then
+                For Each pair As KeyValuePair(Of String, String) In macros
+                    If tmpcmd.Contains(" ") AndAlso pair.Key = tmpcmd.Split(" ")(1) Then
+                        outputChat(pair.Value)
+                        Return
+                    End If
+                Next
                 outputChat("Macro not found.")
                 Return
-            Next
-        End If
+            End If
 
+            'macroadd
+            If tmpcmd.IndexOf("#macroadd") = 0 Then
+                Dim macro As String = ""
+                Dim commands As String = ""
+
+                If tmpcmd.Contains(" ") Then
+                    macro = tmpcmd.Split(" ")(1)
+                    commands = tmpcmd.Replace($"#macroadd {macro}", "")
+                    commands = commands.Replace(" ", "")
+                End If
+
+                If Not macro.IndexOf("#") = 0 Then
+                    outputChat("Macros must begin with #.")
+                    Return
+                End If
+
+                If macro.Length > 20 Then
+                    outputChat("Macro names must be < 20 characters.")
+                    Return
+                End If
+
+                For Each c In macro
+                    If Not ((Asc(c) >= 48 And Asc(c) <= 57) Or (Asc(c) >= 97 And Asc(c) <= 122) Or (Asc(c) = 35)) Then
+                        outputChat("Invalid char in macro name.")
+                        Return
+                    End If
+                Next
+
+                For Each pair As KeyValuePair(Of String, String) In macros
+                    If pair.Key = macro Then
+                        outputChat($"{pair.Key} already exists.")
+                        Return
+                    End If
+                Next
+
+
+                For Each cmd In restricted
+                    If commands.Contains(cmd) Then
+                        outputChat("Control macros cannot be macro'd.")
+                        Return
+                    End If
+                Next
+
+                macros.Add(New KeyValuePair(Of String, String)(macro, commands))
+
+                'Save macros
+                Try
+                    Dim lines As New List(Of String)
+                    For Each pair As KeyValuePair(Of String, String) In macros
+                        lines.Add($"{pair.Key}~{pair.Value}")
+                    Next
+                    IO.File.WriteAllLines("macros.txt", lines)
+
+                    outputChat($"{macro} added.")
+                Catch ex As Exception
+
+                End Try
+                Return
+            End If
+
+            'macroedit
+            If tmpcmd.IndexOf("#macroedit") = 0 Then
+                Dim macro As String = ""
+                Dim commands As String = ""
+
+                If tmpcmd.Contains(" ") Then
+                    macro = tmpcmd.Split(" ")(1)
+                    commands = tmpcmd.Replace($"#macroedit {macro}", "")
+                    commands = commands.Replace(" ", "")
+                End If
+
+                For Each cmd In restricted
+                    If commands.Contains(cmd) Then
+                        outputChat("Control macros cannot be macro'd.")
+                        Return
+                    End If
+                Next
+
+                For Each pair As KeyValuePair(Of String, String) In macros
+                    If pair.Key = macro Then
+                        macros.Remove(pair)
+                        macros.Add(New KeyValuePair(Of String, String)(macro, commands))
+                        'Save macros
+                        Try
+                            Dim lines As New List(Of String)
+                            For Each subpair As KeyValuePair(Of String, String) In macros
+                                lines.Add($"{subpair.Key}~{subpair.Value}")
+                            Next
+                            IO.File.WriteAllLines("macros.txt", lines)
+
+                            outputChat($"{macro} updated.")
+                        Catch ex As Exception
+
+                        End Try
+                        Return
+                    End If
+                Next
+
+                outputChat($"{macro} not found.")
+                Return
+            End If
+
+            'macrodel
+            If tmpcmd.IndexOf("#macrodel") = 0 Then
+                Dim macro As String = ""
+
+                If tmpcmd.Contains(" ") Then
+                    macro = tmpcmd.Split(" ")(1)
+                End If
+
+                For Each pair As KeyValuePair(Of String, String) In macros
+                    If pair.Key = macro Then
+                        macros.Remove(pair)
+
+                        'Save macros
+                        Try
+                            Dim lines As New List(Of String)
+                            For Each subpair As KeyValuePair(Of String, String) In macros
+                                lines.Add($"{subpair.Key}~{subpair.Value}")
+                            Next
+                            IO.File.WriteAllLines("macros.txt", lines)
+
+                            outputChat($"{macro} removed.")
+                        Catch ex As Exception
+
+                        End Try
+                        Return
+                    End If
+                Next
+
+                outputChat($"{macro} not found.")
+                Return
+            End If
+        Catch ex As Exception
+            outputChat("Something macro related just tried to crash.")
+        End Try
 
 
 
@@ -298,9 +474,17 @@ Partial Public Class frmPS4Twitch
 
         If tmpcmd.IndexOf("#") = 0 Then
             For Each pair As KeyValuePair(Of String, String) In macros
-                If pair.Key = tmpcmd Then tmpcmd = pair.Value
+                If pair.Key = tmpcmd Then
+                    tmpcmd = pair.Value
+                    If recurse > 420 Then
+                        Return
+                    End If
+                    If QueuedInput.Count < 42069 Then
+                        recurse += 1
+                        ProcessCMD(tmpuser, role, tmpcmd)
+                    End If
+                End If
             Next
-            ProcessCMD(tmpuser, role, tmpcmd)
             Return
         End If
 
@@ -494,6 +678,8 @@ Partial Public Class frmPS4Twitch
             txtChat.Lines = txtChat.Lines.Skip(1).Take(txtChat.Lines.Length - 1).ToArray()
         End If
 
+        If outspamcheck > 0 Then outspamcheck -= 1
+        If recurse > 0 Then recurse -= 1
 
         Dim msg() As String
         msg = IRC.Read
@@ -567,9 +753,20 @@ Partial Public Class frmPS4Twitch
     End Sub
 
     Private Sub outputChat(ByVal txt As String)
+        If txt(0) = "/" Or txt(0) = "." Then Return
 
+        Do
+            If outspamcheck > 100 Then Return
+            outspamcheck += 20
 
-        IRC.Send($"PRIVMSG {txtTwitchChat.Text} :{txt}")
+            If txt.Length > 400 Then
+                IRC.Send($"PRIVMSG {txtTwitchChat.Text} :{txt.Substring(0, 400)}")
+                txt = txt.Replace(txt.Substring(0, 400), "")
+            Else
+                IRC.Send($"PRIVMSG {txtTwitchChat.Text} :{txt}")
+                Exit Do
+            End If
+        Loop
 
     End Sub
 

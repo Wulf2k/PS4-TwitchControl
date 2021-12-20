@@ -55,7 +55,7 @@ Partial Public Class frmPS4Twitch
 
                 Case "reconnect1"
                     Shell("cmd.exe /c taskkill /f /im celeste.*")
-                    Thread.Sleep(1000)
+                    Thread.Sleep(5000)
                     Select Case which
                         Case "ms"
                             Shell("cmd.exe /c start shell:AppsFolder\MattMakesGamesInc.Celeste_79daxvg0dq3v6!App")
