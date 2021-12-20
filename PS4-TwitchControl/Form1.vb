@@ -68,7 +68,7 @@ Partial Public Class frmPS4Twitch
     Private Sub ProcessCMD(user As String, role As String, cmd As String)
         'ProcessCMD__Switch(user, role, cmd)
         'ProcessCMD__XB1(user, role, cmd)
-        ProcessCMD_Celeste(user, role, cmd)
+        'ProcessCMD_Celeste(user, role, cmd)
         'ProcessCMD_DarkSoulsRemastered(user, role, cmd)
         'ProcessCMD_PokemonFireRed(user, role, cmd)
         'ProcessCMD_PokemonPlatinum(user, role, cmd)
@@ -77,6 +77,168 @@ Partial Public Class frmPS4Twitch
         'ProcessCMD_ZeldaOOT(user, role, cmd)
         'ProcessCMD_ZeldaTP(user, role, cmd)
 
+
+        If user = "wulf2kbot" Then Return
+
+
+        Dim tmpuser = user
+        Dim tmpcmd = cmd
+        Dim CMDmulti As Integer = 1
+
+        If tmpcmd.Contains("wulf") Then
+            Return
+        End If
+
+
+
+        If tmpcmd = "hello" Then
+            outputChat("Hello.")
+            Return
+        End If
+
+
+
+        If tmpcmd = "#authlist" Then
+            Dim txt As String = ""
+            For Each usr In modlist
+                txt += usr + ", "
+            Next
+            outputChat(txt)
+            Return
+        End If
+
+        'If tmpcmd.IndexOf("#authadd") = 0 Then
+        'outputChat("Authadd triggered.")
+        'End If
+
+
+
+
+
+        If tmpcmd.Contains("*") Then
+            CMDmulti = Val(tmpcmd.Split("*")(1))
+            If CMDmulti > 999 Then CMDmulti = 999
+            If CMDmulti < 1 Then CMDmulti = 1
+            For i = 1 To CMDmulti
+                ProcessCMD(tmpuser, role, tmpcmd.Split("*")(0))
+            Next
+            Return
+        End If
+
+
+        'Allow multiple strings per line, with a multiplier on each
+        If tmpcmd.Contains("\") Then
+            tmpcmd = tmpcmd.Replace(" ", "")
+            For Each part In tmpcmd.Split("\")
+                ProcessCMD(tmpuser, role, part)
+            Next
+            Return
+        End If
+
+
+
+        'Loop entire string
+        If tmpcmd.Contains("|") Then
+            CMDmulti = Val(tmpcmd.Split("|")(1))
+
+            If CMDmulti > 999 Then CMDmulti = 999
+            If CMDmulti < 1 Then CMDmulti = 1
+            For i = 0 To CMDmulti - 1
+                ProcessCMD(tmpuser, role, tmpcmd.Split("|")(0))
+            Next
+            Return
+        End If
+
+        'Handle multi-command entries
+        If tmpcmd.Contains(",") Then
+            For Each part In tmpcmd.Split(",")
+                'Prevent buffer overflow in RemotePlay memory
+                tmpuser = Strings.Left(tmpuser, 15)
+                part = part.Replace(" ", "")
+                part = Strings.Left(part, 15)
+
+                ProcessCMD(tmpuser, role, part)
+            Next
+            Return
+        End If
+
+        tmpcmd = tmpcmd.ToLower
+        tmpcmd = tmpcmd.Replace(" ", "")
+
+
+        'Handle command multipliers
+        If tmpcmd.Length > 2 Then
+            If IsNumeric(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x"))) And (tmpcmd.LastIndexOf("x") > tmpcmd.LastIndexOf("-")) Then
+
+                CMDmulti = Val(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x")))
+                If CMDmulti > 999 Then CMDmulti = 999
+                If CMDmulti < 1 Then CMDmulti = 1
+                tmpcmd = Microsoft.VisualBasic.Left(tmpcmd, tmpcmd.LastIndexOf("x"))
+            End If
+        End If
+
+
+
+        'TODO: Improve this handling
+        Dim shorttmpcmd As String
+        If tmpcmd.Contains("-") Then
+            shorttmpcmd = tmpcmd.Split("-")(0)
+        Else
+            shorttmpcmd = tmpcmd
+        End If
+
+
+
+        Select Case shorttmpcmd
+            Case "reconnect1"
+                If Not modlist.Contains(user) Then
+                    outputChat("Command restricted.")
+                    Return
+                End If
+            Case "options", "opt", "hopt"
+                If Not modlist.Contains(user) Then
+                    'outputChat("Options menu restricted to pre-approved users.")
+                    'Return
+                End If
+            Case "pshome"
+                If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb" Or tmpuser = "tompiet1") Then
+                    outputChat("Uhh....  No.")
+                    Return
+                End If
+            Case "tri", "htri"
+                If Not modlist.Contains(user) Then
+
+                End If
+            Case "ca"
+                SyncLock queuelock
+                    QueuedInput.Clear()
+                End SyncLock
+
+                ProcessCMD(tmpuser, role, "nh")
+
+                SyncLock presslock
+                    microTimer.Enabled = False
+                End SyncLock
+
+
+            Case "c"
+                For i = QueuedInput.Count - 1 To 0 Step -1
+                    If QueuedInput(i).user = tmpuser Then
+                        SyncLock queuelock
+                            QueuedInput.RemoveAt(i)
+                        End SyncLock
+                    End If
+                Next
+
+                execCMD(tmpuser, role, "h-1")
+                outputChat("All commands for " & tmpuser & " removed from queue.")
+                Return
+
+        End Select
+
+        For i = 0 To CMDmulti - 1
+            execCMD(tmpuser, role, tmpcmd)
+        Next
     End Sub
 
 
@@ -335,8 +497,9 @@ Partial Public Class frmPS4Twitch
 
 
         'Timer to check chat messages
-        Threading.Thread.Sleep(5000)
-        updTimer.Interval = 25
+        Threading.Thread.Sleep(500)
+
+        updTimer.Interval = 250
         updTimer.Enabled = True
         updTimer.Start()
 
@@ -393,7 +556,7 @@ Partial Public Class frmPS4Twitch
         End SyncLock
 
 
-        If (DateTime.Now - lastping).TotalMinutes > 10 Then
+        If (DateTime.Now - lastping).TotalMinutes > 6 Then
             lastping = DateTime.Now
             IRC.Connect()
         End If
@@ -420,37 +583,6 @@ Partial Public Class frmPS4Twitch
         End SyncLock
     End Sub
 
-    Private Function parseChat(ByVal txt As String) As String()
-        txt = Microsoft.VisualBasic.Right(txt, txt.Length - InStr(2, txt, Chr(13)))
-
-        'LUL is a dumb BTTV emoticon people say a fair bit
-        'lul is also look up left.  Ignore the caps version.
-        If txt.Contains("LUL") Or txt.Contains(",,") Or txt.Contains(".") Or
-            txt.Contains("!") Or txt.Contains("?") Then
-            Return {"", ""}
-        End If
-
-        txt = txt.ToLower
-        txt = txt.Replace(" ", "")
-
-        If Asc(txt(0)) = 10 Then txt = Microsoft.VisualBasic.Right(txt, txt.Length - 1)
-
-
-        If txt.Contains(ChrW(10)) Then
-            txt = txt.Split(ChrW(10))(txt.Split(ChrW(10)).Count - 1)
-        End If
-
-        Dim username As String
-        Dim cmd As String
-        username = txt.Split(":")(0).Trim(" ")
-        cmd = txt.Split(":")(txt.Split(":").Count - 1).Trim(" ")
-
-        'yes, wulf and hard turn out to be valid commands.
-        'ignore them.
-        If cmd.Contains("wulf") Or cmd.Contains("hard") Then Return {"", ""}
-
-        Return {username, cmd}
-    End Function
     Private Sub outputChat(ByVal txt As String)
 
 
