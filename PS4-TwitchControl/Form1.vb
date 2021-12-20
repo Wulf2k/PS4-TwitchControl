@@ -486,7 +486,9 @@ Partial Public Class frmPS4Twitch
                     End If
                     If QueuedInput.Count < 42069 Then
                         recurse += 1
-                        ProcessCMD(tmpuser, role, tmpcmd)
+                        For i = 0 To CMDmulti - 1
+                            ProcessCMD(tmpuser, role, tmpcmd)
+                        Next
                     End If
                 End If
             Next
