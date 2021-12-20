@@ -5,6 +5,8 @@ Imports System.Threading
 
 Partial Public Class frmPS4Twitch
 
+    Dim lastping As DateTime
+
     Dim gh As IntPtr = IntPtr.Zero
     Dim rph As IntPtr = IntPtr.Zero
     Dim fcAddr As IntPtr = IntPtr.Zero
@@ -325,6 +327,7 @@ Partial Public Class frmPS4Twitch
         IRC.realname = ""
         IRC.hostname = "wulf2k.ca"
 
+        lastping = DateTime.Now
         IRC.Connect()
         IRC.Join(txtTwitchChat.Text)
 
@@ -367,6 +370,7 @@ Partial Public Class frmPS4Twitch
                 IRC.Send("PONG")
                 txtChat.AppendText($"<- PONG :tmi.twitch.tv")
                 txtChat.AppendText(Environment.NewLine)
+                lastping = DateTime.Now
             End If
 
             If line.IndexOf("PRIVMSG") > -1 Then
@@ -388,6 +392,11 @@ Partial Public Class frmPS4Twitch
             End If
         End SyncLock
 
+
+        If (DateTime.Now - lastping).TotalMinutes > 10 Then
+            lastping = DateTime.Now
+            IRC.Connect()
+        End If
 
     End Sub
 
@@ -650,6 +659,7 @@ Public Class IrcCon
     Private active As Boolean
 
     Public Sub Connect()
+        client = New Net.Sockets.TcpClient
         client.connect(server, port)
         netstream = client.GetStream()
         writer = New IO.StreamWriter(netstream, Text.Encoding.ASCII)
