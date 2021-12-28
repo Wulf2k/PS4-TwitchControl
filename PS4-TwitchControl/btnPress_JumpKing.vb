@@ -1,10 +1,9 @@
 ﻿Imports System.Threading
 
-
 Partial Public Class frmPS4Twitch
-    Dim which = "ms"
+    Private Sub btnPress_JumpKing()
 
-    Private Sub btnPress_Celeste()
+
         'frametime = 33333  '30fps
         frametime = 16667   '60fps
 
@@ -18,6 +17,14 @@ Partial Public Class frmPS4Twitch
 
 
 
+
+
+
+        'Console.WriteLine(DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.ffffff"))
+
+        Dim winTitle As String = "Jump King"
+        Dim procName As String = "jumpking.exe"
+
         Dim buttons = 0
         Dim LStickLR As Single = 0
         Dim LStickUD As Single = 0
@@ -28,12 +35,12 @@ Partial Public Class frmPS4Twitch
         Dim user As String = ""
         Dim cmd As String = ""
 
-
-
+        'SyncLock queuelock
+        'If nothing in queue, push a 'nothing'-press onto it for 1 frame
         If QueuedInput.Count = 1 AndAlso Not QueuedInput(0).cmd = "idle" Then
             Controller(0, 0, 0, 0, 0, 0, 0, 1, "", "idle")
         End If
-
+        'End SyncLock
 
         'Try
         SyncLock queuelock
@@ -56,46 +63,86 @@ Partial Public Class frmPS4Twitch
                 Case "reconnect1"
                     Shell("cmd.exe /c taskkill /f /im RTSS*")
                     Thread.Sleep(1000)
-                    Shell("cmd.exe /c taskkill /f /im celeste.*")
+                    Shell($"cmd.exe /c taskkill /f /im {procName}")
                     Thread.Sleep(5000)
-                    Select Case which
-                        Case "ms"
-                            Shell("cmd.exe /c start shell:AppsFolder\MattMakesGamesInc.Celeste_79daxvg0dq3v6!App")
-
-                        Case "nonms"
-                            Shell("cmd.exe /c start c:\\temp\\celeste\\celeste.exe")
-                    End Select
+                    Shell("cmd.exe /c start steam://run/1061090")
 
 
                 Case "focus"
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "Celeste")
+                    hwnd = FindWindowA(Nothing, $"{winTitle}")
                     If Not hwnd.Equals(IntPtr.Zero) Then
                         'ShowWindow(hwnd, 3)
                         SetForegroundWindow(hwnd)
-                        outputChat("Celeste focused.")
+                        outputChat($"{winTitle} focused.")
                     Else
-                        outputChat($"'Celeste' window not found.")
+                        outputChat($"'{winTitle}' window not found.")
                     End If
+
+
+                'Case "ss"
+                '    Try
+                '        FileCopy("c:\program files (x86)\steam\steamapps\common\super meat boy\userdata\savegame.dat",
+                '                 $"c:\program files (x86)\steam\steamapps\common\super meat boy\userdata\{DateTime.Now.Year}.{DateTime.Now.Month}.{DateTime.Now.Day}.{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.savegame.dat")
+                '        outputChat("save backup complete")
+                '    Catch ex As Exception
+                '        outputChat("saved failed?")
+                '    End Try
+                    ''Return
+                    'Dim hwnd As IntPtr
+                    'hwnd = FindWindowA(Nothing, winTitle)
+                    'If Not hwnd.Equals(IntPtr.Zero) Then
+                    'SetForegroundWindow(hwnd)
+                    ''My.Computer.Keyboard.SendKeys("+{F1}", True)
+                    ''outputChat($"State saved.")
+                    'Else
+                    'outputChat($"Window not found.")
+                    'End If
+
+
+                    'Case "ls"
+                    'Return
+
+                    'Dim hwnd As IntPtr
+                    'hwnd = FindWindowA(Nothing, winTitle)
+                    'If Not hwnd.Equals(IntPtr.Zero) Then
+                    'SetForegroundWindow(hwnd)
+                    ''My.Computer.Keyboard.SendKeys("{F1}", True)
+                    ''outputChat($"State loaded.")
+                    'Else
+                    'outputChat($"Window not found.")
+                    'End If
+
+                    'Case "rs"
+                    'Dim hwnd As IntPtr
+                    'hwnd = FindWindowA(Nothing, winTitle)
+                    'If Not hwnd.Equals(IntPtr.Zero) Then
+                    '                    SetForegroundWindow(hwnd)
+                    'My.Computer.Keyboard.SendKeys("^{R}", True)
+                    '                    outputChat($"Game reset.")
+                    'Else
+                    '                    outputChat($"Window not found.")
+                    'End If
+
+                Case "invertlx"
+                    boolInvertLX = Not boolInvertLX
+                    outputChat("InvertLX = " + boolInvertLX.ToString)
+                Case "invertly"
+                    boolInvertLY = Not boolInvertLY
+                    outputChat("InvertLY = " + boolInvertLY.ToString)
+                Case "invertrx"
+                    boolInvertRX = Not boolInvertRX
+                    outputChat("InvertRX = " + boolInvertRX.ToString)
+                Case "invertry"
+                    boolInvertRY = Not boolInvertRY
+                    outputChat("InvertRY = " + boolInvertRY.ToString)
+
 
                 Case "hidecursor"
                     Dim x = 1600
                     Dim y = 1
 
                     Cursor.Position = New Point(x, y)
-                    'mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, IntPtr.Zero)
-                    'mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, IntPtr.Zero)
-
-                Case "killoverlay"
-                    Shell("taskkill /f /im ps4-twitchhelper.exe")
-
-                Case "startoverlay"
-                    'Shell("")
-                    Dim ProcessProperties As New ProcessStartInfo
-                    ProcessProperties.FileName = "C:\Users\Lane\Documents\GitHub\PS4-TwitchHelper\PS4-TwitchHelper\bin\Debug\PS4-TwitchHelper.exe"
-                    'Dim myProcess As Process = Process.Start(ProcessProperties)
-
-
 
                 Case "nh"
                     boolHoldL1 = False
@@ -126,24 +173,24 @@ Partial Public Class frmPS4Twitch
                         boolHoldAxisVal(i) = 0
                     Next
 
-                Case "share", "hselect"
+                Case "hshare", "hselect"
                     boolHoldShare = True
                 Case "nhshare", "nhselect"
                     boolHoldShare = False
 
-                Case "hopt"
+                Case "hopt", "hstart"
                     boolHoldOpt = True
-                Case "nhopt"
+                Case "nhopt", "nhstart"
                     boolHoldOpt = False
 
-                Case "hl1"
+                Case "hl1", "hlb"
                     boolHoldL1 = True
-                Case "nhl1"
+                Case "nhl1", "nhlb"
                     boolHoldL1 = False
 
-                Case "hl2"
+                Case "hl2", "hlt"
                     boolHoldL2 = True
-                Case "nhl2"
+                Case "nhl2", "nhlt"
                     boolHoldL2 = False
 
                 Case "hl3"
@@ -152,14 +199,14 @@ Partial Public Class frmPS4Twitch
                     boolHoldL3 = False
 
 
-                Case "hr1"
+                Case "hr1", "hrb"
                     boolHoldR1 = True
-                Case "nhr1"
+                Case "nhr1", "nhrb"
                     boolHoldR1 = False
 
-                Case "hr2"
+                Case "hr2", "hrt"
                     boolHoldR2 = True
-                Case "nhr2"
+                Case "nhr2", "nhrt"
                     boolHoldR2 = False
 
                 Case "hr3"
@@ -168,24 +215,24 @@ Partial Public Class frmPS4Twitch
                     boolHoldR3 = False
 
 
-                Case "ho", "holdo"
+                Case "hb"
                     boolHoldO = True
-                Case "nho", "noholdo"
+                Case "nhb"
                     boolHoldO = False
 
-                Case "hsq"
+                Case "hx"
                     boolHoldSq = True
-                Case "nhsq"
+                Case "nhx"
                     boolHoldSq = False
 
-                Case "htri"
+                Case "hy"
                     boolHoldTri = True
-                Case "nhtri"
+                Case "nhy"
                     boolHoldTri = False
 
-                Case "hx"
+                Case "ha"
                     boolHoldX = True
-                Case "nhx"
+                Case "nha"
                     boolHoldX = False
 
                 Case "hdu"
@@ -222,6 +269,7 @@ Partial Public Class frmPS4Twitch
             If boolHoldL3 Then buttons = (buttons Or BTN_L3)
             If boolHoldR3 Then buttons = (buttons Or BTN_R3)
             If boolHoldOpt Then buttons = (buttons Or BTN_OPTIONS)
+            If boolHoldShare Then buttons = (buttons Or BTN_SHARE)
 
             If boolHoldDU Then buttons = (buttons Or BTN_DPAD_UP)
             If boolHoldDD Then buttons = (buttons Or BTN_DPAD_DOWN)
@@ -270,6 +318,7 @@ Partial Public Class frmPS4Twitch
             End SyncLock
 
             If presstimer = 0 Then PopQ()
+
 
 
             Dim b(&H20) As Byte
@@ -331,6 +380,8 @@ Partial Public Class frmPS4Twitch
         End Select
 
         Try
+            'WUInt32(hookmem + &H40C, buttons)
+
             Select Case ctrlStyle
                 Case "switch"
                     Select Case ctrlType
@@ -440,6 +491,55 @@ Partial Public Class frmPS4Twitch
 
 
 
+            'DS4ctrl.SetButtonState(DualShock4Button.Circle, buttons And BTN_O)
+            'DS4ctrl.SetButtonState(DualShock4Button.Cross, buttons And BTN_X)
+            'DS4ctrl.SetButtonState(DualShock4Button.Square, buttons And BTN_SQUARE)
+            'DS4ctrl.SetButtonState(DualShock4Button.Triangle, buttons And BTN_TRIANGLE)
+            'DS4ctrl.SetButtonState(DualShock4Button.Share, buttons And BTN_SHARE)
+            'DS4ctrl.SetButtonState(DualShock4Button.Options, buttons And BTN_OPTIONS)
+            'DS4ctrl.SetButtonState(DualShock4Button.ShoulderLeft, buttons And BTN_L1)
+            'DS4ctrl.SetButtonState(DualShock4Button.TriggerLeft, buttons And BTN_L2)
+            'DS4ctrl.SetButtonState(DualShock4Button.ThumbLeft, buttons And BTN_L3)
+            'DS4ctrl.SetButtonState(DualShock4Button.ShoulderRight, buttons And BTN_R1)
+            'DS4ctrl.SetButtonState(DualShock4Button.TriggerRight, buttons And BTN_R2)
+            'DS4ctrl.SetButtonState(DualShock4Button.ThumbRight, buttons And BTN_R3)
+
+            'DS4ctrl.SetAxisValue(DualShock4Axis.LeftThumbX, &H7FUI + LStickLR * &H7FUI)
+            'DS4ctrl.SetAxisValue(DualShock4Axis.LeftThumbY, &H7FUI + LStickUD * &H7FUI)
+            'DS4ctrl.SetAxisValue(DualShock4Axis.RightThumbX, &H7FUI + RStickLR * &H7FUI)
+            'DS4ctrl.SetAxisValue(DualShock4Axis.RightThumbY, &H7FUI + RStickUD * &H7FUI)
+
+            'DS4ctrl.SetSliderValue(DualShock4Slider.LeftTrigger, &HFFUI * LTrigger)
+            'DS4ctrl.SetSliderValue(DualShock4Slider.RightTrigger, &HFFUI * RTrigger)
+
+
+
+
+
+
+            'Do DPad properly
+            'Someday
+            'Fuck you, Future-Wulf, you deal with this shit
+
+            'If (buttons And BTN_DPAD_UP) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.North)
+            'If (buttons And BTN_DPAD_RIGHT) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.East)
+            'If (buttons And BTN_DPAD_DOWN) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.South)
+            'If (buttons And BTN_DPAD_LEFT) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.West)
+            'If (buttons And (BTN_DPAD_UP + BTN_DPAD_LEFT)) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.Northwest)
+            'If (buttons And (BTN_DPAD_UP + BTN_DPAD_RIGHT)) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.Northeast)
+            'If (buttons And (BTN_DPAD_DOWN + BTN_DPAD_LEFT)) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.Southwest)
+            'If (buttons And (BTN_DPAD_DOWN + BTN_DPAD_RIGHT)) Then DS4ctrl.SetDPadDirection(DualShock4DPadDirection.Southeast)
+
+
+
+
+            'WUInt8(hookmem + &H410, &H7FUI + LStickLR * &H7FUI)
+            'WUInt8(hookmem + &H411, &H7FUI - LStickUD * &H7FUI)
+            'WUInt8(hookmem + &H412, &H7FUI + RStickLR * &H7FUI)
+            'WUInt8(hookmem + &H413, &H7FUI - RStickUD * &H7FUI)
+
+            'WUInt8(hookmem + &H414, &HFFUI * LTrigger)
+            'WUInt8(hookmem + &H415, &HFFUI * RTrigger)
         Catch ex As Exception
             Console.WriteLine("WUInt8 stick value overflow? " & ex.Message)
         End Try
@@ -449,9 +549,7 @@ Partial Public Class frmPS4Twitch
         'Console.WriteLine("press exception")
         ' End Try
     End Sub
-
-    Private Sub execCMD_Celeste(user As String, role As String, cmd As String)
-
+    Private Sub execCMD_JumpKing(user As String, role As String, cmd As String)
         Dim buttons = 0
         Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}
         Dim halfhold As Boolean = False
@@ -478,26 +576,30 @@ Partial Public Class frmPS4Twitch
             'Hold toggles
             Case "nh",
                  "hw", "nhw",
-                 "holdo", "ho", "noholdo", "nho",
-                 "hopt", "nhopt",
-                 "hshare", "nhshare",
-                 "hl1", "nhl1",
-                 "hl2", "nhl2",
+                 "ho", "nho",
+                 "hopt", "nhopt", "hstart", "nhstart",
+                 "hshare", "nhshare", "hselect", "nhselect",
+                 "hl1", "nhl1", "hlb", "nhlb",
+                 "hl2", "nhl2", "hlt", "nhlt",
                  "hl3", "nhl3",
-                 "hr1", "nhr1",
-                 "hr2", "nhr2",
+                 "hr1", "nhr1", "hrb", "nhrb",
+                 "hr2", "nhr2", "hrt", "nhrt",
                  "hr3", "nhr3",
                  "hsq", "nhsq",
-                 "htri", "nhtri",
-                 "hx", "nhx",
+                 "ho", "nho", "hb", "nhb",
+                 "htri", "nhtri", "hy", "nhy",
+                 "hx", "nhx", "ha", "nha",
                  "hdu", "nhdu",
                  "hdd", "nhdd",
                  "hdl", "nhdl",
                  "hdr", "nhdr",
-                 "reconnect1",
+                 "ss",
+                 "reconnect1", "reconnect2",
                  "focus",
-                 "hidecursor"
+                 "hidecursor",
+                 "invertlx", "invertly", "invertrx", "invertry"
 
+                '"ss", "ls", "rs",
 
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
 
@@ -522,7 +624,7 @@ Partial Public Class frmPS4Twitch
 
             'Our old, archaic friend 'flong', "forward long"
             Case "flong"
-                If duration = 0 Then duration = 180
+                If duration = 0 Then duration = 90
                 Controller(0, 0, 0, 0, 1, 0, 0, duration, user, cmd)
                 Return
 
@@ -548,60 +650,62 @@ Partial Public Class frmPS4Twitch
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "share"
-                If duration = 0 Then duration = 2
-                Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+
+
+            Case "share", "select"
+                If duration = 0 Then duration = 4
+                Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "options", "opt"
+            Case "opt", "start"
                 If duration = 0 Then duration = 4
                 Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "o"
-                If duration = 0 Then duration = 36
+            Case "b"
+                If duration = 0 Then duration = 10
                 Controller(BTN_O, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "x"
-                If duration = 0 Then duration = 36
+            Case "a"
+                If duration = 0 Then duration = 10
                 Controller(BTN_X, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "sq"
-                If duration = 0 Then duration = 36
+            Case "x"
+                If duration = 0 Then duration = 10
                 Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "tri"
-                If duration = 0 Then duration = 56
+            Case "y"
+                If duration = 0 Then duration = 15
                 Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
-            Case "l1"
-                If duration = 0 Then duration = 36
+            Case "l1", "lb"
+                If duration = 0 Then duration = 20
                 Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
-            Case "l2"
-                If duration = 0 Then duration = 56
-                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 4, user, cmd & "(!)")
+            Case "l2", "lt"
+                If duration = 0 Then duration = 5
+                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
-            Case "r1"
-                If duration = 0 Then duration = 56
+            Case "r1", "rb"
+                If duration = 0 Then duration = 20
                 Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
-            Case "r2"
-                If duration = 0 Then duration = 56
+            Case "r2", "rt"
+                If duration = 0 Then duration = 12
                 Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
@@ -622,21 +726,12 @@ Partial Public Class frmPS4Twitch
 
 
 
-            Case "pshome"
-                Controller(BTN_PSHOME, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(-)")
-                Return
-
-
-
-            Case "retry"
-                If duration = 0 Then duration = 110
-                ProcessCMD(user, role, $"nh-2,opt-2,dd-2,x-{duration},")
+            Case "home"
+                If duration = 0 Then duration = 4
+                Controller(BTN_PSHOME, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 0, duration, cmd & "(-)")
                 Return
         End Select
-
-
-
 
 
 
@@ -655,7 +750,7 @@ Partial Public Class frmPS4Twitch
 
         'parse out half-hold
         If cmd(0) = "h" Then
-            If duration > 0 Then analoghold = True
+            If duration = 0 Then analoghold = True
             cmd = Strings.Right(cmd, cmd.Length - 1)
         End If
 
@@ -668,47 +763,33 @@ Partial Public Class frmPS4Twitch
 
 
         'parse 'walks', 'looks', 'analog's, and 'rolls'
-        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a") Or (cmd(0) = "j")) Or
-            (Strings.Left(cmd, 2) = "da") Then
+        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "j")) Or    'If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
+            (Strings.Left(cmd, 2) = "ro") Then
 
             Dim axispad = 0
             Dim cmdpad = 0
             Dim jump As Boolean = False
-            Dim dash As Boolean = False
 
 
             'Set default walk duration if none specified
-            If cmd(0) = "w" Then
-                If duration = 0 Then duration = 60
+            If cmd(0) = "w" And Not analoghold Then
+                If duration = 0 Then duration = 20
             End If
 
-            If cmd(0) = "a" Then
+            If cmd(0) = "a" And Not analoghold Then
                 'TODO:  Damnit this is ugly.  Redo, with proper parsing.
                 cmd = Strings.Left(cmd.Replace(".", "5"), 5)
-                If duration = 0 Then duration = 60
+                If duration = 0 Then duration = 20
                 cmdparams = Mid(cmd, 2, 4)
             End If
 
 
 
-            If Strings.Left(cmd, 2) = "da" Then
-                cmdpad = 1
-                If duration = 0 Then duration = 12
-                dash = True
-            End If
 
             If cmd(0) = "j" Then
-                If duration = 0 Then duration = 12
+                If duration = 0 Then duration = 36
                 jump = True
             End If
-
-            'If 'look', then modify right stick's axises
-            If cmd(0) = "l" Then
-                axispad = 2
-                If duration = 0 Then duration = 14
-            End If
-
-
 
             'Return if garbage data
             For i = 1 To 4
@@ -753,6 +834,10 @@ Partial Public Class frmPS4Twitch
                 End If
             Next
 
+            If boolInvertLX Then axis(0) *= -1.0
+            If boolInvertLY Then axis(1) *= -1.0
+            If boolInvertRX Then axis(2) *= -1.0
+            If boolInvertRY Then axis(3) *= -1.0
 
 
             If halfhold Then cmd = "s" & cmd
@@ -763,10 +848,7 @@ Partial Public Class frmPS4Twitch
             cmd = cmd.Replace(".", "")
 
             If jump Then
-                Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(!)")
-            ElseIf dash Then
-                Controller(BTN_SQUARE, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
-                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration - 2, user, cmd & "(-)")
+                Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
             Else
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
             End If

@@ -11,6 +11,8 @@ Partial Public Class frmPS4Twitch
     Dim rph As IntPtr = IntPtr.Zero
     Dim fcAddr As IntPtr = IntPtr.Zero
 
+    Dim game As String = "jumpking"
+
     Dim ctrlStyle As String = ""
     Dim ctrlType As String = ""
 
@@ -37,10 +39,17 @@ Partial Public Class frmPS4Twitch
 
     End Sub
     Private Sub press()
+        Select Case game
+            Case "celeste"
+                btnPress_Celeste()
+            Case "jumpking"
+                btnPress_JumpKing()
+
+        End Select
+
         'btnPress__Switch()
         'btnPress__XB1()
         'btnPress_Standard()
-        btnPress_Celeste()
         'btnPress_DarkSoulsRemastered()
         'btnPress_PokemonFireRed()
         'btnPress_PokemonPlatinum()
@@ -52,9 +61,15 @@ Partial Public Class frmPS4Twitch
     End Sub
 
     Private Sub execCMD(user As String, role As String, cmd As String)
+
+        Select Case game
+            Case "celeste"
+                execCMD_Celeste(user, role, cmd)
+            Case "jumpking"
+                execCMD_JumpKing(user, role, cmd)
+        End Select
         'execCMD__Switch(user, role, cmd)
         'execCMD__XB1(user, role, cmd)
-        execCMD_Celeste(user, role, cmd)
         'execCMD_DarkSoulsRemastered(user, role, cmd)
         'execCMD_PokemonFireRed(user, role, cmd)
         'execCMD_PokemonPlatinum(user, role, cmd)
@@ -186,8 +201,26 @@ Partial Public Class frmPS4Twitch
 
         Try
             Dim restricted As New List(Of String) From
-                {"#authlist", "#authadd", "#authdel", "#macrolist", "#macroshow", "#macroadd", "#macrodel", "#macroedit"}
+                {"#authlist", "#authadd", "#authdel",
+                "#game",
+                "#macrolist", "#macroshow", "#macroadd", "#macrodel", "#macroedit"}
 
+
+            'game
+            If tmpcmd.IndexOf("#game") = 0 Then
+                If tmpcmd.Contains(" ") Then
+                    If authlist.Contains(tmpuser) Then
+                        game = game = tmpcmd.Split(" ")(1)
+                        outputChat($"Controls now set to {game}")
+                    Else
+                        outputChat($"{tmpuser} not authorized to change controls.")
+                        Return
+                    End If
+                Else
+                    outputChat("Unable to parse game name.")
+                End If
+                Return
+            End If
 
             'macrolist
             If tmpcmd = "#macrolist" Then
@@ -219,7 +252,7 @@ Partial Public Class frmPS4Twitch
                 If tmpcmd.Contains(" ") Then
                     macro = tmpcmd.Split(" ")(1)
                     commands = tmpcmd.Replace($"#macroadd {macro}", "")
-                    commands = commands.Replace(" ", "")
+                    'commands = commands.Replace(" ", "")
                 End If
 
                 If Not macro.IndexOf("#") = 0 Then
@@ -257,19 +290,15 @@ Partial Public Class frmPS4Twitch
                 macros.Add(New KeyValuePair(Of String, String)(macro, commands))
 
                 'Save macros
-                Try
-                    Dim lines As New List(Of String)
-                    For Each pair As KeyValuePair(Of String, String) In macros
-                        lines.Add($"{pair.Key}~{pair.Value}")
-                    Next
-                    lines.Sort()
-                    macros.Sort()
-                    IO.File.WriteAllLines("macros.txt", lines)
+                Dim lines As New List(Of String)
+                For Each pair As KeyValuePair(Of String, String) In macros
+                    lines.Add($"{pair.Key}~{pair.Value}")
+                Next
+                lines.Sort()
 
-                    outputChat($"{macro} added.")
-                Catch ex As Exception
+                IO.File.WriteAllLines("macros.txt", lines)
 
-                End Try
+                outputChat($"{macro} added.")
                 Return
             End If
 
@@ -281,7 +310,7 @@ Partial Public Class frmPS4Twitch
                 If tmpcmd.Contains(" ") Then
                     macro = tmpcmd.Split(" ")(1)
                     commands = tmpcmd.Replace($"#macroedit {macro}", "")
-                    commands = commands.Replace(" ", "")
+                    'commands = commands.Replace(" ", "")
                 End If
 
                 For Each cmd In restricted
@@ -349,7 +378,7 @@ Partial Public Class frmPS4Twitch
                 Return
             End If
         Catch ex As Exception
-            outputChat("Something macro related just tried to crash.")
+            outputChat($"Something macro related just tried to crash. {ex.Message}")
         End Try
 
 
@@ -443,7 +472,7 @@ Partial Public Class frmPS4Twitch
                 End If
             Case "pshome"
                 If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb" Or tmpuser = "tompiet1") Then
-                    outputChat("Uhh....  No.")
+                    'outputChat("Uhh....  No.")
                     Return
                 End If
             Case "tri", "htri"
@@ -762,13 +791,14 @@ Partial Public Class frmPS4Twitch
     Private Sub outputChat(ByVal txt As String)
         If txt(0) = "/" Or txt(0) = "." Then Return
 
+        Dim maxChat As Int32 = 500
         Do
             If outspamcheck > 100 Then Return
             outspamcheck += 20
 
-            If txt.Length > 400 Then
-                IRC.Send($"PRIVMSG {txtTwitchChat.Text} :{txt.Substring(0, 400)}")
-                txt = txt.Replace(txt.Substring(0, 400), "")
+            If txt.Length > maxChat Then
+                IRC.Send($"PRIVMSG {txtTwitchChat.Text} :{txt.Substring(0, maxChat)}")
+                txt = txt.Replace(txt.Substring(0, maxChat), "")
             Else
                 IRC.Send($"PRIVMSG {txtTwitchChat.Text} :{txt}")
                 Exit Do

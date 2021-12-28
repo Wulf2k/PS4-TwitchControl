@@ -23,6 +23,7 @@ Partial Public Class frmPS4Twitch
         'Console.WriteLine(DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.ffffff"))
 
         Dim winTitle As String = "PCSX2"
+        Dim procName As String = "jumpking.exe"
 
         Dim buttons = 0
         Dim LStickLR As Single = 0
@@ -60,51 +61,23 @@ Partial Public Class frmPS4Twitch
 
 
                 Case "reconnect1"
-                    Return
-
-
-
-
-
-                    Shell("cmd.exe /c taskkill /f /im visualboyadvance-m.exe")
+                    Shell("cmd.exe /c taskkill /f /im RTSS*")
                     Thread.Sleep(1000)
-                    Dim currDir = "C:\Emus\GBA"
-                    Dim exe = $"{currDir}\visualboyadvance-m.exe"
+                    Shell($"cmd.exe /c taskkill /f /im {procName}")
+                    Thread.Sleep(5000)
+                    Shell("steam://run/1061090")
 
 
-                    Dim ProcessProperties As New ProcessStartInfo
-                    ProcessProperties.FileName = exe
-                    ProcessProperties.WorkingDirectory = currDir
-                    ProcessProperties.Arguments = $"""c:\emus\GBA\Roms\Pokemon - Fire Red Version (U) (V1.1).gba"""
-                    Dim myProcess As Process = Process.Start(ProcessProperties)
-
-                    Thread.Sleep(1000)
-
+                Case "focus"
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, winTitle)
+                    hwnd = FindWindowA(Nothing, $"{winTitle}")
                     If Not hwnd.Equals(IntPtr.Zero) Then
-                        ShowWindow(hwnd, 3)
-                        outputChat("visualboyadvance-m.exe launched.")
+                        'ShowWindow(hwnd, 3)
+                        SetForegroundWindow(hwnd)
+                        outputChat($"{winTitle} focused.")
                     Else
-                        outputChat($"Window not found.")
+                        outputChat($"'{winTitle}' window not found.")
                     End If
-
-
-                'Case "focus"
-                    'Return
-
-
-
-
-
-                    ''Dim hwnd As IntPtr
-                    ''hwnd = FindWindowA(Nothing, winTitle)
-                    ''If Not hwnd.Equals(IntPtr.Zero) Then
-                    ''ShowWindow(hwnd, 3)
-                    ''outputChat("Focused.")
-                    ''Else
-                    ''outputChat($"Window not found.")
-                    ''End If
 
 
                 'Case "ss"
@@ -639,13 +612,13 @@ Partial Public Class frmPS4Twitch
 
             'Half halt
             Case "hh"
-                If duration = 0 Then duration = 15
+                If duration = 0 Then duration = 30
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
                 Return
 
             'Halt
             Case "h"
-                If duration = 0 Then duration = 30
+                If duration = 0 Then duration = 60
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
                 Return
 
@@ -657,68 +630,68 @@ Partial Public Class frmPS4Twitch
 
 
             Case "du"
-                If duration = 0 Then duration = 2
-                Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dd"
-                If duration = 0 Then duration = 2
-                Controller(BTN_DPAD_DOWN, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_DPAD_DOWN, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dl"
-                If duration = 0 Then duration = 2
-                Controller(BTN_DPAD_LEFT, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_DPAD_LEFT, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dr"
-                If duration = 0 Then duration = 2
-                Controller(BTN_DPAD_RIGHT, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_DPAD_RIGHT, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
 
             Case "share", "select"
-                If duration = 0 Then duration = 2
-                Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "opt", "start"
-                If duration = 0 Then duration = 2
-                Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "b"
                 If duration = 0 Then duration = 10
-                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "a"
                 If duration = 0 Then duration = 10
-                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "x"
                 If duration = 0 Then duration = 10
-                Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "y"
                 If duration = 0 Then duration = 15
-                Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
             Case "l1", "lb"
                 If duration = 0 Then duration = 20
-                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "l2", "lt"
@@ -728,35 +701,35 @@ Partial Public Class frmPS4Twitch
                 Return
             Case "r1", "rb"
                 If duration = 0 Then duration = 20
-                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r2", "rt"
                 If duration = 0 Then duration = 12
-                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 2, user, cmd & "(!)")
+                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
 
             Case "l3"
-                If duration = 0 Then duration = 2
-                Controller(BTN_L3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_L3, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "r3"
-                If duration = 0 Then duration = 2
-                Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
 
             Case "home"
-                If duration = 0 Then duration = 2
-                Controller(BTN_PSHOME, 0, 0, 0, 0, 0, 0, 2, user, cmd & "(!)")
-                Controller(0, 0, 0, 0, 0, 0, 0, 2, duration, cmd & "(-)")
+                If duration = 0 Then duration = 4
+                Controller(BTN_PSHOME, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, 0, duration, cmd & "(-)")
                 Return
         End Select
 
@@ -891,159 +864,5 @@ Partial Public Class frmPS4Twitch
 
 
         End If
-    End Sub
-    Private Sub ProcessCMD__XB1(user As String, role As String, cmd As String)
-        Dim tmpuser = user
-        Dim tmpcmd = cmd
-        Dim CMDmulti As Integer = 1
-
-        'allow loop of entire string, with inner loops
-
-        If tmpcmd.Contains("wulf") Then
-            Return
-        End If
-
-        If tmpcmd.Contains("*") Then
-            CMDmulti = Val(tmpcmd.Split("*")(1))
-            If CMDmulti > 999 Then CMDmulti = 999
-            If CMDmulti < 1 Then CMDmulti = 1
-            For i = 1 To CMDmulti
-                ProcessCMD(tmpuser, role, tmpcmd.Split("*")(0))
-            Next
-            Return
-        End If
-
-
-        'Allow multiple strings per line, with a multiplier on each
-        If tmpcmd.Contains("\") Then
-            tmpcmd = tmpcmd.Replace(" ", "")
-            For Each part In tmpcmd.Split("\")
-                ProcessCMD(tmpuser, role, part)
-            Next
-            Return
-        End If
-
-
-
-        'Loop entire string
-        If tmpcmd.Contains("|") Then
-            CMDmulti = Val(tmpcmd.Split("|")(1))
-
-            If CMDmulti > 999 Then CMDmulti = 999
-            If CMDmulti < 1 Then CMDmulti = 1
-            For i = 0 To CMDmulti - 1
-                ProcessCMD(tmpuser, role, tmpcmd.Split("|")(0))
-            Next
-            Return
-        End If
-
-        'Handle multi-command entries
-        If tmpcmd.Contains(",") Then
-            For Each part In tmpcmd.Split(",")
-                'Prevent buffer overflow in RemotePlay memory
-                tmpuser = Strings.Left(tmpuser, 15)
-                part = part.Replace(" ", "")
-                part = Strings.Left(part, 15)
-
-                ProcessCMD(tmpuser, role, part)
-            Next
-            Return
-        End If
-
-        tmpcmd = tmpcmd.ToLower
-        tmpcmd = tmpcmd.Replace(" ", "")
-
-
-        'Handle command multipliers
-        If tmpcmd.Length > 2 Then
-            If IsNumeric(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x"))) And (tmpcmd.LastIndexOf("x") > tmpcmd.LastIndexOf("-")) Then
-
-                CMDmulti = Val(Strings.Right(tmpcmd, tmpcmd.Length - 1 - tmpcmd.LastIndexOf("x")))
-                If CMDmulti > 999 Then CMDmulti = 999
-                If CMDmulti < 1 Then CMDmulti = 1
-                tmpcmd = Microsoft.VisualBasic.Left(tmpcmd, tmpcmd.LastIndexOf("x"))
-            End If
-        End If
-
-
-
-        'TODO: Improve this handling
-        Dim shorttmpcmd As String
-        If tmpcmd.Contains("-") Then
-            shorttmpcmd = tmpcmd.Split("-")(0)
-        Else
-            shorttmpcmd = tmpcmd
-        End If
-
-
-
-        Select Case shorttmpcmd
-            'Case "tpr", "tpl"      'Free for all on the tpwhatevs
-            '   If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb") Then
-            'outputChat("Personal items restricted to pre-approved users.")
-            '       Return
-            'End If
-            Case "hello"
-                If QueuedInput.Count < 2 Then
-                    outputChat("Hello.")
-                End If
-
-
-            Case "reconnect1", "ss", "ls", "rs", "l3", "r3", "l1"
-                If Not authlist.Contains(user) Then
-                    outputChat("Command restricted.")
-                    Return
-                End If
-            Case "options", "opt", "hopt"
-                If Not authlist.Contains(user) Then
-
-
-                End If
-            Case "home"
-                If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb" Or tmpuser = "tompiet1") Then
-                    outputChat("Uhh....  No.")
-                    Return
-                End If
-            Case "tri", "htri"
-                If Not authlist.Contains(user) Then
-
-                End If
-            Case "clearallcmds", "ca"
-
-
-                SyncLock queuelock
-                    QueuedInput.Clear()
-                End SyncLock
-
-                ProcessCMD(tmpuser, role, "nh")
-
-                SyncLock presslock
-                    microTimer.Enabled = False
-                    microTimer.Stop()
-                End SyncLock
-
-
-                'End If
-            Case "clearcmds", "c"
-                SyncLock queuelock
-                    For i = QueuedInput.Count - 1 To 0 Step -1
-                        If QueuedInput(i).user = tmpuser Then
-                            QueuedInput.RemoveAt(i)
-                        End If
-                    Next
-                End SyncLock
-                execCMD(tmpuser, role, "h-1")
-                outputChat("All commands for " & tmpuser & " removed from queue.")
-                Return
-
-        End Select
-
-
-
-
-        'For direct analog stick inputs
-        For i = 0 To CMDmulti - 1
-            execCMD(tmpuser, role, tmpcmd)
-        Next
     End Sub
 End Class
