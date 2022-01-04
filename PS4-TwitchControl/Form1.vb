@@ -222,7 +222,25 @@ Partial Public Class frmPS4Twitch
                             End If
                         Next
 
-                        outputChat($"Controls now set to {game}")
+                        If gamelist.Contains(game) Then
+                            macros.Clear()
+
+                            Dim lines As New List(Of String)
+                            'Load macros
+                            Try
+                                lines = IO.File.ReadLines($"{game}-macros.txt")
+                                For Each line In lines
+                                    macros.Add(New KeyValuePair(Of String, String)(line.Split("~")(0), line.Split("~")(1)))
+                                Next
+                            Catch ex As Exception
+
+                            End Try
+                            outputChat($"Controls now set to {game}")
+                            Return
+                        Else
+                            outputChat($"Game {game} not recognized.")
+                        End If
+
                     Else
                         outputChat($"{tmpuser} not authorized to change controls.")
                         Return
@@ -307,7 +325,7 @@ Partial Public Class frmPS4Twitch
                 Next
                 lines.Sort()
 
-                IO.File.WriteAllLines("macros.txt", lines)
+                IO.File.WriteAllLines($"{game}-macros.txt", lines)
 
                 outputChat($"{macro} added.")
                 Return
@@ -342,7 +360,7 @@ Partial Public Class frmPS4Twitch
                                 lines.Add($"{subpair.Key}~{subpair.Value}")
                             Next
                             lines.Sort()
-                            IO.File.WriteAllLines("macros.txt", lines)
+                            IO.File.WriteAllLines($"{game}-macros.txt", lines)
 
                             outputChat($"{macro} updated.")
                         Catch ex As Exception
@@ -375,7 +393,7 @@ Partial Public Class frmPS4Twitch
                                 lines.Add($"{subpair.Key}~{subpair.Value}")
                             Next
                             lines.Sort()
-                            IO.File.WriteAllLines("macros.txt", lines)
+                            IO.File.WriteAllLines($"{game}-macros.txt", lines)
 
                             outputChat($"{macro} removed.")
                         Catch ex As Exception
@@ -586,6 +604,7 @@ Partial Public Class frmPS4Twitch
     Dim authlist As New List(Of String)
     Dim trilist As New List(Of String)
     Dim ignorelist As New List(Of String)
+    Dim gamelist As New List(Of String)
 
     Dim macros As List(Of KeyValuePair(Of String, String)) = New List(Of KeyValuePair(Of String, String))
 
@@ -659,6 +678,13 @@ Partial Public Class frmPS4Twitch
 
     Private Sub frmPS4Twitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+
+        gamelist.Add("celeste")
+        gamelist.Add("jumpking")
+
+
+
+
         'Control which chat users can execute privileged commands
         Dim lines
         Try
@@ -674,13 +700,15 @@ Partial Public Class frmPS4Twitch
 
         'Load macros
         Try
-            lines = IO.File.ReadLines("macros.txt")
+            lines = IO.File.ReadLines($"{game}-macros.txt")
             For Each line In lines
                 macros.Add(New KeyValuePair(Of String, String)(line.Split("~")(0), line.Split("~")(1)))
             Next
         Catch ex As Exception
 
         End Try
+
+
 
 
         'macros.Add(New KeyValuePair(Of String, String)("#test1", "hx10,wb,wr,hx10"))
