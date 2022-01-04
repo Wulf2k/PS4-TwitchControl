@@ -11,7 +11,7 @@ Partial Public Class frmPS4Twitch
     Dim rph As IntPtr = IntPtr.Zero
     Dim fcAddr As IntPtr = IntPtr.Zero
 
-    Dim game As String = "jumpking"
+    Dim game As String = "celeste"
 
     Dim ctrlStyle As String = ""
     Dim ctrlType As String = ""
@@ -210,7 +210,18 @@ Partial Public Class frmPS4Twitch
             If tmpcmd.IndexOf("#game") = 0 Then
                 If tmpcmd.Contains(" ") Then
                     If authlist.Contains(tmpuser) Then
-                        game = game = tmpcmd.Split(" ")(1)
+                        game = tmpcmd.Split(" ")(1).ToLower()
+                        game = game.Replace(".", "")
+                        game = game.Replace("\", "")
+                        game = game.Replace("/", "")
+
+                        For Each c In game
+                            If Not ((Asc(c) >= 48 And Asc(c) <= 57) Or (Asc(c) >= 97 And Asc(c) <= 122)) Then
+                                outputChat("Invalid char in game name.")
+                                Return
+                            End If
+                        Next
+
                         outputChat($"Controls now set to {game}")
                     Else
                         outputChat($"{tmpuser} not authorized to change controls.")

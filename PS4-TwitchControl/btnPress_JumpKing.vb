@@ -72,7 +72,10 @@ Partial Public Class frmPS4Twitch
                     Dim hwnd As IntPtr
                     hwnd = FindWindowA(Nothing, $"{winTitle}")
                     If Not hwnd.Equals(IntPtr.Zero) Then
-                        'ShowWindow(hwnd, 3)
+                        ShowWindow(hwnd, 2)
+                        Thread.Sleep(1000)
+                        ShowWindow(hwnd, 1)
+                        Thread.Sleep(1000)
                         SetForegroundWindow(hwnd)
                         outputChat($"{winTitle} focused.")
                     Else

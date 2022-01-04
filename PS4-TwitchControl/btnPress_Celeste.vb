@@ -18,6 +18,8 @@ Partial Public Class frmPS4Twitch
 
 
 
+        Dim winTitle As String = "Celeste"
+
         Dim buttons = 0
         Dim LStickLR As Single = 0
         Dim LStickUD As Single = 0
@@ -69,13 +71,16 @@ Partial Public Class frmPS4Twitch
 
                 Case "focus"
                     Dim hwnd As IntPtr
-                    hwnd = FindWindowA(Nothing, "Celeste")
+                    hwnd = FindWindowA(Nothing, $"{winTitle}")
                     If Not hwnd.Equals(IntPtr.Zero) Then
-                        'ShowWindow(hwnd, 3)
+                        ShowWindow(hwnd, 2)
+                        Thread.Sleep(1000)
+                        ShowWindow(hwnd, 1)
+                        Thread.Sleep(1000)
                         SetForegroundWindow(hwnd)
-                        outputChat("Celeste focused.")
+                        outputChat($"{winTitle} focused.")
                     Else
-                        outputChat($"'Celeste' window not found.")
+                        outputChat($"'{winTitle}' window not found.")
                     End If
 
                 Case "hidecursor"
