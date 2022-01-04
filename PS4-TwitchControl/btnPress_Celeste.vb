@@ -667,14 +667,16 @@ Partial Public Class frmPS4Twitch
 
 
 
-        'parse 'walks', 'looks', 'analog's, and 'rolls'
-        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a") Or (cmd(0) = "j")) Or
-            (Strings.Left(cmd, 2) = "da") Then
+        'parse 'walks', 'looks', 'analog's, 'jumps', and 'dashes'
+        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a") Or (cmd(0) = "j") Or (cmd(0) = "y")) Or
+            (Strings.Left(cmd, 2) = "da") Or (Strings.Left(cmd, 3) = "dda") Then
 
             Dim axispad = 0
             Dim cmdpad = 0
             Dim jump As Boolean = False
+            Dim yump As Boolean = False
             Dim dash As Boolean = False
+            Dim demodash As Boolean = False
 
 
             'Set default walk duration if none specified
@@ -696,10 +698,19 @@ Partial Public Class frmPS4Twitch
                 If duration = 0 Then duration = 12
                 dash = True
             End If
+            If Strings.Left(cmd, 3) = "dda" Then
+                cmdpad = 2
+                If duration = 0 Then duration = 12
+                demodash = True
+            End If
 
             If cmd(0) = "j" Then
                 If duration = 0 Then duration = 12
                 jump = True
+            End If
+            If cmd(0) = "y" Then
+                If duration = 0 Then duration = 12
+                yump = True
             End If
 
             'If 'look', then modify right stick's axises
@@ -764,8 +775,13 @@ Partial Public Class frmPS4Twitch
 
             If jump Then
                 Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(!)")
+            ElseIf yump Then
+                Controller(BTN_TRIANGLE, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(!)")
             ElseIf dash Then
                 Controller(BTN_SQUARE, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
+                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration - 2, user, cmd & "(-)")
+            ElseIf demodash Then
+                Controller(BTN_SQUARE, 0, 0, 0, -1, 0, 0, 2, user, cmd & "(!)")
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration - 2, user, cmd & "(-)")
             Else
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
