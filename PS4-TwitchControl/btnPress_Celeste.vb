@@ -638,6 +638,10 @@ Partial Public Class frmPS4Twitch
                 If duration = 0 Then duration = 110
                 ProcessCMD(user, role, $"nh-2,opt-2,dd-2,x-{duration},")
                 Return
+            Case "restart"
+                If duration = 0 Then duration = 140
+                ProcessCMD(user, role, $"nh-2,opt-2,du-2x2,x-2,x-{duration}")
+                Return
         End Select
 
 
