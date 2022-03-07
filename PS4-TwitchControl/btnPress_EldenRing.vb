@@ -700,12 +700,12 @@ Partial Public Class frmPS4Twitch
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r1", "rb"
-                If duration = 0 Then duration = 20
+                If duration = 0 Then duration = 38
                 Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r2", "rt"
-                If duration = 0 Then duration = 12
+                If duration = 0 Then duration = 90
                 Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
@@ -725,8 +725,8 @@ Partial Public Class frmPS4Twitch
                 Return
 
             Case "cr2", "crt"
-                If duration = 0 Then duration = 5
-                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 99, user, cmd & "(!)")
+                If duration = 0 Then duration = 60
+                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 60, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
@@ -793,13 +793,13 @@ Partial Public Class frmPS4Twitch
             'If 'roll', then roll params will be offset 1 character and modify right stick's axises
             If Strings.Left(cmd, 2) = "ro" Then
                 cmdpad = 1
-                If duration = 0 Then duration = 18
+                If duration = 0 Then duration = 38
                 roll = True
             End If
             'If 'jump'
             If Strings.Left(cmd, 1) = "j" Then
                 'cmdpad = 1
-                If duration = 0 Then duration = 18
+                If duration = 0 Then duration = 20
                 jump = True
             End If
 
