@@ -1,7 +1,7 @@
 ﻿Imports System.Threading
 
 Partial Public Class frmPS4Twitch
-    Private Sub btnPress_JumpKing()
+    Private Sub btnPress_EldenRing()
 
 
         'frametime = 33333  '30fps
@@ -22,7 +22,7 @@ Partial Public Class frmPS4Twitch
 
         'Console.WriteLine(DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.ffffff"))
 
-        Dim winTitle As String = "Jump King"
+        Dim winTitle As String = "PCSX2"
         Dim procName As String = "jumpking.exe"
 
         Dim buttons = 0
@@ -61,19 +61,18 @@ Partial Public Class frmPS4Twitch
 
 
                 Case "reconnect1"
+                    Shell("cmd.exe /c taskkill /f /im RTSS*")
+                    Thread.Sleep(1000)
                     Shell($"cmd.exe /c taskkill /f /im {procName}")
                     Thread.Sleep(5000)
-                    Shell("cmd.exe /c start steam://run/1061090")
+                    Shell("steam://run/1061090")
 
 
                 Case "focus"
                     Dim hwnd As IntPtr
                     hwnd = FindWindowA(Nothing, $"{winTitle}")
                     If Not hwnd.Equals(IntPtr.Zero) Then
-                        ShowWindow(hwnd, 2)
-                        Thread.Sleep(1000)
-                        ShowWindow(hwnd, 1)
-                        Thread.Sleep(1000)
+                        'ShowWindow(hwnd, 3)
                         SetForegroundWindow(hwnd)
                         outputChat($"{winTitle} focused.")
                     Else
@@ -174,9 +173,9 @@ Partial Public Class frmPS4Twitch
                         boolHoldAxisVal(i) = 0
                     Next
 
-                Case "hshare", "hselect"
+                Case "hshare", "hsel", "hselect"
                     boolHoldShare = True
-                Case "nhshare", "nhselect"
+                Case "nhshare", "nhsel", "nhselect"
                     boolHoldShare = False
 
                 Case "hopt", "hstart"
@@ -550,7 +549,7 @@ Partial Public Class frmPS4Twitch
         'Console.WriteLine("press exception")
         ' End Try
     End Sub
-    Private Sub execCMD_JumpKing(user As String, role As String, cmd As String)
+    Private Sub execCMD_EldenRing(user As String, role As String, cmd As String)
         Dim buttons = 0
         Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}
         Dim halfhold As Boolean = False
@@ -579,7 +578,7 @@ Partial Public Class frmPS4Twitch
                  "hw", "nhw",
                  "ho", "nho",
                  "hopt", "nhopt", "hstart", "nhstart",
-                 "hshare", "nhshare", "hselect", "nhselect",
+                 "hshare", "nhshare", "hselect", "nhselect", "hsel", "nhsel",
                  "hl1", "nhl1", "hlb", "nhlb",
                  "hl2", "nhl2", "hlt", "nhlt",
                  "hl3", "nhl3",
@@ -653,7 +652,7 @@ Partial Public Class frmPS4Twitch
 
 
 
-            Case "share", "select"
+            Case "share", "sel", "select"
                 If duration = 0 Then duration = 4
                 Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
@@ -764,12 +763,12 @@ Partial Public Class frmPS4Twitch
 
 
         'parse 'walks', 'looks', 'analog's, and 'rolls'
-        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "j")) Or    'If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
+        If ((cmd(0) = "w") Or (cmd(0) = "l")) Or    'If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
             (Strings.Left(cmd, 2) = "ro") Then
 
             Dim axispad = 0
             Dim cmdpad = 0
-            Dim jump As Boolean = False
+            Dim roll As Boolean = False
 
 
             'Set default walk duration if none specified
@@ -785,12 +784,20 @@ Partial Public Class frmPS4Twitch
             End If
 
 
-
-
-            If cmd(0) = "j" Then
-                If duration = 0 Then duration = 40
-                jump = True
+            'If 'roll', then roll params will be offset 1 character and modify right stick's axises
+            If Strings.Left(cmd, 2) = "ro" Then
+                cmdpad = 1
+                If duration = 0 Then duration = 18
+                roll = True
             End If
+
+            'If 'look', then modify right stick's axises
+            If cmd(0) = "l" Then
+                axispad = 2
+                If duration = 0 Then duration = 1
+            End If
+
+
 
             'Return if garbage data
             For i = 1 To 4
@@ -848,9 +855,9 @@ Partial Public Class frmPS4Twitch
             'Remove cmd padding
             cmd = cmd.Replace(".", "")
 
-            If jump Then
-                Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
-                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd + "(-)")
+            If roll Then
+                Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
+                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(-)")
             Else
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
             End If
@@ -858,5 +865,4 @@ Partial Public Class frmPS4Twitch
 
         End If
     End Sub
-
 End Class

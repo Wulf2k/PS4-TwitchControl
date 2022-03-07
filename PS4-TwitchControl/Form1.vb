@@ -11,7 +11,7 @@ Partial Public Class frmPS4Twitch
     Dim rph As IntPtr = IntPtr.Zero
     Dim fcAddr As IntPtr = IntPtr.Zero
 
-    Dim game As String = "celeste"
+    Dim game As String = "eldenring"
 
     Dim ctrlStyle As String = ""
     Dim ctrlType As String = ""
@@ -40,11 +40,35 @@ Partial Public Class frmPS4Twitch
     End Sub
     Private Sub press()
         Select Case game
+            Case "gamecube"
+                btnPress__Gamecube()
+                Return
+            Case "ps4"
+                btnPress__PS4()
+                Return
+            Case "xb1"
+                btnPress__XB1()
+                Return
+
+
+            Case "bloodbornedemake"
+                btnPress_BloodborneDemake()
+                Return
+            Case "crashbandicootwoc"
+                btnPress_CrashBandicootWoC()
+                Return
             Case "celeste"
                 btnPress_Celeste()
+                Return
+            Case "eldenring"
+                btnPress_EldenRing()
+                Return
             Case "jumpking"
                 btnPress_JumpKing()
-
+                Return
+            Case "terraria"
+                btnPress_Terraria()
+                Return
         End Select
 
         'btnPress__Switch()
@@ -63,11 +87,37 @@ Partial Public Class frmPS4Twitch
     Private Sub execCMD(user As String, role As String, cmd As String)
 
         Select Case game
+            Case "gamecube"
+                execCMD__Gamecube(user, role, cmd)
+                Return
+            Case "ps4"
+                execCMD__PS4(user, role, cmd)
+                Return
+            Case "xb1"
+                execCMD__XB1(user, role, cmd)
+                Return
+
+
+            Case "bloodbornedemake"
+                execCMD_BloodborneDemake(user, role, cmd)
+                Return
+            Case "crashbandicootwoc"
+                execCMD_CrashBandicootWoC(user, role, cmd)
+                Return
             Case "celeste"
                 execCMD_Celeste(user, role, cmd)
+                Return
+            Case "eldenring"
+                execCMD_EldenRing(user, role, cmd)
+                Return
             Case "jumpking"
                 execCMD_JumpKing(user, role, cmd)
+                Return
+            Case "terraria"
+                execCMD_Terraria(user, role, cmd)
+                Return
         End Select
+
         'execCMD__Switch(user, role, cmd)
         'execCMD__XB1(user, role, cmd)
         'execCMD_DarkSoulsRemastered(user, role, cmd)
@@ -208,6 +258,10 @@ Partial Public Class frmPS4Twitch
 
             'game
             If tmpcmd.IndexOf("#game") = 0 Then
+                outputChat("Functionality temporarily neutered.")
+                'Debug macros failing to load from txt file when using this cmd before re-enabling
+                Return
+
                 If tmpcmd.Contains(" ") Then
                     If authlist.Contains(tmpuser) Then
                         game = tmpcmd.Split(" ")(1).ToLower()
@@ -237,27 +291,32 @@ Partial Public Class frmPS4Twitch
                             End Try
                             outputChat($"Controls now set to {game}")
                             Return
-                        Else
+                        Else 'if game not in gamlist
                             outputChat($"Game {game} not recognized.")
-                        End If
+                        End If 'end if game in gamelist
 
-                    Else
+                    Else 'if authlist not contain tmpuser
                         outputChat($"{tmpuser} not authorized to change controls.")
                         Return
-                    End If
-                Else
-                    outputChat("Unable to parse game name.")
-                End If
+                    End If 'end if authlist contains tmpuser
+                Else 'if tmpcmd had no space
+                    outputChat($"Current game is {game}.")
+                End If 'end if tmpcmd has space
                 Return
             End If
 
             'macrolist
             If tmpcmd = "#macrolist" Then
-                Dim txt As String = ""
-                For Each pair As KeyValuePair(Of String, String) In macros
-                    txt += pair.Key + ", "
-                Next
-                outputChat(txt)
+                If macros.Count > 0 Then
+                    Dim txt As String = ""
+                    For Each pair As KeyValuePair(Of String, String) In macros
+                        txt += pair.Key + ", "
+                    Next
+                    outputChat(txt)
+                Else
+                    outputChat($"No macros found for {game}.")
+                End If
+
                 Return
             End If
 
@@ -489,7 +548,7 @@ Partial Public Class frmPS4Twitch
 
 
         Select Case shorttmpcmd
-            Case "reconnect1"
+            Case "reconnect1", "ss", "ls", "rs"
                 If Not authlist.Contains(user) Then
                     outputChat("Command restricted.")
                     Return

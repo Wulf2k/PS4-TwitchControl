@@ -77,7 +77,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="asm.vb" />
+    <Compile Include="btnPress_ZeldaTP.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="btnPress_CrashBandicootWoC.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="btnPress__PS4.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="btnPress_JumpKing.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="btnPress_BloodborneDemake.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="btnPress_Terraria.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="btnPress_EldenRing.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="memFuncs.vb">
@@ -92,7 +110,7 @@
     <Compile Include="btnPress__Switch.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="btnPress_ZeldaTP.vb">
+    <Compile Include="btnPress__Gamecube.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="btnPress_SilentHill2.vb">

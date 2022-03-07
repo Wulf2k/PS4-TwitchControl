@@ -1,7 +1,7 @@
 ﻿Imports System.Threading
 
 Partial Public Class frmPS4Twitch
-    Private Sub btnPress_JumpKing()
+    Private Sub btnPress_Terraria()
 
 
         'frametime = 33333  '30fps
@@ -22,8 +22,8 @@ Partial Public Class frmPS4Twitch
 
         'Console.WriteLine(DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.ffffff"))
 
-        Dim winTitle As String = "Jump King"
-        Dim procName As String = "jumpking.exe"
+        Dim winTitle As String = "Terraria"
+        Dim procName As String = "terraria.exe"
 
         Dim buttons = 0
         Dim LStickLR As Single = 0
@@ -63,17 +63,14 @@ Partial Public Class frmPS4Twitch
                 Case "reconnect1"
                     Shell($"cmd.exe /c taskkill /f /im {procName}")
                     Thread.Sleep(5000)
-                    Shell("cmd.exe /c start steam://run/1061090")
+                    'Shell("steam://run/1061090")
 
 
                 Case "focus"
                     Dim hwnd As IntPtr
                     hwnd = FindWindowA(Nothing, $"{winTitle}")
                     If Not hwnd.Equals(IntPtr.Zero) Then
-                        ShowWindow(hwnd, 2)
-                        Thread.Sleep(1000)
-                        ShowWindow(hwnd, 1)
-                        Thread.Sleep(1000)
+                        'ShowWindow(hwnd, 3)
                         SetForegroundWindow(hwnd)
                         outputChat($"{winTitle} focused.")
                     Else
@@ -81,14 +78,16 @@ Partial Public Class frmPS4Twitch
                     End If
 
 
-                'Case "ss"
-                '    Try
-                '        FileCopy("c:\program files (x86)\steam\steamapps\common\super meat boy\userdata\savegame.dat",
-                '                 $"c:\program files (x86)\steam\steamapps\common\super meat boy\userdata\{DateTime.Now.Year}.{DateTime.Now.Month}.{DateTime.Now.Day}.{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.savegame.dat")
-                '        outputChat("save backup complete")
-                '    Catch ex As Exception
-                '        outputChat("saved failed?")
-                '    End Try
+                Case "ss"
+                    Try
+                        FileCopy("C:\Users\Lane\Documents\My Games\Terraria\Players\Flong.plr",
+                                 $"c:\share\{DateTime.Now.Year}.{DateTime.Now.Month}.{DateTime.Now.Day}.{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.Flong.plr")
+                        FileCopy("C:\Users\Lane\Documents\My Games\Terraria\Worlds\Wulftopia.wld",
+                                 $"c:\share\{DateTime.Now.Year}.{DateTime.Now.Month}.{DateTime.Now.Day}.{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.Wulftopia.wld")
+                        outputChat("Save backup complete")
+                    Catch ex As Exception
+                        outputChat("Save backup failed?")
+                    End Try
                     ''Return
                     'Dim hwnd As IntPtr
                     'hwnd = FindWindowA(Nothing, winTitle)
@@ -174,9 +173,9 @@ Partial Public Class frmPS4Twitch
                         boolHoldAxisVal(i) = 0
                     Next
 
-                Case "hshare", "hselect"
+                Case "hshare", "hsel", "hselect"
                     boolHoldShare = True
-                Case "nhshare", "nhselect"
+                Case "nhshare", "nhsel", "nhselect"
                     boolHoldShare = False
 
                 Case "hopt", "hstart"
@@ -405,7 +404,7 @@ Partial Public Class frmPS4Twitch
                             P1output(gcapiTitanOne.TitanOne.Xbox.LeftX) = LStickLR * 100
                             P1output(gcapiTitanOne.TitanOne.Xbox.LeftY) = LStickUD * -100
                             P1output(gcapiTitanOne.TitanOne.Xbox.RightX) = RStickLR * 100
-                            P1output(gcapiTitanOne.TitanOne.Xbox.RightY) = RStickUD * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightY) = RStickUD * -100
 
                             P1output(gcapiTitanOne.TitanOne.Xbox.LeftTrigger) = LTrigger * 100
                             P1output(gcapiTitanOne.TitanOne.Xbox.RightTrigger) = RTrigger * 100
@@ -444,7 +443,7 @@ Partial Public Class frmPS4Twitch
                             P1output(gcapiTitanOne.TitanOne.Xbox.LeftX) = LStickLR * 100
                             P1output(gcapiTitanOne.TitanOne.Xbox.LeftY) = LStickUD * -100
                             P1output(gcapiTitanOne.TitanOne.Xbox.RightX) = RStickLR * 100
-                            P1output(gcapiTitanOne.TitanOne.Xbox.RightY) = RStickUD * 100
+                            P1output(gcapiTitanOne.TitanOne.Xbox.RightY) = RStickUD * -100
 
                             P1output(gcapiTitanOne.TitanOne.Xbox.LeftTrigger) = LTrigger * 100
                             P1output(gcapiTitanOne.TitanOne.Xbox.RightTrigger) = RTrigger * 100
@@ -550,7 +549,7 @@ Partial Public Class frmPS4Twitch
         'Console.WriteLine("press exception")
         ' End Try
     End Sub
-    Private Sub execCMD_JumpKing(user As String, role As String, cmd As String)
+    Private Sub execCMD_Terraria(user As String, role As String, cmd As String)
         Dim buttons = 0
         Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}
         Dim halfhold As Boolean = False
@@ -579,7 +578,7 @@ Partial Public Class frmPS4Twitch
                  "hw", "nhw",
                  "ho", "nho",
                  "hopt", "nhopt", "hstart", "nhstart",
-                 "hshare", "nhshare", "hselect", "nhselect",
+                 "hshare", "nhshare", "hselect", "nhselect", "hsel", "nhsel",
                  "hl1", "nhl1", "hlb", "nhlb",
                  "hl2", "nhl2", "hlt", "nhlt",
                  "hl3", "nhl3",
@@ -631,105 +630,105 @@ Partial Public Class frmPS4Twitch
 
 
             Case "du"
-                If duration = 0 Then duration = 4
-                Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dd"
-                If duration = 0 Then duration = 4
-                Controller(BTN_DPAD_DOWN, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_DPAD_DOWN, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dl"
-                If duration = 0 Then duration = 4
-                Controller(BTN_DPAD_LEFT, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_DPAD_LEFT, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "dr"
-                If duration = 0 Then duration = 4
-                Controller(BTN_DPAD_RIGHT, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_DPAD_RIGHT, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
 
-            Case "share", "select"
-                If duration = 0 Then duration = 4
-                Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+            Case "share", "sel", "select"
+                If duration = 0 Then duration = 5
+                Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "opt", "start"
-                If duration = 0 Then duration = 4
-                Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_OPTIONS, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "b"
-                If duration = 0 Then duration = 10
-                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_O, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "a"
-                If duration = 0 Then duration = 10
-                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_X, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "x"
-                If duration = 0 Then duration = 10
-                Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "y"
-                If duration = 0 Then duration = 15
-                Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
             Case "l1", "lb"
-                If duration = 0 Then duration = 20
-                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_L1, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "l2", "lt"
                 If duration = 0 Then duration = 5
-                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 10, user, cmd & "(!)")
+                Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r1", "rb"
-                If duration = 0 Then duration = 20
-                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_R1, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "r2", "rt"
-                If duration = 0 Then duration = 12
-                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
 
             Case "l3"
-                If duration = 0 Then duration = 4
-                Controller(BTN_L3, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_L3, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
             Case "r3"
-                If duration = 0 Then duration = 4
-                Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_R3, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
 
 
             Case "home"
-                If duration = 0 Then duration = 4
-                Controller(BTN_PSHOME, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
+                If duration = 0 Then duration = 5
+                Controller(BTN_PSHOME, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, 0, duration, cmd & "(-)")
                 Return
         End Select
@@ -764,8 +763,8 @@ Partial Public Class frmPS4Twitch
 
 
         'parse 'walks', 'looks', 'analog's, and 'rolls'
-        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "j")) Or    'If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
-            (Strings.Left(cmd, 2) = "ro") Then
+        If ((cmd(0) = "w") Or (cmd(0) = "l")) Or    'If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
+            (Strings.Left(cmd, 1) = "j") Then
 
             Dim axispad = 0
             Dim cmdpad = 0
@@ -785,12 +784,20 @@ Partial Public Class frmPS4Twitch
             End If
 
 
-
-
-            If cmd(0) = "j" Then
-                If duration = 0 Then duration = 40
+            'If 'roll', then roll params will be offset 1 character and modify right stick's axises
+            If Strings.Left(cmd, 1) = "j" Then
+                'cmdpad = 1
+                If duration = 0 Then duration = 30
                 jump = True
             End If
+
+            'If 'look', then modify right stick's axises
+            If cmd(0) = "l" Then
+                axispad = 2
+                If duration = 0 Then duration = 2
+            End If
+
+
 
             'Return if garbage data
             For i = 1 To 4
@@ -849,8 +856,8 @@ Partial Public Class frmPS4Twitch
             cmd = cmd.Replace(".", "")
 
             If jump Then
-                Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
-                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd + "(-)")
+                Controller(BTN_L2, axis(2), axis(3), axis(0), axis(1), 1, 0, duration, user, cmd & "(!)")
+                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, 5, user, cmd & "(-)")
             Else
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
             End If
@@ -858,5 +865,4 @@ Partial Public Class frmPS4Twitch
 
         End If
     End Sub
-
 End Class

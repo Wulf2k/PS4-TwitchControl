@@ -10,8 +10,8 @@ Partial Public Class frmPS4Twitch
         'ctrlStyle = "switch"
         ctrlStyle = "xbox"
 
-        'ctrlType = "tt"
-        ctrlType = "vg"
+        ctrlType = "tt"
+        'ctrlType = "vg"
 
 
 
@@ -173,9 +173,9 @@ Partial Public Class frmPS4Twitch
                         boolHoldAxisVal(i) = 0
                     Next
 
-                Case "hshare", "hselect"
+                Case "hshare", "hsel", "hselect"
                     boolHoldShare = True
-                Case "nhshare", "nhselect"
+                Case "nhshare", "nhsel", "nhselect"
                     boolHoldShare = False
 
                 Case "hopt", "hstart"
@@ -578,7 +578,7 @@ Partial Public Class frmPS4Twitch
                  "hw", "nhw",
                  "ho", "nho",
                  "hopt", "nhopt", "hstart", "nhstart",
-                 "hshare", "nhshare", "hselect", "nhselect",
+                 "hshare", "nhshare", "hselect", "nhselect", "hsel", "nhsel",
                  "hl1", "nhl1", "hlb", "nhlb",
                  "hl2", "nhl2", "hlt", "nhlt",
                  "hl3", "nhl3",
@@ -652,7 +652,7 @@ Partial Public Class frmPS4Twitch
 
 
 
-            Case "share", "select"
+            Case "share", "sel", "select"
                 If duration = 0 Then duration = 4
                 Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")

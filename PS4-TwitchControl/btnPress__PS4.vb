@@ -1,7 +1,7 @@
 ﻿Imports System.Threading
 
 Partial Public Class frmPS4Twitch
-    Private Sub btnPress_JumpKing()
+    Private Sub btnPress__PS4()
 
 
         'frametime = 33333  '30fps
@@ -22,8 +22,8 @@ Partial Public Class frmPS4Twitch
 
         'Console.WriteLine(DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.ffffff"))
 
-        Dim winTitle As String = "Jump King"
-        Dim procName As String = "jumpking.exe"
+        Dim winTitle As String = "PCSX2"
+        Dim procName As String = "BBPSX-Win64-Shipping.exe"
 
         Dim buttons = 0
         Dim LStickLR As Single = 0
@@ -61,19 +61,17 @@ Partial Public Class frmPS4Twitch
 
 
                 Case "reconnect1"
+
                     Shell($"cmd.exe /c taskkill /f /im {procName}")
                     Thread.Sleep(5000)
-                    Shell("cmd.exe /c start steam://run/1061090")
+                    Shell("C:\temp\bbdemake\BBPSX\Binaries\Win64\BBPSX-Win64-Shipping.exe")
 
 
                 Case "focus"
                     Dim hwnd As IntPtr
                     hwnd = FindWindowA(Nothing, $"{winTitle}")
                     If Not hwnd.Equals(IntPtr.Zero) Then
-                        ShowWindow(hwnd, 2)
-                        Thread.Sleep(1000)
-                        ShowWindow(hwnd, 1)
-                        Thread.Sleep(1000)
+                        'ShowWindow(hwnd, 3)
                         SetForegroundWindow(hwnd)
                         outputChat($"{winTitle} focused.")
                     Else
@@ -81,40 +79,42 @@ Partial Public Class frmPS4Twitch
                     End If
 
 
-                'Case "ss"
-                '    Try
-                '        FileCopy("c:\program files (x86)\steam\steamapps\common\super meat boy\userdata\savegame.dat",
-                '                 $"c:\program files (x86)\steam\steamapps\common\super meat boy\userdata\{DateTime.Now.Year}.{DateTime.Now.Month}.{DateTime.Now.Day}.{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.savegame.dat")
-                '        outputChat("save backup complete")
-                '    Catch ex As Exception
-                '        outputChat("saved failed?")
-                '    End Try
-                    ''Return
-                    'Dim hwnd As IntPtr
-                    'hwnd = FindWindowA(Nothing, winTitle)
-                    'If Not hwnd.Equals(IntPtr.Zero) Then
-                    'SetForegroundWindow(hwnd)
-                    ''My.Computer.Keyboard.SendKeys("+{F1}", True)
-                    ''outputChat($"State saved.")
-                    'Else
-                    'outputChat($"Window not found.")
-                    'End If
+                Case "ss"
+
+                    Try
+                        '        FileCopy("c:\program files (x86)\steam\steamapps\common\super meat boy\userdata\savegame.dat",
+                        '                 $"c:\program files (x86)\steam\steamapps\common\super meat boy\userdata\{DateTime.Now.Year}.{DateTime.Now.Month}.{DateTime.Now.Day}.{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.savegame.dat")
+                        '        outputChat("save backup complete")
+
+                        Dim hwnd As IntPtr
+                        hwnd = FindWindowA(Nothing, winTitle)
+                        If Not hwnd.Equals(IntPtr.Zero) Then
+                            SetForegroundWindow(hwnd)
+                            My.Computer.Keyboard.SendKeys("{F1}", True)
+                            outputChat($"State saved.")
+                        Else
+                            outputChat($"Window {winTitle} not found.")
+                        End If
+
+                    Catch ex As Exception
+                        '        outputChat("saved failed?")
+                    End Try
 
 
-                    'Case "ls"
-                    'Return
 
-                    'Dim hwnd As IntPtr
-                    'hwnd = FindWindowA(Nothing, winTitle)
-                    'If Not hwnd.Equals(IntPtr.Zero) Then
-                    'SetForegroundWindow(hwnd)
-                    ''My.Computer.Keyboard.SendKeys("{F1}", True)
-                    ''outputChat($"State loaded.")
-                    'Else
-                    'outputChat($"Window not found.")
-                    'End If
+                Case "ls"
+                    Dim hwnd As IntPtr
+                    hwnd = FindWindowA(Nothing, winTitle)
+                    If Not hwnd.Equals(IntPtr.Zero) Then
+                        SetForegroundWindow(hwnd)
+                        My.Computer.Keyboard.SendKeys("{F3}", True)
+                        outputChat($"State loaded.")
+                    Else
+                        outputChat($"Window {winTitle} not found.")
+                    End If
 
-                    'Case "rs"
+
+                Case "rs"
                     'Dim hwnd As IntPtr
                     'hwnd = FindWindowA(Nothing, winTitle)
                     'If Not hwnd.Equals(IntPtr.Zero) Then
@@ -216,24 +216,24 @@ Partial Public Class frmPS4Twitch
                     boolHoldR3 = False
 
 
-                Case "hb"
+                Case "ho"
                     boolHoldO = True
-                Case "nhb"
+                Case "nho"
                     boolHoldO = False
 
-                Case "hx"
+                Case "hsq"
                     boolHoldSq = True
-                Case "nhx"
+                Case "nhsq"
                     boolHoldSq = False
 
-                Case "hy"
+                Case "htri"
                     boolHoldTri = True
-                Case "nhy"
+                Case "nhtri"
                     boolHoldTri = False
 
-                Case "ha"
+                Case "ha", "hx"
                     boolHoldX = True
-                Case "nha"
+                Case "nha", "nhx"
                     boolHoldX = False
 
                 Case "hdu"
@@ -550,7 +550,7 @@ Partial Public Class frmPS4Twitch
         'Console.WriteLine("press exception")
         ' End Try
     End Sub
-    Private Sub execCMD_JumpKing(user As String, role As String, cmd As String)
+    Private Sub execCMD__PS4(user As String, role As String, cmd As String)
         Dim buttons = 0
         Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}
         Dim halfhold As Boolean = False
@@ -594,13 +594,13 @@ Partial Public Class frmPS4Twitch
                  "hdd", "nhdd",
                  "hdl", "nhdl",
                  "hdr", "nhdr",
-                 "ss",
                  "reconnect1", "reconnect2",
                  "focus",
                  "hidecursor",
-                 "invertlx", "invertly", "invertrx", "invertry"
+                 "invertlx", "invertly", "invertrx", "invertry",
+                 "ss", "ls", "rs"
 
-                '"ss", "ls", "rs",
+
 
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
 
@@ -665,25 +665,25 @@ Partial Public Class frmPS4Twitch
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "b"
+            Case "o"
                 If duration = 0 Then duration = 10
                 Controller(BTN_O, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "a"
+            Case "x"
                 If duration = 0 Then duration = 10
                 Controller(BTN_X, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "x"
+            Case "sq"
                 If duration = 0 Then duration = 10
                 Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
-            Case "y"
+            Case "tri"
                 If duration = 0 Then duration = 15
                 Controller(BTN_TRIANGLE, 0, 0, 0, 0, 0, 0, 4, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
@@ -764,33 +764,41 @@ Partial Public Class frmPS4Twitch
 
 
         'parse 'walks', 'looks', 'analog's, and 'rolls'
-        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "j")) Or    'If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
+        If ((cmd(0) = "w") Or (cmd(0) = "l")) Or    'If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
             (Strings.Left(cmd, 2) = "ro") Then
 
             Dim axispad = 0
             Dim cmdpad = 0
-            Dim jump As Boolean = False
+            Dim roll As Boolean = False
 
 
             'Set default walk duration if none specified
             If cmd(0) = "w" And Not analoghold Then
-                If duration = 0 Then duration = 20
+                If duration = 0 Then duration = 60
             End If
 
             If cmd(0) = "a" And Not analoghold Then
                 'TODO:  Damnit this is ugly.  Redo, with proper parsing.
                 cmd = Strings.Left(cmd.Replace(".", "5"), 5)
-                If duration = 0 Then duration = 20
+                If duration = 0 Then duration = 60
                 cmdparams = Mid(cmd, 2, 4)
             End If
 
 
-
-
-            If cmd(0) = "j" Then
-                If duration = 0 Then duration = 40
-                jump = True
+            'If 'roll', then roll params will be offset 1 character and modify right stick's axises
+            If Strings.Left(cmd, 2) = "ro" Then
+                cmdpad = 1
+                If duration = 0 Then duration = 18
+                roll = True
             End If
+
+            'If 'look', then modify right stick's axises
+            If cmd(0) = "l" Then
+                axispad = 2
+                If duration = 0 Then duration = 1
+            End If
+
+
 
             'Return if garbage data
             For i = 1 To 4
@@ -848,9 +856,9 @@ Partial Public Class frmPS4Twitch
             'Remove cmd padding
             cmd = cmd.Replace(".", "")
 
-            If jump Then
-                Controller(BTN_X, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
-                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd + "(-)")
+            If roll Then
+                Controller(BTN_O, axis(2), axis(3), axis(0), axis(1), 0, 0, 2, user, cmd & "(!)")
+                Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd & "(-)")
             Else
                 Controller(0, axis(2), axis(3), axis(0), axis(1), 0, 0, duration, user, cmd)
             End If
@@ -858,5 +866,4 @@ Partial Public Class frmPS4Twitch
 
         End If
     End Sub
-
 End Class
