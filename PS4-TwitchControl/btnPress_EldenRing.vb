@@ -768,7 +768,7 @@ Partial Public Class frmPS4Twitch
 
 
         'parse 'walks', 'looks', 'analog's, and 'rolls'
-        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "j")) Or    'If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
+        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "j") Or (cmd(0) = "a")) Or    'If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
             (Strings.Left(cmd, 2) = "ro") Then
 
             Dim axispad = 0
@@ -807,7 +807,7 @@ Partial Public Class frmPS4Twitch
             'If 'look', then modify right stick's axises
             If cmd(0) = "l" Then
                 axispad = 2
-                If duration = 0 Then duration = 5
+                If duration = 0 Then duration = 15
             End If
 
 
