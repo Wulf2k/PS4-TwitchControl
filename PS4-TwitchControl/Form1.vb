@@ -558,7 +558,7 @@ Partial Public Class frmPS4Twitch
                     'outputChat("Options menu restricted to pre-approved users.")
                     'Return
                 End If
-            Case "pshome"
+            Case "home", "hhome", "pshome", "hpshome"
                 If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb" Or tmpuser = "tompiet1") Then
                     'outputChat("Uhh....  No.")
                     Return
