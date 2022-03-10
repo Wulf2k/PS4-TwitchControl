@@ -553,14 +553,14 @@ Partial Public Class frmPS4Twitch
                     outputChat("Command restricted.")
                     Return
                 End If
-            Case "options", "opt", "hopt"
+            Case "options", "opt", "hopt", "start", "hstart"
                 If Not authlist.Contains(user) Then
-                    'outputChat("Options menu restricted to pre-approved users.")
-                    'Return
+                    outputChat("Options menu restricted to pre-approved users.")
+                    Return
                 End If
             Case "home", "hhome", "pshome", "hpshome"
                 If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb" Or tmpuser = "tompiet1") Then
-                    'outputChat("Uhh....  No.")
+                    outputChat("Uhh....  No.")
                     Return
                 End If
             Case "tri", "htri"

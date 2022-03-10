@@ -652,8 +652,42 @@ Partial Public Class frmPS4Twitch
 
 
 
-            Case "share", "sel", "select"
+            Case "ydu"
                 If duration = 0 Then duration = 5
+                Controller(BTN_TRIANGLE + BTN_DPAD_UP, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
+                Return
+            Case "ydd"
+                If duration = 0 Then duration = 5
+                Controller(BTN_TRIANGLE + BTN_DPAD_DOWN, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
+                Return
+            Case "ydl"
+                If duration = 0 Then duration = 5
+                Controller(BTN_TRIANGLE + BTN_DPAD_LEFT, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
+                Return
+            Case "ydr"
+                If duration = 0 Then duration = 5
+                Controller(BTN_TRIANGLE + BTN_DPAD_RIGHT, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
+                Return
+            Case "yl1", "ylb"
+                If duration = 0 Then duration = 30
+                Controller(BTN_TRIANGLE + BTN_L1, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
+                Return
+            Case "yr1", "yrb"
+                If duration = 0 Then duration = 30
+                Controller(BTN_TRIANGLE + BTN_R1, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
+                Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
+                Return
+
+
+
+
+            Case "share", "sel", "select"
+                If duration = 0 Then duration = 20
                 Controller(BTN_SHARE, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
@@ -665,7 +699,7 @@ Partial Public Class frmPS4Twitch
                 Return
 
             Case "b"
-                If duration = 0 Then duration = 10
+                If duration = 0 Then duration = 15
                 Controller(BTN_O, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
@@ -677,7 +711,7 @@ Partial Public Class frmPS4Twitch
                 Return
 
             Case "x"
-                If duration = 0 Then duration = 10
+                If duration = 0 Then duration = 50
                 Controller(BTN_SQUARE, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
@@ -713,7 +747,7 @@ Partial Public Class frmPS4Twitch
 
 
             Case "l3"
-                If duration = 0 Then duration = 5
+                If duration = 0 Then duration = 15
                 Controller(BTN_L3, 0, 0, 0, 0, 0, 0, 5, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
@@ -768,7 +802,7 @@ Partial Public Class frmPS4Twitch
 
 
         'parse 'walks', 'looks', 'analog's, and 'rolls'
-        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "j") Or (cmd(0) = "a")) Or    'If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "a")) Or
+        If ((cmd(0) = "w") Or (cmd(0) = "l") Or (cmd(0) = "j") Or (cmd(0) = "a")) Or
             (Strings.Left(cmd, 2) = "ro") Then
 
             Dim axispad = 0
@@ -785,7 +819,7 @@ Partial Public Class frmPS4Twitch
             If cmd(0) = "a" And Not analoghold Then
                 'TODO:  Damnit this is ugly.  Redo, with proper parsing.
                 cmd = Strings.Left(cmd.Replace(".", "5"), 5)
-                If duration = 0 Then duration = 60
+                If duration = 0 Then duration = 15
                 cmdparams = Mid(cmd, 2, 4)
             End If
 
