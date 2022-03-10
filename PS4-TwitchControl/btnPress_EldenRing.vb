@@ -35,6 +35,9 @@ Partial Public Class frmPS4Twitch
         Dim user As String = ""
         Dim cmd As String = ""
 
+        Dim analoghold As Boolean = False
+        Dim analogholdrelease As Boolean = False
+
         'SyncLock queuelock
         'If nothing in queue, push a 'nothing'-press onto it for 1 frame
         If QueuedInput.Count = 1 AndAlso Not QueuedInput(0).cmd = "idle" Then
@@ -60,70 +63,6 @@ Partial Public Class frmPS4Twitch
                     QueuedInput(0).cmd = ""
 
 
-                    'Case "reconnect1"
-                    'Shell("cmd.exe /c taskkill /f /im RTSS*")
-                    'Thread.Sleep(1000)
-                    'Shell($"cmd.exe /c taskkill /f /im {procName}")
-                    'Thread.Sleep(5000)
-                    'Shell("steam://run/1061090")
-
-
-                    'Case "focus"
-                    'Dim hwnd As IntPtr
-                    'hwnd = FindWindowA(Nothing, $"{winTitle}")
-                    'If Not hwnd.Equals(IntPtr.Zero) Then
-                    '                    'ShowWindow(hwnd, 3)
-                    'SetForegroundWindow(hwnd)
-                    '                    outputChat($"{winTitle} focused.")
-                    'Else
-                    '                    outputChat($"'{winTitle}' window not found.")
-                    'End If
-
-
-                'Case "ss"
-                '    Try
-                '        FileCopy("c:\program files (x86)\steam\steamapps\common\super meat boy\userdata\savegame.dat",
-                '                 $"c:\program files (x86)\steam\steamapps\common\super meat boy\userdata\{DateTime.Now.Year}.{DateTime.Now.Month}.{DateTime.Now.Day}.{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.savegame.dat")
-                '        outputChat("save backup complete")
-                '    Catch ex As Exception
-                '        outputChat("saved failed?")
-                '    End Try
-                    ''Return
-                    'Dim hwnd As IntPtr
-                    'hwnd = FindWindowA(Nothing, winTitle)
-                    'If Not hwnd.Equals(IntPtr.Zero) Then
-                    'SetForegroundWindow(hwnd)
-                    ''My.Computer.Keyboard.SendKeys("+{F1}", True)
-                    ''outputChat($"State saved.")
-                    'Else
-                    'outputChat($"Window not found.")
-                    'End If
-
-
-                    'Case "ls"
-                    'Return
-
-                    'Dim hwnd As IntPtr
-                    'hwnd = FindWindowA(Nothing, winTitle)
-                    'If Not hwnd.Equals(IntPtr.Zero) Then
-                    'SetForegroundWindow(hwnd)
-                    ''My.Computer.Keyboard.SendKeys("{F1}", True)
-                    ''outputChat($"State loaded.")
-                    'Else
-                    'outputChat($"Window not found.")
-                    'End If
-
-                    'Case "rs"
-                    'Dim hwnd As IntPtr
-                    'hwnd = FindWindowA(Nothing, winTitle)
-                    'If Not hwnd.Equals(IntPtr.Zero) Then
-                    '                    SetForegroundWindow(hwnd)
-                    'My.Computer.Keyboard.SendKeys("^{R}", True)
-                    '                    outputChat($"Game reset.")
-                    'Else
-                    '                    outputChat($"Window not found.")
-                    'End If
-
                 Case "invertlx"
                     boolInvertLX = Not boolInvertLX
                     outputChat("InvertLX = " + boolInvertLX.ToString)
@@ -137,12 +76,6 @@ Partial Public Class frmPS4Twitch
                     boolInvertRY = Not boolInvertRY
                     outputChat("InvertRY = " + boolInvertRY.ToString)
 
-
-                Case "hidecursor"
-                    Dim x = 1600
-                    Dim y = 1
-
-                    Cursor.Position = New Point(x, y)
 
                 Case "nh"
                     boolHoldL1 = False
@@ -251,7 +184,84 @@ Partial Public Class frmPS4Twitch
                     boolHoldDR = True
                 Case "nhdr"
                     boolHoldDR = False
+
+
+                Case Else
+                    'Sweet Jebus, what monstrosity have I created by 'fixing' analog holds jumping the queue?
+                    'Why do I do this to myself?
+                    If QueuedInput(0).cmd.Length < 3 Then Exit Select
+
+                    'parse out no-hold
+                    If QueuedInput(0).cmd(0) = "n" Then
+                        analogholdrelease = True
+                        QueuedInput(0).cmd = Strings.Right(QueuedInput(0).cmd, QueuedInput(0).cmd.Length - 1)
+                    End If
+
+
+                    'parse out analog-hold
+                    If QueuedInput(0).cmd(0) = "h" Then
+                        analoghold = True
+                        QueuedInput(0).cmd = Strings.Right(QueuedInput(0).cmd, QueuedInput(0).cmd.Length - 1)
+                    End If
+
+
+                    Dim halfhold As Boolean = False
+                    'parse out short-walk
+                    If QueuedInput(0).cmd(0) = "s" Then
+                        halfhold = True
+                        QueuedInput(0).cmd = Strings.Right(QueuedInput(0).cmd, QueuedInput(0).cmd.Length - 1)
+                    End If
+
+
+                    Dim cmdparams As String = "5555"
+                    Dim axispad = 0
+                    Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}
+
+
+                    'If 'look', then modify right stick's axises
+                    If QueuedInput(0).cmd(0) = "l" Then
+                        axispad = 2
+                    End If
+
+
+                    For i = 1 To Math.Min(2, QueuedInput(0).cmd.Length - 1)
+                        'Handle lettered values
+                        Select Case QueuedInput(0).cmd(i)
+                            Case "f", "u"
+                                mid(cmdparams, axispad + 2) = "1"
+                            Case "b", "d"
+                                mid(cmdparams, axispad + 2) = "9"
+                            Case "l"
+                                mid(cmdparams, axispad + 1) = "9"
+                            Case "r"
+                                mid(cmdparams, axispad + 1) = "1"
+                        End Select
+                        If QueuedInput(0).cmd(i) >= "1" And QueuedInput(0).cmd(i) <= "9" Then
+                            Mid(cmdparams, axispad + i) = QueuedInput(0).cmd(i)
+                        End If
+                    Next
+
+
+                    For i = 0 To 3
+                        axis(i) = (5 - Val(cmdparams(i))) / 4
+                        If halfhold Then
+                            axis(i) = axis(i) / 2
+                        End If
+                        If analoghold And Not axis(i) = 0 Then
+                            boolHoldAxis(i) = Not analogholdrelease
+                            boolHoldAxisVal(i) = axis(i)
+                        End If
+                    Next
+
+
+                    If halfhold Then QueuedInput(0).cmd = "s" & QueuedInput(0).cmd
+                    If analoghold Then QueuedInput(0).cmd = "h" & QueuedInput(0).cmd
+                    If analogholdrelease Then QueuedInput(0).cmd = "n" & QueuedInput(0).cmd
             End Select
+
+
+
+
 
 
 
@@ -553,8 +563,7 @@ Partial Public Class frmPS4Twitch
         Dim buttons = 0
         Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}
         Dim halfhold As Boolean = False
-        Dim analoghold As Boolean = False
-        Dim analogholdrelease As Boolean = False
+
         Dim duration As Integer = 0
 
         Dim partcmd As String = ""
@@ -781,22 +790,19 @@ Partial Public Class frmPS4Twitch
 
 
 
-        'parse out no-hold
-        If cmd(0) = "n" Then
-            analogholdrelease = True
-            cmd = Strings.Right(cmd, cmd.Length - 1)
-        End If
 
-        'parse out half-hold
-        If cmd(0) = "h" Then
-            If duration = 0 Then analoghold = True
-            cmd = Strings.Right(cmd, cmd.Length - 1)
-        End If
 
         'parse out short-walk
         If cmd(0) = "s" Then
             halfhold = True
             cmd = Strings.Right(cmd, cmd.Length - 1)
+        End If
+
+        'Holds or noholds, handle in queue
+        If cmd(0) = "h" Or cmd(0) = "n" Then
+            cmd = cmd.Replace(".", "")
+            Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd)
+            Return
         End If
 
 
@@ -812,11 +818,11 @@ Partial Public Class frmPS4Twitch
 
 
             'Set default walk duration if none specified
-            If cmd(0) = "w" And Not analoghold Then
+            If cmd(0) = "w" Then
                 If duration = 0 Then duration = 60
             End If
 
-            If cmd(0) = "a" And Not analoghold Then
+            If cmd(0) = "a" Then
                 'TODO:  Damnit this is ugly.  Redo, with proper parsing.
                 cmd = Strings.Left(cmd.Replace(".", "5"), 5)
                 If duration = 0 Then duration = 15
@@ -883,10 +889,6 @@ Partial Public Class frmPS4Twitch
                 If halfhold Then
                     axis(i) = axis(i) / 2
                 End If
-                If analoghold And Not axis(i) = 0 Then
-                    boolHoldAxis(i) = Not analogholdrelease
-                    boolHoldAxisVal(i) = axis(i)
-                End If
             Next
 
             If boolInvertLX Then axis(0) *= -1.0
@@ -896,8 +898,7 @@ Partial Public Class frmPS4Twitch
 
 
             If halfhold Then cmd = "s" & cmd
-            If analoghold Then cmd = "h" & cmd
-            If analogholdrelease Then cmd = "n" & cmd
+
 
             'Remove cmd padding
             cmd = cmd.Replace(".", "")
