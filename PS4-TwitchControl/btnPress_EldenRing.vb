@@ -738,7 +738,7 @@ Partial Public Class frmPS4Twitch
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
             Case "l2", "lt"
-                If duration = 0 Then duration = 5
+                If duration = 0 Then duration = 80
                 Controller(BTN_L2, 0, 0, 0, 0, 1, 0, 10, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
@@ -768,8 +768,8 @@ Partial Public Class frmPS4Twitch
                 Return
 
             Case "cr2", "crt"
-                If duration = 0 Then duration = 60
-                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 60, user, cmd & "(!)")
+                If duration = 0 Then duration = 50
+                Controller(BTN_R2, 0, 0, 0, 0, 0, 1, 70, user, cmd & "(!)")
                 Controller(0, 0, 0, 0, 0, 0, 0, duration, user, cmd & "(-)")
                 Return
 
