@@ -212,6 +212,18 @@ Partial Public Class frmPS4Twitch
                         QueuedInput(0).cmd = Strings.Right(QueuedInput(0).cmd, QueuedInput(0).cmd.Length - 1)
                     End If
 
+                    If Not {"w", "a", "l"}.Contains(QueuedInput(0).cmd(0)) Then
+                        Exit Select
+                    End If
+
+
+                    For i = 1 To Math.Min(2, QueuedInput(0).cmd.Length - 1)
+                        If Not {"f", "u", "b", "d", "l", "r", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."
+                        }.Contains(QueuedInput(0).cmd(i)) Then
+                            Exit Select
+                        End If
+                    Next
+
 
                     Dim cmdparams As String = "5555"
                     Dim axispad = 0
