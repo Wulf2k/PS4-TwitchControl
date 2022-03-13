@@ -1,7 +1,7 @@
 ﻿Imports System.Threading
 
 Partial Public Class frmPS4Twitch
-    Private Sub btnPress_EldenRing()
+    Private Function btnPress_EldenRing()
 
 
         'frametime = 33333  '30fps
@@ -49,7 +49,7 @@ Partial Public Class frmPS4Twitch
         SyncLock queuelock
             'TODO:  Fix up below, randomly seems to be hitting this spot with an empty queue
             If QueuedInput.Count < 1 Then
-                Return
+                Return 0
 
             End If
 
@@ -290,7 +290,7 @@ Partial Public Class frmPS4Twitch
             If QueuedInput(0).time < 1 Then
                 PopQ()
                 'press()
-                Return
+                Return 1
             End If
 
 
@@ -579,7 +579,7 @@ Partial Public Class frmPS4Twitch
         'Catch ex As Exception
         'Console.WriteLine("press exception")
         ' End Try
-    End Sub
+    End Function
     Private Sub execCMD_EldenRing(user As String, role As String, cmd As String)
         Dim buttons = 0
         Dim axis() As Single = {CSng(0), CSng(0), CSng(0), CSng(0)}

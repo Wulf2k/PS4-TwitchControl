@@ -39,49 +39,30 @@ Partial Public Class frmPS4Twitch
 
     End Sub
     Private Sub press()
-        Select Case game
-            Case "gamecube"
-                btnPress__Gamecube()
-                Return
-            Case "ps4"
-                btnPress__PS4()
-                Return
-            Case "xb1"
-                btnPress__XB1()
-                Return
+        Dim repeat = 0
+        Do
+            Select Case game
+                Case "gamecube"
+                    btnPress__Gamecube()
+                Case "ps4"
+                    btnPress__PS4()
+                Case "xb1"
+                    repeat = btnPress__XB1()
 
-
-            Case "bloodbornedemake"
-                btnPress_BloodborneDemake()
-                Return
-            Case "crashbandicootwoc"
-                btnPress_CrashBandicootWoC()
-                Return
-            Case "celeste"
-                btnPress_Celeste()
-                Return
-            Case "eldenring"
-                btnPress_EldenRing()
-                Return
-            Case "jumpking"
-                btnPress_JumpKing()
-                Return
-            Case "terraria"
-                btnPress_Terraria()
-                Return
-        End Select
-
-        'btnPress__Switch()
-        'btnPress__XB1()
-        'btnPress_Standard()
-        'btnPress_DarkSoulsRemastered()
-        'btnPress_PokemonFireRed()
-        'btnPress_PokemonPlatinum()
-        'btnPress_SilentHill2()
-        'btnPress_SuperMeatBoy()
-        'btnPress_ZeldaMM()
-        'btnPress_ZeldaOOT()
-        'btnPress_ZeldaTP()
+                Case "bloodbornedemake"
+                    btnPress_BloodborneDemake()
+                Case "crashbandicootwoc"
+                    btnPress_CrashBandicootWoC()
+                Case "celeste"
+                    btnPress_Celeste()
+                Case "eldenring"
+                    repeat = btnPress_EldenRing()
+                Case "jumpking"
+                    btnPress_JumpKing()
+                Case "terraria"
+                    btnPress_Terraria()
+            End Select
+        Loop While repeat = 1
     End Sub
 
     Private Sub execCMD(user As String, role As String, cmd As String)
@@ -89,45 +70,24 @@ Partial Public Class frmPS4Twitch
         Select Case game
             Case "gamecube"
                 execCMD__Gamecube(user, role, cmd)
-                Return
             Case "ps4"
                 execCMD__PS4(user, role, cmd)
-                Return
             Case "xb1"
                 execCMD__XB1(user, role, cmd)
-                Return
-
 
             Case "bloodbornedemake"
                 execCMD_BloodborneDemake(user, role, cmd)
-                Return
             Case "crashbandicootwoc"
                 execCMD_CrashBandicootWoC(user, role, cmd)
-                Return
             Case "celeste"
                 execCMD_Celeste(user, role, cmd)
-                Return
             Case "eldenring"
                 execCMD_EldenRing(user, role, cmd)
-                Return
             Case "jumpking"
                 execCMD_JumpKing(user, role, cmd)
-                Return
             Case "terraria"
                 execCMD_Terraria(user, role, cmd)
-                Return
         End Select
-
-        'execCMD__Switch(user, role, cmd)
-        'execCMD__XB1(user, role, cmd)
-        'execCMD_DarkSoulsRemastered(user, role, cmd)
-        'execCMD_PokemonFireRed(user, role, cmd)
-        'execCMD_PokemonPlatinum(user, role, cmd)
-        'execCMD_SilentHill2(user, role, cmd)
-        'execCMD_SuperMeatBoy(user, role, cmd)
-        'execCMD_ZeldaMM(user, role, cmd)
-        'execCMD_ZeldaOOT(user, role, cmd)
-        'execCMD_ZeldaTP(user, role, cmd)
     End Sub
 
     Private Sub ProcessCMD(user As String, role As String, cmd As String)
