@@ -189,7 +189,15 @@ Partial Public Class frmPS4Twitch
                 Case Else
                     'Sweet Jebus, what monstrosity have I created by 'fixing' analog holds jumping the queue?
                     'Why do I do this to myself?
-                    If QueuedInput(0).cmd.Length < 3 Then Exit Select
+                    If QueuedInput(0).cmd.Length < 3 Or QueuedInput(0).cmd.Length > 7 Then Exit Select
+
+
+                    'don't trigger on common words
+                    If {"half", "hard"}.Contains(QueuedInput(0).cmd) Then
+                        Exit Select
+                    End If
+
+
 
                     'parse out no-hold
                     If QueuedInput(0).cmd(0) = "n" Then
@@ -216,8 +224,9 @@ Partial Public Class frmPS4Twitch
                         Exit Select
                     End If
 
-
-                    For i = 1 To Math.Min(2, QueuedInput(0).cmd.Length - 1)
+                    Dim maxcmdl = 2
+                    If QueuedInput(0).cmd(0) = "a" Then maxcmdl = 4
+                    For i = 1 To Math.Min(maxcmdl, QueuedInput(0).cmd.Length - 1)
                         If Not {"f", "u", "b", "d", "l", "r", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."
                         }.Contains(QueuedInput(0).cmd(i)) Then
                             Exit Select
@@ -280,7 +289,7 @@ Partial Public Class frmPS4Twitch
             'If command has no duration, skip to next command.
             If QueuedInput(0).time < 1 Then
                 PopQ()
-                press()
+                'press()
                 Return
             End If
 

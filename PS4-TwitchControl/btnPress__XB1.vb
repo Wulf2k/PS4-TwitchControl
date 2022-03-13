@@ -258,7 +258,7 @@ Partial Public Class frmPS4Twitch
             'If command has no duration, skip to next command.
             If QueuedInput(0).time < 1 Then
                 PopQ()
-                press()
+                'press()
                 Return
             End If
 
