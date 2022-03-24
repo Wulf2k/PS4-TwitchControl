@@ -519,8 +519,13 @@ Partial Public Class frmPS4Twitch
                     Return
                 End If
             Case "home", "hhome", "pshome", "hpshome"
-                If Not (tmpuser = "wulf2k" Or tmpuser = "seannyb" Or tmpuser = "tompiet1") Then
+                If Not authlist.Contains(user) Then
                     outputChat("Uhh....  No.")
+                    Return
+                End If
+            Case "dl", "hdl", "dr", "hdr"
+                If Not authlist.Contains(user) Then
+                    outputChat("DR/DL buttons restricted to pre-approved users.")
                     Return
                 End If
             Case "tri", "htri"
