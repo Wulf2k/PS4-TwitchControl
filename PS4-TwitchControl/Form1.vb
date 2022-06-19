@@ -11,7 +11,7 @@ Partial Public Class frmPS4Twitch
     Dim rph As IntPtr = IntPtr.Zero
     Dim fcAddr As IntPtr = IntPtr.Zero
 
-    Dim game As String = "eldenring"
+    Dim game As String = "endisnigh"
 
     Dim ctrlStyle As String = ""
     Dim ctrlType As String = ""
@@ -57,6 +57,8 @@ Partial Public Class frmPS4Twitch
                     btnPress_Celeste()
                 Case "eldenring"
                     repeat = btnPress_EldenRing()
+                Case "endisnigh"
+                    repeat = btnPress_EndIsNigh()
                 Case "jumpking"
                     btnPress_JumpKing()
                 Case "terraria"
@@ -83,6 +85,8 @@ Partial Public Class frmPS4Twitch
                 execCMD_Celeste(user, role, cmd)
             Case "eldenring"
                 execCMD_EldenRing(user, role, cmd)
+            Case "endisnigh"
+                execCMD_EndIsNigh(user, role, cmd)
             Case "jumpking"
                 execCMD_JumpKing(user, role, cmd)
             Case "terraria"
