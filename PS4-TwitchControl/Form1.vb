@@ -11,7 +11,7 @@ Partial Public Class frmPS4Twitch
     Dim rph As IntPtr = IntPtr.Zero
     Dim fcAddr As IntPtr = IntPtr.Zero
 
-    Dim game As String = "endisnigh"
+    Dim game As String = "xb1"
 
     Dim ctrlStyle As String = ""
     Dim ctrlType As String = ""
