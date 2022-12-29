@@ -101,6 +101,9 @@
     <Compile Include="btnPress_EndIsNigh.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="btnPress_Pikuniku.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="memFuncs.vb">
       <SubType>Form</SubType>
     </Compile>
