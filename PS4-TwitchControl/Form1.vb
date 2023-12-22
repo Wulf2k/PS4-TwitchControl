@@ -11,7 +11,7 @@ Partial Public Class frmPS4Twitch
     Dim rph As IntPtr = IntPtr.Zero
     Dim fcAddr As IntPtr = IntPtr.Zero
 
-    Dim game As String = "pikuniku"
+    Dim game As String = "sunblaze"
 
     Dim ctrlStyle As String = ""
     Dim ctrlType As String = ""
@@ -51,6 +51,8 @@ Partial Public Class frmPS4Twitch
 
                 Case "bloodbornedemake"
                     btnPress_BloodborneDemake()
+                Case "celeste"
+                    btnPress_Celeste()
                 Case "crashbandicootwoc"
                     btnPress_CrashBandicootWoC()
                 Case "celeste"
@@ -63,6 +65,8 @@ Partial Public Class frmPS4Twitch
                     btnPress_JumpKing()
                 Case "pikuniku"
                     repeat = btnPress_Pikuniku()
+                Case "sunblaze"
+                    repeat = btnPress_Sunblaze()
                 Case "terraria"
                     btnPress_Terraria()
             End Select
@@ -81,6 +85,8 @@ Partial Public Class frmPS4Twitch
 
             Case "bloodbornedemake"
                 execCMD_BloodborneDemake(user, role, cmd)
+            Case "celeste"
+                execCMD_Celeste(user, role, cmd)
             Case "crashbandicootwoc"
                 execCMD_CrashBandicootWoC(user, role, cmd)
             Case "celeste"
@@ -95,6 +101,8 @@ Partial Public Class frmPS4Twitch
                 execCMD_Pikuniku(user, role, cmd)
             Case "terraria"
                 execCMD_Terraria(user, role, cmd)
+            Case "sunblaze"
+                execCMD_Sunblaze(user, role, cmd)
         End Select
     End Sub
 
